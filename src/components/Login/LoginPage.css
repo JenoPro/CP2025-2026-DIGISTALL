@@ -113,10 +113,9 @@
 .main-title {
   font-size: clamp(1.75rem, 5vw, 3rem);
   font-weight: 700;
-  color: #2c3e50;
+  color: #000000;
   margin-bottom: 0.5rem;
   line-height: 1.1;
-  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.3);
   word-wrap: break-word;
   hyphens: auto;
 }
@@ -124,19 +123,17 @@
 .sub-title {
   font-size: clamp(1.25rem, 4vw, 2.2rem);
   font-weight: 600;
-  color: #34495e;
+  color: #000000;
   margin-bottom: 1rem;
   line-height: 1.2;
-  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
   word-wrap: break-word;
 }
 
 .powered-by {
   font-size: clamp(0.9rem, 2.5vw, 1.1rem);
-  color: #3498db;
-  font-weight: 500;
+  color: #002181;
+  font-weight: 600;
   margin: 0;
-  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 /* Form Section - Responsive */

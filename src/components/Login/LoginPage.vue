@@ -16,7 +16,7 @@
       </v-col>
 
       <!-- Right Side - Login Form -->
-      <v-col cols="12" md="4" class="right-section d-flex align-center justify-center">
+      <v-col cols="12" md="3" class="right-section d-flex align-center justify-center">
         <v-card class="login-card" elevation="0" width="100%" max-width="400">
           <v-card-text class="pa-8">
             <h3 class="form-title text-center mb-6">Sign In</h3>
