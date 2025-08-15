@@ -6,6 +6,7 @@ export default {
       loading: false,
       username: '',
       password: '',
+      errorMessage: '', // Add error message state
       usernameRules: [
         (v) => !!v || 'Username is required',
         (v) => (v && v.length >= 3) || 'Username must be at least 3 characters',
@@ -18,10 +19,14 @@ export default {
   },
   methods: {
     async handleLogin() {
+      // Clear any previous error messages
+      this.clearError()
+
       // Validate form first
       const { valid } = await this.$refs.loginForm.validate()
 
       if (!valid) {
+        this.showErrorMessage('Please fill in all required fields correctly.')
         return
       }
 
@@ -50,11 +55,18 @@ export default {
           username: this.username,
         })
       } catch (error) {
-        // Handle login error
+        // Handle different types of errors
+        if (error.message === 'Invalid credentials') {
+          this.showErrorMessage('Invalid username or password. Please try again.')
+        } else if (error.message === 'Network error') {
+          this.showErrorMessage('Unable to connect to server. Please check your internet connection.')
+        } else if (error.message === 'Server error') {
+          this.showErrorMessage('Server is currently unavailable. Please try again later.')
+        } else {
+          this.showErrorMessage('Login failed. Please try again.')
+        }
+        
         console.error('Login failed:', error)
-
-        // Show error message (you can use Vuetify's snackbar or alert)
-        this.showErrorMessage('Invalid username or password')
       } finally {
         this.loading = false
       }
@@ -67,6 +79,12 @@ export default {
           // Updated credentials: admin / admin123
           if (this.username === 'admin' && this.password === 'admin123') {
             resolve({ success: true })
+          } else if (this.username === 'network-error') {
+            // Simulate network error for testing
+            reject(new Error('Network error'))
+          } else if (this.username === 'server-error') {
+            // Simulate server error for testing
+            reject(new Error('Server error'))
           } else {
             reject(new Error('Invalid credentials'))
           }
@@ -75,6 +93,9 @@ export default {
     },
 
     handleForgotPassword() {
+      // Clear error message when navigating away
+      this.clearError()
+      
       // Handle forgot password logic
       console.log('Forgot password clicked')
 
@@ -86,15 +107,41 @@ export default {
     },
 
     showErrorMessage(message) {
-      // You can use Vuetify's snackbar or your preferred notification method
+      this.errorMessage = message
+      
+      // Auto-clear error message after 5 seconds
+      setTimeout(() => {
+        this.clearError()
+      }, 5000)
+      
+      // You can also emit event to parent if needed
       this.$emit('show-error', message)
+    },
+
+    clearError() {
+      this.errorMessage = ''
     },
 
     resetForm() {
       this.username = ''
       this.password = ''
+      this.clearError()
       this.$refs.loginForm.resetValidation()
     },
+  },
+
+  watch: {
+    // Clear error message when user starts typing
+    username() {
+      if (this.errorMessage) {
+        this.clearError()
+      }
+    },
+    password() {
+      if (this.errorMessage) {
+        this.clearError()
+      }
+    }
   },
 
   mounted() {

@@ -43,7 +43,7 @@
 
               <v-btn
                 type="submit"
-                class="login-btn mb-4"
+                class="login-btn mb-3"
                 block
                 size="large"
                 :loading="loading"
@@ -51,6 +51,18 @@
               >
                 Login
               </v-btn>
+
+              <!-- Error Message Display -->
+              <v-alert
+                v-if="errorMessage"
+                type="error"
+                density="compact"
+                class="error-alert mb-4"
+                closable
+                @click:close="clearError"
+              >
+                {{ errorMessage }}
+              </v-alert>
 
               <div class="text-center">
                 <v-btn

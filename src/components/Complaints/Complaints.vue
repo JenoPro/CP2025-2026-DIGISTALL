@@ -20,8 +20,8 @@
           <v-row>
             <v-col cols="12">
               <div class="content-placeholder">
-                <h3>Dashboard Content</h3>
-                <p>Dashboard analytics and overview content goes here</p>
+                <h3>Complaints Content</h3>
+                <p>Complaints and analytics system content goes here</p>
               </div>
             </v-col>
           </v-row>
@@ -31,5 +31,5 @@
   </v-app>
 </template>
 
-<script src="./Dashboard.js"></script>
-<style scoped src="./Dashboard.css"></style>
+<script src="./Complaints.js"></script>
+<style scoped src="./Complaints.css"></style>
