@@ -21,7 +21,7 @@
             <v-col cols="12">
               <div class="content-placeholder">
                 <h3>Stalls Content</h3>
-                <p>Stalls management system content goes here</p>
+                <p>Main Content lapag nalang responsive yan</p>
               </div>
             </v-col>
           </v-row>

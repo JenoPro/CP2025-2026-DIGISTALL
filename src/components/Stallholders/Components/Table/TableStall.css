@@ -1,0 +1,304 @@
+.table-container {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+}
+
+.stall-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.stall-table thead {
+  background: #1976d2;
+  color: white;
+}
+
+.stall-table th {
+  padding: 16px 12px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stall-table tbody tr {
+  border-bottom: 1px solid #e0e0e0;
+  transition: background-color 0.2s ease;
+}
+
+.stall-table tbody tr:hover {
+  background: #f8f9fa;
+}
+
+.stall-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.stall-table td {
+  padding: 16px 12px;
+  vertical-align: middle;
+}
+
+.name-cell {
+  min-width: 200px;
+}
+
+.name-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1976d2, #42a5f5);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.address-cell {
+  max-width: 250px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-active {
+  background: #e8f5e8;
+  color: #2e7d32;
+}
+
+.status-inactive {
+  background: #ffebee;
+  color: #c62828;
+}
+
+.status-pending {
+  background: #fff3e0;
+  color: #ef6c00;
+}
+
+.status-complete {
+  background: #e3f2fd;
+  color: #1565c0;
+}
+
+.actions-cell {
+  min-width: 120px;
+}
+
+.action-btn {
+  background: none;
+  border: none;
+  padding: 8px;
+  margin: 0 2px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-btn svg {
+  width: 16px;
+  height: 16px;
+  color: #666;
+}
+
+.action-btn:hover {
+  background: #f5f5f5;
+}
+
+.view-btn:hover {
+  background: #e3f2fd;
+}
+
+.view-btn:hover svg {
+  color: #1976d2;
+}
+
+.edit-btn:hover {
+  background: #fff3e0;
+}
+
+.edit-btn:hover svg {
+  color: #f57c00;
+}
+
+.delete-btn:hover {
+  background: #ffebee;
+}
+
+.delete-btn:hover svg {
+  color: #d32f2f;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #666;
+}
+
+.empty-icon {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 16px auto;
+  opacity: 0.5;
+  color: #666;
+}
+
+.empty-state h3 {
+  margin: 0 0 8px 0;
+  font-size: 20px;
+  font-weight: 500;
+  color: #333;
+}
+
+.empty-state p {
+  margin: 0;
+  font-size: 14px;
+}
+
+/* Pagination */
+.pagination-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.page-btn {
+  padding: 8px 16px;
+  border: 1px solid #ddd;
+  background: white;
+  color: #666;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.page-btn:hover:not(:disabled) {
+  background: #1976d2;
+  color: white;
+  border-color: #1976d2;
+}
+
+.page-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.page-info {
+  font-size: 14px;
+  color: #666;
+}
+
+/* Add Button */
+.add-btn {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #1976d2;
+  color: white;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(25, 118, 210, 0.4);
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+
+.add-btn:hover {
+  background: #1565c0;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(25, 118, 210, 0.5);
+}
+
+.add-icon {
+  width: 24px;
+  height: 24px;
+  color: white;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .stall-table {
+    font-size: 12px;
+  }
+
+  .stall-table th,
+  .stall-table td {
+    padding: 12px 8px;
+  }
+
+  .address-cell {
+    max-width: 150px;
+  }
+
+  .action-btn {
+    padding: 6px;
+  }
+
+  .action-btn svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .add-btn {
+    width: 50px;
+    height: 50px;
+    bottom: 20px;
+    right: 20px;
+  }
+
+  .add-icon {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .table-wrapper {
+    overflow-x: scroll;
+  }
+
+  .stall-table {
+    min-width: 800px;
+  }
+
+  .pagination-wrapper {
+    flex-direction: column;
+    gap: 10px;
+  }
+}

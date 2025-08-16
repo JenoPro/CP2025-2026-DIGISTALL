@@ -21,7 +21,7 @@
             <v-col cols="12">
               <div class="content-placeholder">
                 <h3>Dashboard Content</h3>
-                <p>Dashboard analytics and overview content goes here</p>
+                <p>Main Content lapag nalang responsive yan</p>
               </div>
             </v-col>
           </v-row>
