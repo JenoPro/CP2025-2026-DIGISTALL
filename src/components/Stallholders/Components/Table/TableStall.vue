@@ -18,9 +18,6 @@
             <td>{{ stallholder.id }}</td>
             <td class="name-cell">
               <div class="name-wrapper">
-                <div class="avatar">
-                  {{ getInitials(stallholder.fullName) }}
-                </div>
                 <span>{{ stallholder.fullName }}</span>
               </div>
             </td>

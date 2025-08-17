@@ -5,7 +5,7 @@
       <v-col cols="12" md="6" lg="4">
         <v-text-field
           v-model="searchQuery"
-          placeholder="Search"
+          placeholder="Search applicants..."
           variant="outlined"
           density="comfortable"
           hide-details
@@ -22,84 +22,84 @@
 
       <!-- Filter Button -->
       <v-col cols="12" md="2" lg="2" class="text-right">
-        <v-btn
-          variant="outlined"
-          color="primary"
-          prepend-icon="mdi-filter-outline"
-          @click="toggleFilter"
-          class="filter-btn"
-        >
-          Filter
-        </v-btn>
+        <div class="filter-container" ref="filterContainer">
+          <v-btn
+            variant="outlined"
+            prepend-icon="mdi-filter-variant"
+            @click="toggleFilter"
+            class="filter-btn"
+            :class="{ 'filter-active': showFilterPanel }"
+          >
+            Filter
+            <v-icon
+              :icon="showFilterPanel ? 'mdi-chevron-up' : 'mdi-chevron-down'"
+              size="small"
+              class="ml-1"
+            ></v-icon>
+          </v-btn>
+
+          <!-- Filter Dropdown Panel -->
+          <transition name="slide-down">
+            <div v-show="showFilterPanel" class="filter-dropdown">
+              <v-card elevation="8" class="filter-card">
+                <div class="filter-header">
+                  <div class="d-flex align-center">
+                    <v-icon icon="mdi-filter-variant" size="small" class="mr-2"></v-icon>
+                    <span class="filter-title">FILTER OPTIONS</span>
+                  </div>
+                  <v-btn
+                    icon="mdi-close"
+                    variant="text"
+                    size="small"
+                    class="close-btn"
+                    @click="showFilterPanel = false"
+                  ></v-btn>
+                </div>
+
+                <div class="filter-content">
+                  <!-- Status Filter -->
+                  <div class="filter-group">
+                    <div class="filter-label">STATUS</div>
+                    <div class="status-buttons">
+                      <v-btn
+                        v-for="status in statusOptions"
+                        :key="status.value"
+                        :variant="selectedStatus === status.value ? 'flat' : 'outlined'"
+                        :color="selectedStatus === status.value ? 'primary' : 'default'"
+                        class="status-btn"
+                        @click="selectStatus(status.value)"
+                      >
+                        {{ status.title }}
+                      </v-btn>
+                    </div>
+                  </div>
+
+                  <!-- Action Buttons -->
+                  <div class="filter-actions">
+                    <v-btn
+                      variant="outlined"
+                      color="grey"
+                      class="action-btn clear-btn"
+                      @click="clearFilters"
+                    >
+                      Clear All
+                    </v-btn>
+                    <v-btn
+                      variant="flat"
+                      color="primary"
+                      class="action-btn apply-btn"
+                      @click="applyFilters"
+                    >
+                      Apply Filters
+                    </v-btn>
+                  </div>
+                </div>
+              </v-card>
+            </div>
+          </transition>
+        </div>
       </v-col>
     </v-row>
-
-    <!-- Filter Panel (expandable) -->
-    <v-expand-transition>
-      <div v-show="showFilterPanel" class="filter-panel mt-4">
-        <v-card elevation="1" class="pa-4">
-          <v-row>
-            <v-col cols="12" md="6" lg="3">
-              <v-select
-                v-model="filters.status"
-                :items="statusOptions"
-                label="Status"
-                variant="outlined"
-                density="comfortable"
-                hide-details
-                clearable
-              ></v-select>
-            </v-col>
-
-            <v-col cols="12" md="6" lg="3">
-              <v-text-field
-                v-model="filters.location"
-                label="Location"
-                variant="outlined"
-                density="comfortable"
-                hide-details
-                clearable
-              ></v-text-field>
-            </v-col>
-
-            <v-col cols="12" md="6" lg="3">
-              <v-text-field
-                v-model="filters.dateFrom"
-                label="Date From"
-                type="date"
-                variant="outlined"
-                density="comfortable"
-                hide-details
-                clearable
-              ></v-text-field>
-            </v-col>
-
-            <v-col cols="12" md="6" lg="3">
-              <v-text-field
-                v-model="filters.dateTo"
-                label="Date To"
-                type="date"
-                variant="outlined"
-                density="comfortable"
-                hide-details
-                clearable
-              ></v-text-field>
-            </v-col>
-          </v-row>
-
-          <v-row class="mt-3">
-            <v-col cols="12" class="d-flex justify-end gap-2">
-              <v-btn variant="outlined" color="grey" @click="clearFilters">
-                Clear Filters
-              </v-btn>
-              <v-btn variant="flat" color="primary" @click="applyFilters">
-                Apply Filters
-              </v-btn>
-            </v-col>
-          </v-row>
-        </v-card>
-      </div>
-    </v-expand-transition>
   </div>
 </template>
 
