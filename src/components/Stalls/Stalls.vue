@@ -1,4 +1,5 @@
 <!-- eslint-disable vue/multi-word-component-names -->
+<!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <v-app>
     <!-- Sidebar Component -->
@@ -6,23 +7,20 @@
 
     <div class="main-wrapper">
       <!-- Header Component -->
-      <AppHeader
-        :title="pageTitle"
-        @notification-click="handleNotificationClick"
-        @profile-click="handleProfileClick"
-        @settings-click="handleSettingsClick"
-        @logout-click="handleLogoutClick"
-      />
+      <AppHeader :title="pageTitle" @notification-click="handleNotificationClick" @profile-click="handleProfileClick"
+        @settings-click="handleSettingsClick" @logout-click="handleLogoutClick" />
 
       <!-- Main Content -->
       <v-main>
         <v-container fluid class="main-content">
           <v-row>
             <v-col cols="12">
-              <div class="content-placeholder">
-                <h3>Stalls Content</h3>
-                <p>Main Content lapag nalang responsive yan</p>
-              </div>
+              <!-- Search Filter Component -->
+              <SearchFilter :stallsData="stallsData" @filtered-stalls="handleFilteredStalls" />
+
+              <!-- Card Stalls Component -->
+              <CardStallsComponent :stalls="displayStalls" @stall-edit="handleStallEdit"
+                @stall-delete="handleStallDelete" />
             </v-col>
           </v-row>
         </v-container>
