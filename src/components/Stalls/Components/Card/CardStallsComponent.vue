@@ -46,14 +46,9 @@
 
             <!-- Action Buttons -->
             <v-card-actions class="pa-4 button-actions">
-                <v-btn color="primary" variant="elevated" size="small" @click="handleEdit(stall)" class="action-btn">
-                    <v-icon left size="small">mdi-pencil</v-icon>
-                    EDIT
-                </v-btn>
-
-                <v-btn color="error" variant="elevated" size="small" @click="handleDelete(stall)" class="action-btn">
-                    <v-icon left size="small">mdi-delete</v-icon>
-                    DELETE
+                <v-btn color="primary" variant="elevated" size="small" @click="handleModify(stall)" class="action-btn">
+                    <v-icon left size="small" class="me-2">mdi-pencil</v-icon>
+                    MODIFY STALL
                 </v-btn>
             </v-card-actions>
         </v-card>

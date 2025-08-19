@@ -1,0 +1,185 @@
+/*Responsive Modal*/
+.v-dialog {
+  max-width: 95vw !important;
+}
+
+.v-dialog .v-card {
+  border-radius: 16px !important;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.15) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+
+.v-dialog .v-card .v-card-title {
+  padding: 20px 24px 16px !important;
+  background: #002181 100%;
+  color: white !important;
+
+  /* alignment for title + close btn */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Close button hover effect */
+.v-dialog .v-card .v-card-title .v-btn {
+  transition: background-color 0.25s ease, transform 0.2s ease;
+}
+
+/*Floating Action Button*/
+.add-stall-btn {
+  background: linear-gradient(135deg, #1b2e76 30%, #4f2578 100%) !important;
+  color: white !important;
+  position: fixed !important;
+  bottom: 24px !important;
+  right: 24px !important;
+  z-index: 9999 !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 28px !important;
+  width: 64px !important;
+  height: 64px !important;
+  overflow: hidden !important;
+}
+
+/*Ripple Effect*/
+.ripple-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 1;
+  animation: ripple-pulse 2s infinite;
+  will-change: transform, opacity;
+}
+
+@keyframes ripple-pulse {
+  0%   { transform: scale(0.6); opacity: 0.9; }
+  70%  { transform: scale(1.6); opacity: 0.4; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+
+/*Pulse Rings Behind FAB*/
+.pulse-rings {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9998;
+  pointer-events: none;
+  width: 64px;
+  height: 64px;
+}
+
+.pulse-ring {
+  position: absolute;
+  border: 2px solid rgba(102, 126, 234, 0.3);
+  border-radius: 50%;
+  width: 64px;
+  height: 64px;
+  animation: pulse-ring-animation 2s infinite;
+}
+
+.pulse-ring-1 { animation-delay: 0s; }
+.pulse-ring-2 { animation-delay: 0.7s; }
+.pulse-ring-3 { animation-delay: 1.4s; }
+.pulse-ring-4 { animation-delay: 2.0s; }
+
+@keyframes pulse-ring-animation {
+  0% { transform: scale(1); opacity: 0.8; }
+  100% { transform: scale(2.5); opacity: 0; }
+}
+
+/* Placeholder styling */
+.v-input input::placeholder,
+.v-input textarea::placeholder {
+  color: rgba(0, 0, 0, 0.874) !important;
+  font-style: italic;
+}
+
+/* Helper / hint text */
+.v-messages__message {
+  font-size: 12.5px !important;
+  opacity: 0.85 !important;
+}
+
+/* Switch label */
+.v-input--switch .v-label {
+  font-weight: 500 !important;
+  color: rgba(0, 0, 0, 0.8) !important;
+}
+
+/* Card text (inside modal body) */
+.v-card-text {
+  color: rgb(0, 0, 0) !important;
+  font-size: 20px !important;
+  line-height: 1.5 !important;
+}
+
+/* Buttons: keep glow/ripple, only enhance text */
+.v-btn {
+  font-weight: 500 !important;
+  text-transform: none !important;
+  letter-spacing: 0.3px !important;
+}
+
+/* Cancel Button */
+.v-card-actions .v-btn.cancel-btn {
+  background: rgb(206, 7, 7) !important;
+  color: #ffffff !important;
+  border: 1px solid #17171798 !important;
+  border-radius: 8px !important;
+  padding: 8px 18px !important;
+  transition: all 0.25s ease-in-out;
+}
+
+.v-card-actions .v-btn.cancel-btn:hover {
+  background: #e0e0e0 !important;
+  transform: translateY(-2px);
+}
+
+/* Add Stall Button */
+.v-card-actions .v-btn.add-btn {
+  background: linear-gradient(135deg, #002181 0%, #4f2578 100%) !important;
+  color: white !important;
+  border-radius: 8px !important;
+  padding: 8px 20px !important;
+  font-weight: 600 !important;
+  box-shadow: 0 6px 16px rgba(27, 46, 118, 0.35) !important;
+  transition: all 0.25s ease-in-out;
+}
+
+.v-card-actions .v-btn.add-btn:hover {
+  box-shadow: 0 8px 22px rgba(27, 46, 118, 0.5) !important;
+  transform: translateY(-2px);
+}
+
+/*Mobile Responsive FAB*/
+@media (max-width: 600px) {
+  .add-stall-btn {
+    width: 52px !important;
+    height: 52px !important;
+    font-size: 22px !important;
+    bottom: 16px !important;
+    right: 16px !important;
+  }
+
+  .pulse-rings {
+    width: 52px;
+    height: 52px;
+    bottom: 16px;
+    right: 16px;
+  }
+
+  .pulse-ring {
+    width: 52px;
+    height: 52px;
+  }
+}

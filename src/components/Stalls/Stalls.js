@@ -3,6 +3,8 @@ import AppSidebar from '../AppSidebar/AppSidebar.vue'
 import AppHeader from '../AppHeader/AppHeader.vue'
 import CardStallsComponent from '../Stalls/Components/Card/CardStallsComponent.vue'
 import SearchFilter from '../Stalls/Components/SearchAndFilter/SearchAndFilter.vue'
+import AddAvailableStall from '../Stalls/Components/Add/AddAvailableStall.vue'
+import EditStall from '../Stalls/Components/Edit/EditStall.vue'
 
 export default {
   name: 'Stalls',
@@ -11,10 +13,15 @@ export default {
     AppHeader,
     CardStallsComponent,
     SearchFilter,
+    AddAvailableStall,
+    EditStall,
   },
   data() {
     return {
       pageTitle: 'Stalls',
+      showModal: false,
+      showEditModal: false,
+      selectedStall: {},
       menuItems: [
         { id: 1, icon: 'mdi-view-dashboard', name: 'Dashboard', active: false },
         { id: 2, icon: 'mdi-credit-card', name: 'Payments', active: false },
@@ -104,6 +111,12 @@ export default {
         },
       ],
       displayStalls: [],
+      // Snackbar for notifications
+      snackbar: {
+        show: false,
+        text: '',
+        color: 'success',
+      },
     }
   },
   mounted() {
@@ -113,16 +126,13 @@ export default {
     // Handle menu item clicks from sidebar
     handleMenuItemClick(itemId) {
       console.log('Menu item clicked:', itemId)
-      // Update page title based on selected menu item
       this.updatePageTitle(itemId)
-      // Add navigation logic here
       this.navigateToPage(itemId)
     },
 
     // Handle notification clicks from header
     handleNotificationClick() {
       console.log('Notification clicked in Stalls')
-      // Add notification logic here
     },
 
     // Handle profile clicks from header
@@ -133,13 +143,11 @@ export default {
     // Handle settings clicks from header dropdown
     handleSettingsClick() {
       console.log('Settings clicked in Stalls')
-      // Navigate to settings or open settings modal
     },
 
     // Handle logout clicks from header dropdown
     handleLogoutClick() {
       console.log('Logout clicked in Stalls')
-      // Handle logout logic - clear session, redirect to login, etc.
     },
 
     // Update page title based on menu selection
@@ -179,25 +187,115 @@ export default {
 
     // Initialize stalls page
     initializeStalls() {
-      console.log('Stalls page initialized')
-      // Add any initialization logic here
+      this.displayStalls = [...this.stallsData]
     },
 
+    // ENHANCED EDIT FUNCTIONALITY
     handleStallEdit(stall) {
-      console.log('Edit stall:', stall)
-      // Add stall edit logic 
+      // Store the selected stall for editing
+      this.selectedStall = { ...stall }
+      this.showEditModal = true
     },
 
-    handleStallDelete(stall) {
-      console.log('Delete stall:', stall)
-        // Add stall delete logic 
-      if (confirm(`Are you sure you want to delete ${stall.stallNumber}?`)) {
-        // Delete logic here upon confirmation
+    // Handle when stall is updated from EditStall component
+    handleStallUpdated(updatedStall) {
+      console.log('Stall updated:', updatedStall)
+      // Find and update the stall in stallsData
+      const index = this.stallsData.findIndex((s) => s.id === updatedStall.id)
+      if (index > -1) {
+        // Update the stall data
+        this.stallsData[index] = { ...updatedStall }
+        this.displayStalls = [...this.stallsData]
+        this.showMessage('Stall updated successfully!', 'success')
+      }
+      this.closeEditModal()
+    },
+
+    // Close edit modal
+    closeEditModal() {
+      this.showEditModal = false
+      this.selectedStall = {}
+    },
+
+    // Handle stall deletion from EditStall component
+    handleStallDeleted(stallId) {
+      console.log('Stall deleted:', stallId)
+
+      // Remove from stallsData array
+      const index = this.stallsData.findIndex((s) => s.id === stallId)
+      if (index > -1) {
+        this.stallsData.splice(index, 1)
+        this.displayStalls = [...this.stallsData]
+        this.showMessage('Stall deleted successfully!', 'success')
       }
     },
 
+    // Simulate API call for deleting stall (wala pa naman actual API pero ok na muna ito)
+    async deleteStallFromServer(stallId) {
+      // Simulate API delay
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          console.log(`Stall ${stallId} deleted from server`)
+          resolve()
+        }, 500)
+      })
+    },
+
+    // Handle filtered stalls
     handleFilteredStalls(filtered) {
       this.displayStalls = filtered
+    },
+
+    // Handle opening the add stall modal
+    openAddStallModal() {
+      this.showModal = true
+    },
+
+    // Method to close the add modal
+    closeAddStallModal() {
+      this.showModal = false
+    },
+
+    // Handle new stall added
+    handleStallAdded(newStall) {
+      console.log('New stall added:', newStall)
+
+      // Generate new ID
+      const newId = Math.max(...this.stallsData.map((s) => s.id)) + 1
+      newStall.id = newId
+
+      // Add new stall to stallsData
+      this.stallsData.push(newStall)
+
+      // Update display stalls
+      this.displayStalls = [...this.stallsData]
+
+      // Show success message
+      this.showMessage('Stall added successfully!', 'success')
+    },
+
+    // Enhanced message display
+    showMessage(text, color = 'success') {
+      this.snackbar = {
+        show: true,
+        text,
+        color,
+      }
+
+      // Auto-hide after 5 seconds
+      setTimeout(() => {
+        this.snackbar.show = false
+      }, 5000)
+    },
+
+    // Handle edit modal close event
+    handleEditModalClose() {
+      this.closeEditModal()
+    },
+
+    // Handle edit error
+    handleEditError(errorMessage) {
+      this.showMessage(errorMessage, 'error')
     },
   },
 }

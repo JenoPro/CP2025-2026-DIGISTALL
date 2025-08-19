@@ -1,0 +1,165 @@
+/* Responsive Modal */
+.v-dialog {
+  max-width: 95vw !important;
+}
+
+.v-dialog .v-card {
+  border-radius: 16px !important;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.15) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+
+/* Modal Header */
+.v-dialog .v-card .v-card-title {
+  padding: 20px 24px 16px !important;
+  background: #002181;
+  color: white !important;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.v-dialog .v-card .v-card-title .v-btn {
+  transition: background-color 0.25s ease, transform 0.2s ease;
+}
+
+/* Subtitle */
+.v-card-title .text-subtitle-2 {
+  font-size: 14px !important;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* Modal Body */
+.v-card-text {
+  font-size: 16px !important;
+  line-height: 1.5 !important;
+  color: #000 !important;
+}
+
+/* Input Fields & Textarea */
+.v-input input,
+.v-input textarea {
+  color: rgba(0, 0, 0, 0.87) !important;
+}
+
+.v-input input::placeholder,
+.v-input textarea::placeholder {
+  color: rgba(0, 0, 0, 0.5) !important;
+  font-style: italic;
+}
+
+/* Form Helper Text */
+.v-messages__message {
+  font-size: 12.5px !important;
+  opacity: 0.85 !important;
+}
+
+/* Switch Label */
+.v-input--switch .v-label {
+  font-weight: 500 !important;
+  color: rgba(0, 0, 0, 0.8) !important;
+}
+
+/* Image Preview Card */
+.image-preview {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.image-preview .v-img {
+  border-radius: 12px;
+}
+
+/* Card Actions Buttons (Remove Image) */
+.image-preview .v-card-actions .v-btn {
+  font-weight: 500 !important;
+  text-transform: none;
+}
+
+/* Modal Footer Buttons */
+.v-card-actions .v-btn {
+  font-weight: 500 !important;
+  text-transform: none !important;
+  letter-spacing: 0.3px !important;
+  border-radius: 8px !important;
+  padding: 8px 20px !important;
+  transition: all 0.25s ease-in-out;
+}
+
+/* Delete Button */
+.v-card-actions .v-btn.delete-btn {
+  background: rgb(206, 7, 7) !important;
+  color: #ffffff !important;
+  border: 1px solid #17171798 !important;
+  border-radius: 8px !important;
+  padding: 8px 18px !important;
+  font-weight: 500 !important;
+  transition: all 0.25s ease-in-out;
+}
+
+.v-card-actions .v-btn.delete-btn:hover {
+  background: #d32f2f !important;
+  transform: translateY(-2px);
+}
+
+/* Delete Confirmation Dialog */
+.v-dialog .v-card .v-card-title span.text-h6 {
+  font-size: 20px !important;
+  font-weight: 600 !important;
+}
+
+.v-dialog .v-card .v-card-text p.text-body-1 {
+  font-size: 20px !important;
+}
+
+.v-dialog .v-card .v-card-text .v-alert {
+  font-size: 19px !important; 
+}
+
+/* Optional: Make Delete button text bigger */
+.v-dialog .v-card-actions .v-btn[color="error"] {
+  font-size: 15px !important;
+  font-weight: 600 !important;
+}
+
+/* Cancel Button */
+.v-card-actions .v-btn[color="grey-darken-1"] {
+  background: #e0e0e0 !important;
+  color: #424242 !important;
+}
+
+.v-card-actions .v-btn[color="grey-darken-1"]:hover {
+  background: #cfcfcf !important;
+  transform: translateY(-2px);
+}
+
+/* Save/Update Button */
+.v-card-actions .v-btn[color="primary"] {
+  background: linear-gradient(135deg, #1b2e76 0%, #4f2578 100%) !important;
+  color: white !important;
+  box-shadow: 0 6px 16px rgba(27, 46, 118, 0.35) !important;
+}
+
+.v-card-actions .v-btn[color="primary"]:hover {
+  box-shadow: 0 8px 22px rgba(27, 46, 118, 0.5) !important;
+  transform: translateY(-2px);
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 600px) {
+  .v-dialog .v-card .v-card-title {
+    padding: 16px !important;
+  }
+
+  .v-card-text {
+    padding: 12px !important;
+    font-size: 14px !important;
+  }
+
+  .v-card-actions {
+    padding: 12px !important;
+    flex-direction: column;
+    gap: 8px;
+  }
+}
