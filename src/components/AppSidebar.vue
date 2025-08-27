@@ -41,9 +41,7 @@
                   <v-icon :color="item.active ? 'white' : 'dark'">{{ item.icon }}</v-icon>
                 </v-list-item-icon>
                 <v-list-item-content v-if="isExpanded">
-                  <v-list-item-title class="sidebar-text">{{
-                    item.name
-                  }}</v-list-item-title>
+                  <v-list-item-title class="sidebar-text">{{ item.name }}</v-list-item-title>
                 </v-list-item-content>
               </div>
             </template>
@@ -69,7 +67,7 @@
             </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title class="sidebar-text">{{
-                showMoreItems ? "Less" : "More"
+                showMoreItems ? 'Less' : 'More'
               }}</v-list-item-title>
             </v-list-item-content>
           </div>
@@ -89,9 +87,7 @@
                 <v-icon :color="item.active ? 'white' : 'dark'">{{ item.icon }}</v-icon>
               </v-list-item-icon>
               <v-list-item-content>
-                <v-list-item-title class="sidebar-text">{{
-                  item.name
-                }}</v-list-item-title>
+                <v-list-item-title class="sidebar-text">{{ item.name }}</v-list-item-title>
               </v-list-item-content>
             </div>
           </v-list-item>
@@ -103,16 +99,16 @@
 
 <script>
 export default {
-  name: "AppSidebar",
+  name: 'AppSidebar',
   props: {
     items: {
       type: Array,
       default: () => [
-        { id: 1, icon: "mdi-view-dashboard", name: "Dashboard", active: true },
-        { id: 2, icon: "mdi-credit-card", name: "Payments", active: false },
-        { id: 3, icon: "mdi-account-plus", name: "Applicants", active: false },
-        { id: 4, icon: "mdi-chart-line", name: "Complaints", active: false },
-        { id: 5, icon: "mdi-clipboard-check", name: "Compliances", active: false },
+        { id: 1, icon: 'mdi-view-dashboard', name: 'Dashboard', active: true },
+        { id: 2, icon: 'mdi-credit-card', name: 'Payments', active: false },
+        { id: 3, icon: 'mdi-account-plus', name: 'Applicants', active: false },
+        { id: 4, icon: 'mdi-chart-line', name: 'Complaints', active: false },
+        { id: 5, icon: 'mdi-clipboard-check', name: 'Compliances', active: false },
       ],
     },
   },
@@ -122,80 +118,80 @@ export default {
       isExpanded: false,
       showMoreItems: false,
       moreItems: [
-        { id: 6, icon: "mdi-account-group", name: "Vendors", active: false },
-        { id: 7, icon: "mdi-account-multiple", name: "Stallholders", active: false },
-        { id: 8, icon: "mdi-account-cash", name: "Collectors", active: false },
-        { id: 9, icon: "mdi-store", name: "Stalls", active: false },
+        { id: 6, icon: 'mdi-account-group', name: 'Vendors', active: false },
+        { id: 7, icon: 'mdi-account-multiple', name: 'Stallholders', active: false },
+        { id: 8, icon: 'mdi-account-cash', name: 'Collectors', active: false },
+        { id: 9, icon: 'mdi-store', name: 'Stalls', active: false },
       ],
-    };
+    }
   },
   watch: {
     items: {
       handler(newItems) {
-        this.menuItems = [...newItems];
+        this.menuItems = [...newItems]
       },
       deep: true,
     },
   },
   methods: {
     toggleSidebar() {
-      this.isExpanded = !this.isExpanded;
+      this.isExpanded = !this.isExpanded
       if (!this.isExpanded) {
-        this.showMoreItems = false;
+        this.showMoreItems = false
       }
     },
 
     toggleMoreItems() {
-      this.showMoreItems = !this.showMoreItems;
+      this.showMoreItems = !this.showMoreItems
     },
 
     setActiveItem(itemId) {
       // Set all main items to inactive
       this.menuItems.forEach((item) => {
-        item.active = false;
-      });
+        item.active = false
+      })
 
       // Set all more items to inactive
       this.moreItems.forEach((item) => {
-        item.active = false;
-      });
+        item.active = false
+      })
 
       // Set clicked item to active (check both main and more items)
-      const selectedMainItem = this.menuItems.find((item) => item.id === itemId);
-      const selectedMoreItem = this.moreItems.find((item) => item.id === itemId);
+      const selectedMainItem = this.menuItems.find((item) => item.id === itemId)
+      const selectedMoreItem = this.moreItems.find((item) => item.id === itemId)
 
       if (selectedMainItem) {
-        selectedMainItem.active = true;
+        selectedMainItem.active = true
         // Close more items if a main item is selected
-        this.showMoreItems = false;
+        this.showMoreItems = false
       } else if (selectedMoreItem) {
-        selectedMoreItem.active = true;
+        selectedMoreItem.active = true
       }
 
       // Emit the navigation event to parent
-      this.$emit("menu-item-click", itemId);
-      this.handleNavigation(itemId);
+      this.$emit('menu-item-click', itemId)
+      this.handleNavigation(itemId)
     },
 
     handleNavigation(itemId) {
       // Add your routing logic here based on the selected menu item
       const routes = {
-        1: "/dashboard",
-        2: "/payments",
-        3: "/applicants",
-        4: "/Complaints",
-        5: "/compliances",
-        6: "/vendors",
-        7: "/stallholders",
-        8: "/collectors",
-        9: "/stalls",
-      };
+        1: '/dashboard',
+        2: '/payments',
+        3: '/applicants',
+        4: '/Complaints',
+        5: '/compliances',
+        6: '/vendors',
+        7: '/stallholders',
+        8: '/collectors',
+        9: '/stalls',
+      }
 
-      console.log("Navigating to:", routes[itemId] || "/dashboard");
-      // this.$router.push(routes[itemId] || '/dashboard');
+      console.log('Navigating to:', routes[itemId] || '/dashboard')
+      this.$router.push(routes[itemId] || '/dashboard')
     },
   },
-};
+}
 </script>
 
 <style scoped>
@@ -241,7 +237,7 @@ export default {
   font-size: 20px;
   font-weight: 600;
   color: #333;
-  font-family: "Poppins", sans-serif;
+  font-family: 'Poppins', sans-serif;
 }
 
 /* Section Title */
