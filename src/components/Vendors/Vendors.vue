@@ -76,10 +76,10 @@
         >
           <template #item.actions="{ item }">
             <div class="d-flex ga-2">
-              <v-btn variant="text" size="small" class="text-primary" @click="edit(item)"
+              <v-btn variant="text" size="small" class="text-primary" @click="edit(item.raw)"
                 >Edit</v-btn
               >
-              <v-btn variant="text" size="small" class="text-primary" @click="view(item)"
+              <v-btn variant="text" size="small" class="text-primary" @click="view(item.raw)"
                 >View</v-btn
               >
             </div>
@@ -91,6 +91,14 @@
 
         <!-- Add Vendor Dialog -->
         <AddVendorDialog v-model="addDialog" @save="handleSave" />
+        <VendorDetailsDialog
+          v-model="detailsDialog"
+          :data="detailsData"
+          photo="https://i.pravatar.cc/200?img=12"
+        />
+
+        <!-- Edit Vendor Details Dialog -->
+        <EditVendorDialog v-model="editDialog" :data="editData" @update="handleEditUpdate" />
       </v-container>
     </v-main>
   </div>
@@ -101,14 +109,22 @@ import { computed } from 'vue'
 import AppSidebar from '../AppSidebar.vue'
 import AppHeader from '../AppHeader.vue'
 import AddVendorDialog from './AddVendorDialog.vue'
+import VendorDetailsDialog from './VendorDetailsDialog.vue'
+import EditVendorDialog from './EditVendorDialog.vue'
 
 export default {
   name: 'Vendors',
-  components: { AppSidebar, AppHeader, AddVendorDialog },
+  components: { AppSidebar, AppHeader, AddVendorDialog, VendorDetailsDialog, EditVendorDialog },
   data() {
     return {
       pageTitle: 'Vendors',
       addDialog: false,
+      detailsDialog: false,
+      detailsData: null,
+      editDialog: false,
+      editData: null, // payload for the dialog (item.raw)
+      editTargetId: null, // which row to update
+
       menuItems: [
         { id: 1, icon: 'mdi-view-dashboard', name: 'Dashboard', active: false },
         { id: 2, icon: 'mdi-credit-card', name: 'Payments', active: false },
@@ -139,7 +155,6 @@ export default {
       collectorFilter: null,
       statusFilter: null,
 
-      addDialog: false,
       newVendor: {
         id: '',
         name: '',
@@ -181,6 +196,7 @@ export default {
     handleSave(newRow) {
       this.vendors.unshift(newRow)
     },
+
     handleMenuItemClick(itemId) {
       this.updatePageTitle(itemId)
     },
@@ -211,31 +227,102 @@ export default {
       }
       this.pageTitle = titleMap[itemId] || 'Vendors'
     },
+
     initializeVendors() {
       console.log('Vendors page initialized')
     },
 
-    edit(item) {
-      console.log('edit', item)
-    },
-    view(item) {
-      console.log('view', item)
+    edit(row) {
+      console.log('edit', row)
     },
 
-    openAddDialog() {
-      this.newVendor = {
-        id: '',
-        name: '',
-        business: '',
-        collector: this.collectors[0],
-        status: this.statuses[0],
+    view(row) {
+      this.detailsData = row || {
+        lastName: 'Dela Cruz',
+        firstName: 'Juan',
+        middleName: 'Perez',
+        suffix: 'Jr.',
+        birthdate: '1990-10-05',
+        gender: 'Male',
+        phone: '09123456789',
+        email: 'juan.delacruz@email.com',
+        vendorId: '123456',
+        address: 'Block 6 Lot 15 Maharlika Village Barangay Rosario Naga City',
+        spouseFirst: 'Jessa',
+        spouseMiddle: 'Caceres',
+        spouseLast: 'Dela Cruz',
+        childFirst: 'Pedro',
+        childMiddle: 'Caceres',
+        childLast: 'Dela Cruz',
+        businessName: "Juan's Street Foods",
+        businessType: 'Street Foods',
+        productsSold: 'Street Foods',
+        vendStart: '09:00',
+        vendEnd: '13:00',
+        businessAddress: 'Panganiban Naga City',
+        files: {
+          clearance: 'Clearance.pdf',
+          votersId: 'VotersID.pdf',
+          cedula: 'Cedula.pdf',
+          picture: 'Picture.png',
+          association: 'Association.pdf',
+          healthcard: 'healthcard.png',
+        },
       }
-      this.addDialog = true
+      this.detailsDialog = true
     },
-    saveNew() {
-      if (!this.newVendor.id || !this.newVendor.name || !this.newVendor.business) return
-      this.vendors.unshift({ ...this.newVendor })
-      this.addDialog = false
+    edit(row) {
+      // row is the compact row or item.raw (prefer item.raw from your Add form)
+      // If you only have the compact row, you can still open with fallback data.
+      const raw = row?.raw ||
+        row || {
+          lastName: 'Dela Cruz',
+          firstName: 'Juan',
+          middleName: 'Perez',
+          suffix: 'Jr.',
+          birthdate: '1990-10-05',
+          gender: 'Male',
+          phone: '09123456789',
+          email: 'juan.delacruz@email.com',
+          vendorId: String(row?.id || '123456'),
+          address: 'Block 6 Lot 15 Maharlika Village Barangay Rosario Naga City',
+          spouseFirst: 'Jessa',
+          spouseMiddle: 'Caceres',
+          spouseLast: 'Dela Cruz',
+          childFirst: 'Pedro',
+          childMiddle: 'Caceres',
+          childLast: 'Dela Cruz',
+          businessName: "Juan's Street Foods",
+          businessType: 'Street Foods',
+          productsSold: 'Street Foods',
+          vendStart: '09:00',
+          vendEnd: '13:00',
+          businessAddress: 'Panganiban Naga City',
+          files: {
+            clearance: 'Clearance.pdf',
+            votersId: 'VotersID.pdf',
+            cedula: 'Cedula.pdf',
+            picture: 'Picture.png',
+            association: 'Association.pdf',
+            healthcard: 'healthcard.png',
+          },
+        }
+
+      this.editData = raw
+      this.editTargetId = row?.id || raw?.vendorId
+      this.editDialog = true
+    },
+
+    // called when Edit dialog submits
+    handleEditUpdate(updatedRow) {
+      // find row by previous id (editTargetId), then update fields + raw payload
+      const idx = this.vendors.findIndex((v) => String(v.id) === String(this.editTargetId))
+      if (idx !== -1) {
+        this.vendors[idx] = { ...this.vendors[idx], ...updatedRow }
+      } else {
+        // if not found, add it (edge case)
+        this.vendors.unshift(updatedRow)
+      }
     },
   },
 }
