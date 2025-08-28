@@ -1,174 +1,114 @@
 <template>
-    <!-- Sidebar -->
-    <AppSidebar :items="menuItems" @menu-item-click="handleMenuItemClick" />
+  <!-- Sidebar -->
+  <AppSidebar :items="menuItems" @menu-item-click="handleMenuItemClick" />
 
-    <div class="main-wrapper">
-      <!-- Header -->
-      <AppHeader
-        :title="pageTitle"
-        @notification-click="handleNotificationClick"
-        @profile-click="handleProfileClick"
-        @settings-click="handleSettingsClick"
-        @logout-click="handleLogoutClick"
-      />
+  <div class="main-wrapper">
+    <!-- Header -->
+    <AppHeader
+      :title="pageTitle"
+      @notification-click="handleNotificationClick"
+      @profile-click="handleProfileClick"
+      @settings-click="handleSettingsClick"
+      @logout-click="handleLogoutClick"
+    />
 
-      <!-- Main Content -->
-      <v-main>
-        <v-container fluid class="main-content">
-          <!-- Page heading row (left: Vendors + total; right: Add button) -->
-          <v-row class="align-center mb-4">
-            <v-col cols="12" md="6">
-              <div class="d-flex align-center ga-4">
-                <h2 class="text-h6 text-md-h5 font-weight-bold mb-0">Vendors</h2>
-                <div class="text-medium-emphasis">Total Vendors: {{ filteredVendors.length }}</div>
-              </div>
-            </v-col>
-            <v-col cols="12" md="6" class="text-md-right">
-              <v-btn color="primary" rounded="lg" prepend-icon="mdi-plus" @click="openAddDialog">
-                Add Vendor
-              </v-btn>
-            </v-col>
-          </v-row>
+    <!-- Main Content -->
+    <v-main>
+      <v-container fluid class="main-content">
+        <!-- Page heading row (left: Vendors + total; right: Add button) -->
+        <v-row class="align-center mb-4">
+          <v-col cols="12" md="6">
+            <div class="d-flex align-center ga-4">
+              <h2 class="text-h6 text-md-h5 font-weight-bold mb-0">Vendors</h2>
+              <div class="text-medium-emphasis">Total Vendors: {{ filteredVendors.length }}</div>
+            </div>
+          </v-col>
+          <v-col cols="12" md="6" class="text-md-right">
+            <v-btn color="primary" rounded="lg" prepend-icon="mdi-plus" @click="openAddDialog">
+              Add Vendor
+            </v-btn>
+          </v-col>
+        </v-row>
 
-          <!-- Filters -->
-          <v-row class="mb-4" align="center">
-            <v-col cols="12" md="4">
-              <v-text-field
-                v-model="search"
-                label="Search"
-                variant="outlined"
-                density="comfortable"
-                clearable
-                prepend-inner-icon="mdi-magnify"
-              />
-            </v-col>
-            <v-col cols="6" md="3">
-              <v-select
-                v-model="collectorFilter"
-                :items="collectors"
-                label="Assigned Collector"
-                variant="outlined"
-                density="comfortable"
-                clearable
-              />
-            </v-col>
-            <v-col cols="6" md="3">
-              <v-select
-                v-model="statusFilter"
-                :items="statuses"
-                label="Status"
-                variant="outlined"
-                density="comfortable"
-                clearable
-              />
-            </v-col>
-          </v-row>
+        <!-- Filters -->
+        <v-row class="mb-4" align="center">
+          <v-col cols="12" md="4">
+            <v-text-field
+              v-model="search"
+              label="Search"
+              variant="outlined"
+              density="comfortable"
+              clearable
+              prepend-inner-icon="mdi-magnify"
+            />
+          </v-col>
+          <v-col cols="6" md="3">
+            <v-select
+              v-model="collectorFilter"
+              :items="collectors"
+              label="Assigned Collector"
+              variant="outlined"
+              density="comfortable"
+              clearable
+            />
+          </v-col>
+          <v-col cols="6" md="3">
+            <v-select
+              v-model="statusFilter"
+              :items="statuses"
+              label="Status"
+              variant="outlined"
+              density="comfortable"
+              clearable
+            />
+          </v-col>
+        </v-row>
 
-          <!-- Data Table -->
-          <v-data-table
-            :headers="headers"
-            :items="filteredVendors"
-            item-key="id"
-            class="vendors-table elevation-1"
-            :items-per-page="12"
-            density="comfortable"
-            hover
-          >
-            <template #item.actions="{ item }">
-              <div class="d-flex ga-2">
-                <v-btn variant="text" size="small" class="text-primary" @click="edit(item)"
-                  >Edit</v-btn
-                >
-                <v-btn variant="text" size="small" class="text-primary" @click="view(item)"
-                  >View</v-btn
-                >
-              </div>
-            </template>
-            <template #no-data>
-              <div class="text-medium-emphasis py-8">No vendors found.</div>
-            </template>
-          </v-data-table>
+        <!-- Data Table -->
+        <v-data-table
+          :headers="headers"
+          :items="filteredVendors"
+          item-key="id"
+          class="vendors-table elevation-1"
+          :items-per-page="12"
+          density="comfortable"
+          hover
+        >
+          <template #item.actions="{ item }">
+            <div class="d-flex ga-2">
+              <v-btn variant="text" size="small" class="text-primary" @click="edit(item)"
+                >Edit</v-btn
+              >
+              <v-btn variant="text" size="small" class="text-primary" @click="view(item)"
+                >View</v-btn
+              >
+            </div>
+          </template>
+          <template #no-data>
+            <div class="text-medium-emphasis py-8">No vendors found.</div>
+          </template>
+        </v-data-table>
 
-          <!-- Add Vendor Dialog -->
-          <v-dialog v-model="addDialog" max-width="640">
-            <v-card>
-              <v-card-title class="text-h6">Add Vendor</v-card-title>
-              <v-card-text>
-                <v-form ref="addFormRef" @submit.prevent="saveNew">
-                  <v-row>
-                    <v-col cols="12" md="6">
-                      <v-text-field
-                        v-model="newVendor.id"
-                        label="Vendor ID"
-                        variant="outlined"
-                        density="comfortable"
-                        required
-                      />
-                    </v-col>
-                    <v-col cols="12" md="6">
-                      <v-text-field
-                        v-model="newVendor.name"
-                        label="Vendor's Name"
-                        variant="outlined"
-                        density="comfortable"
-                        required
-                      />
-                    </v-col>
-                    <v-col cols="12" md="6">
-                      <v-text-field
-                        v-model="newVendor.business"
-                        label="Business Name"
-                        variant="outlined"
-                        density="comfortable"
-                        required
-                      />
-                    </v-col>
-                    <v-col cols="12" md="6">
-                      <v-select
-                        v-model="newVendor.collector"
-                        :items="collectors"
-                        label="Assigned Collector"
-                        variant="outlined"
-                        density="comfortable"
-                        required
-                      />
-                    </v-col>
-                    <v-col cols="12" md="6">
-                      <v-select
-                        v-model="newVendor.status"
-                        :items="statuses"
-                        label="Status"
-                        variant="outlined"
-                        density="comfortable"
-                        required
-                      />
-                    </v-col>
-                  </v-row>
-                </v-form>
-              </v-card-text>
-              <v-card-actions>
-                <v-spacer />
-                <v-btn variant="text" @click="addDialog = false">Cancel</v-btn>
-                <v-btn color="primary" @click="saveNew">Save</v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
-        </v-container>
-      </v-main>
-    </div>
+        <!-- Add Vendor Dialog -->
+        <AddVendorDialog v-model="addDialog" @save="handleSave" />
+      </v-container>
+    </v-main>
+  </div>
 </template>
 
 <script>
 import { computed } from 'vue'
 import AppSidebar from '../AppSidebar.vue'
 import AppHeader from '../AppHeader.vue'
+import AddVendorDialog from './AddVendorDialog.vue'
 
 export default {
   name: 'Vendors',
-  components: { AppSidebar, AppHeader },
+  components: { AppSidebar, AppHeader, AddVendorDialog },
   data() {
     return {
       pageTitle: 'Vendors',
+      addDialog: false,
       menuItems: [
         { id: 1, icon: 'mdi-view-dashboard', name: 'Dashboard', active: false },
         { id: 2, icon: 'mdi-credit-card', name: 'Payments', active: false },
@@ -232,6 +172,15 @@ export default {
     this.initializeVendors()
   },
   methods: {
+    // open the two-page form
+    openAddDialog() {
+      this.addDialog = true
+    },
+
+    // receive new row and add to table
+    handleSave(newRow) {
+      this.vendors.unshift(newRow)
+    },
     handleMenuItemClick(itemId) {
       this.updatePageTitle(itemId)
     },
@@ -293,7 +242,6 @@ export default {
 </script>
 
 <style scoped>
-/* Keep your original layout rules */
 .v-main {
   padding-left: 0 !important;
 }
@@ -307,8 +255,6 @@ export default {
   min-height: calc(100vh - 64px);
   padding: 24px;
 }
-
-/* Table header navy like the screenshot */
 .vendors-table :deep(thead tr) {
   background: #0e2e6f;
 }
@@ -326,8 +272,6 @@ export default {
     text-align: left;
   }
 }
-
-/* Optional: your scrollbar + placeholder styles preserved */
 .main-content::-webkit-scrollbar {
   width: 6px;
 }
