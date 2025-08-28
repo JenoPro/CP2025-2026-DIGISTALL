@@ -1,0 +1,457 @@
+/* Container and Layout */
+.login-container {
+  min-height: 100vh;
+  background-image: url('../../assets/background-image.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  padding: 0;
+  position: relative;
+  /* Fallback for devices that don't support background-attachment: fixed */
+}
+
+@media (max-width: 768px) {
+  .login-container {
+    background-attachment: scroll; /* Better performance on mobile */
+  }
+}
+
+/* Overlay for better contrast */
+.login-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.1); /* Subtle overlay */
+  z-index: 1;
+}
+
+/* Left Section - Logo and Title */
+.left-section {
+  background: transparent;
+  position: relative;
+  z-index: 2;
+  padding: 2rem;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-title-section {
+  z-index: 3;
+  text-align: center;
+  max-width: 100%;
+}
+
+/* Right Section - Login Form */
+.right-section {
+  position: relative;
+  z-index: 2;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 2rem;
+  min-height: 100vh;
+}
+
+/* White box background - Responsive approach */
+.right-section::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgb(255, 255, 255);
+  backdrop-filter: blur(15px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
+  z-index: 1;
+  /* Dynamic sizing */
+  width: min(90vw, 480px);
+  height: auto;
+  min-height: min(80vh, 600px);
+  max-height: 90vh;
+}
+
+/* Card Styling - Responsive */
+.login-card {
+  background: transparent !important;
+  box-shadow: none !important;
+  width: min(90vw, 480px) !important;
+  max-width: 480px !important;
+  position: relative;
+  z-index: 2;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: min(80vh, 600px);
+}
+
+/* Form container */
+.login-card .v-card-text {
+  width: 100% !important;
+  padding: clamp(1.5rem, 4vw, 3rem) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  height: 100% !important;
+}
+
+/* Logo and Title Section - Responsive Typography */
+.city-logo {
+  width: clamp(60px, 15vw, 120px);
+  height: clamp(60px, 15vw, 120px);
+  object-fit: contain;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.25));
+  margin-bottom: clamp(1rem, 3vw, 2rem);
+}
+
+.main-title {
+  font-size: clamp(1.75rem, 5vw, 3rem);
+  font-weight: 700;
+  color: #000000;
+  margin-bottom: 0.5rem;
+  line-height: 1.1;
+  word-wrap: break-word;
+  hyphens: auto;
+}
+
+.sub-title {
+  font-size: clamp(1.25rem, 4vw, 2.2rem);
+  font-weight: 600;
+  color: #000000;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+  word-wrap: break-word;
+}
+
+.powered-by {
+  font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+  color: #002181;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* Form Section - Responsive */
+.form-title {
+  font-size: clamp(1.25rem, 4vw, 1.75rem);
+  font-weight: 600;
+  color: #2c3e50;
+  text-align: center;
+  margin-bottom: 2rem !important;
+}
+
+/* Input Fields - Enhanced for mobile */
+.v-text-field {
+  margin-bottom: 1rem;
+}
+
+.v-text-field .v-field {
+  border-radius: 12px;
+  background-color: rgba(255, 255, 255, 0.98);
+  border: 1px solid #e0e0e0;
+  min-height: 56px; /* Minimum touch target */
+}
+
+.v-text-field .v-field--focused {
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+  border-color: #3498db;
+}
+
+.v-text-field .v-field__input {
+  font-size: 16px; /* Prevents zoom on iOS */
+  padding: 12px 16px;
+}
+
+/* Login Button - Enhanced touch targets */
+.login-btn {
+  background: linear-gradient(135deg, #4f7cff, #3b5bdb) !important;
+  color: white !important;
+  border-radius: 12px !important;
+  text-transform: none !important;
+  font-weight: 600 !important;
+  font-size: clamp(0.9rem, 2.5vw, 1rem) !important;
+  height: 56px !important; /* Minimum touch target */
+  box-shadow: 0 4px 12px rgba(79, 124, 255, 0.3) !important;
+  transition: all 0.3s ease !important;
+  margin-bottom: 1rem !important;
+}
+
+.login-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(79, 124, 255, 0.4) !important;
+}
+
+.login-btn:disabled {
+  opacity: 0.6 !important;
+  transform: none !important;
+}
+
+/* Forgot Password Button */
+.forgot-password-btn {
+  color: #4f7cff !important;
+  text-transform: none !important;
+  font-weight: 500 !important;
+  text-decoration: underline;
+  font-size: clamp(0.8rem, 2vw, 0.9rem) !important;
+  min-height: 48px !important; /* Touch target */
+}
+
+.forgot-password-btn:hover {
+  color: #3b5bdb !important;
+  background-color: rgba(79, 124, 255, 0.1) !important;
+}
+
+/* Tablet Landscape (1024px - 1200px) */
+@media (min-width: 1024px) and (max-width: 1200px) {
+  .left-section {
+    padding: 3rem 2rem;
+  }
+
+  .right-section::before {
+    width: 450px;
+    min-height: 580px;
+  }
+
+  .login-card {
+    width: 450px !important;
+  }
+}
+
+/* Tablet Portrait (768px - 1024px) */
+@media (max-width: 1024px) and (min-width: 768px) {
+  .left-section {
+    padding: 2rem 1.5rem;
+  }
+
+  .right-section::before {
+    width: min(85vw, 420px);
+    min-height: min(75vh, 550px);
+  }
+
+  .login-card {
+    width: min(85vw, 420px) !important;
+  }
+}
+
+/* Mobile Landscape (568px - 768px) */
+@media (max-width: 768px) and (orientation: landscape) {
+  .login-container {
+    flex-direction: row;
+  }
+
+  .left-section {
+    min-height: 100vh;
+    flex: 1;
+    padding: 1rem;
+  }
+
+  .right-section {
+    min-height: 100vh;
+    flex: 1;
+    padding: 1rem;
+  }
+
+  .right-section::before {
+    width: min(90%, 380px);
+    min-height: min(85vh, 480px);
+  }
+
+  .login-card {
+    width: min(90%, 380px) !important;
+    min-height: min(85vh, 480px) !important;
+  }
+
+  .city-logo {
+    width: clamp(50px, 12vw, 80px);
+    height: clamp(50px, 12vw, 80px);
+  }
+}
+
+/* Mobile Portrait (up to 768px) */
+@media (max-width: 768px) and (orientation: portrait) {
+  .login-container {
+    flex-direction: column;
+  }
+
+  .left-section {
+    min-height: 40vh;
+    padding: 1.5rem 1rem;
+  }
+
+  .right-section {
+    min-height: 60vh;
+    padding: 1rem;
+  }
+
+  .right-section::before {
+    width: min(95vw, 400px);
+    min-height: min(60vh, 450px);
+  }
+
+  .login-card {
+    width: min(95vw, 400px) !important;
+    min-height: min(60vh, 450px) !important;
+  }
+
+  .login-card .v-card-text {
+    padding: clamp(1rem, 3vw, 2rem) !important;
+  }
+}
+
+/* Small Mobile (up to 480px) */
+@media (max-width: 480px) {
+  .left-section {
+    min-height: 35vh;
+    padding: 1rem 0.75rem;
+  }
+
+  .right-section {
+    min-height: 65vh;
+    padding: 0.75rem;
+  }
+
+  .right-section::before {
+    width: calc(100vw - 1.5rem);
+    min-height: min(65vh, 420px);
+    border-radius: 12px;
+  }
+
+  .login-card {
+    width: calc(100vw - 1.5rem) !important;
+    min-height: min(65vh, 420px) !important;
+  }
+
+  .login-card .v-card-text {
+    padding: clamp(1rem, 4vw, 1.5rem) !important;
+  }
+
+  .form-title {
+    margin-bottom: 1.5rem !important;
+  }
+
+  .v-text-field {
+    margin-bottom: 0.75rem;
+  }
+}
+
+/* Very Small Mobile (up to 360px) */
+@media (max-width: 360px) {
+  .right-section::before {
+    width: calc(100vw - 1rem);
+    min-height: min(70vh, 400px);
+  }
+
+  .login-card {
+    width: calc(100vw - 1rem) !important;
+    min-height: min(70vh, 400px) !important;
+  }
+
+  .login-card .v-card-text {
+    padding: 1rem 0.75rem !important;
+  }
+}
+
+/* Animation for form elements */
+.right-section {
+  animation: slideInRight 0.8s ease-out;
+}
+
+.left-section .logo-title-section {
+  animation: slideInLeft 0.8s ease-out;
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .right-section,
+  .left-section .logo-title-section {
+    animation: none;
+  }
+
+  .login-btn:hover {
+    transform: none;
+  }
+}
+
+/* Loading state */
+.login-btn .v-btn__loader {
+  color: white;
+}
+
+/* Error states */
+.v-text-field.error .v-field {
+  border-color: #e74c3c;
+  box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.2);
+}
+
+/* Focus states for accessibility */
+.v-btn:focus-visible {
+  outline: 2px solid #3498db;
+  outline-offset: 2px;
+}
+
+.v-text-field .v-field:focus-within {
+  outline: 2px solid #3498db;
+  outline-offset: 1px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .right-section::before {
+    background: rgba(255, 255, 255, 1);
+    border: 2px solid #000;
+  }
+
+  .login-btn {
+    border: 2px solid #000 !important;
+  }
+
+  .v-text-field .v-field {
+    border: 2px solid #000;
+  }
+}
+
+/* Print styles */
+@media print {
+  .login-container {
+    background: none;
+    color: #000;
+  }
+
+  .right-section::before {
+    box-shadow: none;
+    border: 1px solid #000;
+  }
+
+  .login-btn {
+    background: #fff !important;
+    color: #000 !important;
+    border: 1px solid #000 !important;
+  }
+}

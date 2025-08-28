@@ -1,0 +1,111 @@
+.stalls-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+    padding: 16px; 
+}
+
+.stall-card {
+    border-radius: 9px;
+    overflow: hidden;
+    transition: transform 0.2s ease-in-out;
+}
+
+.stall-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.stall-image {
+    border-radius: 9px 9px 0 0;
+}
+
+.stall-details {
+    padding: 14px 14px 4px 14px; 
+}
+
+.stall-badge {
+    margin-bottom: 10px;
+}
+
+.price-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+}
+
+.price {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #2d2c2c;
+}
+
+.stall-info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.info-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.info-row span {
+    font-size: 0.9rem;
+}
+
+.description-row {
+    margin-top: 8px;
+}
+
+.stall-description {
+    font-size: 0.85rem;
+    color: #777;
+    line-height: 1.4;
+    margin: 0;
+}
+
+.button-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 8px 14px 12px 14px !important;
+    margin-top: 0 !important;
+}
+
+.action-btn {
+    width: 100%;
+    min-width: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .stalls-grid {
+        grid-template-columns: 1fr;
+        padding: 10px;
+        gap: 15px; 
+    }
+}
+
+@media (max-width: 480px) {
+    .stalls-grid {
+        gap: 12px;
+    }
+    
+    .stall-details {
+        padding: 12px;
+    }
+
+    .price {
+        font-size: 1rem;
+    }
+
+    .info-row span {
+        font-size: 0.8rem;
+    }
+}

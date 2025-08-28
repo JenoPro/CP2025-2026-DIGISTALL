@@ -1,0 +1,236 @@
+/* Modal Container */
+.add-stallholder-modal {
+  border-radius: 12px !important;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Modal Header */
+.modal-header {
+  background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%) !important;
+  color: white !important;
+  padding: 20px 24px !important;
+  position: relative;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+}
+
+.modal-title {
+  color: white !important;
+  font-size: 20px !important;
+  font-weight: 600 !important;
+  margin: 0 !important;
+  letter-spacing: 0.5px;
+}
+
+.close-btn {
+  background-color: #ef4444 !important;
+  border-radius: 50% !important;
+  width: 32px !important;
+  height: 32px !important;
+  min-width: unset !important;
+  margin: 0 !important;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3) !important;
+  transition: all 0.2s ease !important;
+}
+
+.close-btn:hover {
+  background-color: #dc2626 !important;
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4) !important;
+}
+
+.close-btn .v-icon {
+  font-size: 18px !important;
+}
+
+/* Modal Content */
+.modal-content {
+  padding: 24px !important;
+  background-color: #fafafa !important;
+}
+
+/* Form Groups */
+.form-group {
+  margin-bottom: 8px;
+}
+
+.form-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+/* Form Inputs */
+.form-input {
+  margin-bottom: 0 !important;
+}
+
+.form-input .v-field {
+  background-color: #e5e7eb !important;
+  border-radius: 6px !important;
+  font-size: 14px !important;
+  min-height: 45px !important;
+  box-shadow: none !important;
+}
+
+.form-input .v-field__input {
+  padding: 0 12px !important;
+  color: #374151 !important;
+  font-size: 14px !important;
+  min-height: 45px !important;
+  background-color: transparent !important;
+}
+
+.form-input .v-field__input::placeholder {
+  color: #9ca3af !important;
+  opacity: 1 !important;
+}
+
+/* Input Focus States */
+.form-input .v-field--focused {
+  background-color: #ffffff !important;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2) !important;
+}
+
+.form-input .v-field--focused .v-field__outline {
+  border-color: #3b82f6 !important;
+  border-width: 2px !important;
+}
+
+/* Input Error States */
+.form-input .v-field--error {
+  background-color: #fef2f2 !important;
+}
+
+.form-input .v-field--error .v-field__outline {
+  border-color: #ef4444 !important;
+}
+
+/* Error Messages */
+.v-messages__message {
+  color: #ef4444 !important;
+  font-size: 12px !important;
+  margin-top: 4px !important;
+}
+
+/* Modal Footer */
+.modal-footer {
+  padding: 0 24px 24px 24px !important;
+  background-color: #fafafa !important;
+  justify-content: center !important;
+}
+
+/* Submit Button */
+.submit-btn {
+  background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%) !important;
+  color: white !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  letter-spacing: 1px !important;
+  padding: 0 48px !important;
+  height: 48px !important;
+  border-radius: 6px !important;
+  text-transform: uppercase !important;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
+  transition: all 0.3s ease !important;
+  min-width: 150px !important;
+}
+
+.submit-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #1e40af 0%, #2563eb 100%) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4) !important;
+}
+
+.submit-btn:disabled {
+  background: #9ca3af !important;
+  color: #ffffff !important;
+  opacity: 0.6 !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.submit-btn .v-btn__loader {
+  color: white !important;
+}
+
+/* Form Validation */
+.v-form .v-input--error .v-field {
+  background-color: #fef2f2 !important;
+}
+
+.v-form .v-input--error .v-field__outline {
+  border-color: #ef4444 !important;
+  border-width: 2px !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .modal-header {
+    padding: 16px 20px !important;
+  }
+  
+  .modal-title {
+    font-size: 18px !important;
+  }
+  
+  .modal-content {
+    padding: 20px !important;
+  }
+  
+  .modal-footer {
+    padding: 0 20px 20px 20px !important;
+  }
+  
+  .form-label {
+    font-size: 13px !important;
+  }
+  
+  .form-input .v-field__input {
+    font-size: 13px !important;
+  }
+  
+  .submit-btn {
+    font-size: 13px !important;
+    height: 44px !important;
+    min-width: 120px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .add-stallholder-modal {
+    margin: 16px !important;
+    max-width: calc(100vw - 32px) !important;
+  }
+  
+  .modal-title {
+    font-size: 16px !important;
+  }
+  
+  .close-btn {
+    width: 28px !important;
+    height: 28px !important;
+  }
+  
+  .close-btn .v-icon {
+    font-size: 16px !important;
+  }
+}
+
+/* Animation for modal appearance */
+.v-dialog-transition-enter-active,
+.v-dialog-transition-leave-active {
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+}
+
+.v-dialog-transition-enter-from,
+.v-dialog-transition-leave-to {
+  opacity: 0 !important;
+  transform: scale(0.9) translateY(-20px) !important;
+}

@@ -1,0 +1,90 @@
+/* Main Content Styles */
+.v-main {
+  padding-left: 0 !important;
+}
+
+.main-wrapper {
+  margin-left: 80px; /* Fixed margin - no longer changes with sidebar expansion */
+  transition: none; /* Remove transition to prevent shifting */
+  min-height: 100vh;
+}
+
+.main-content {
+  background-color: #fafafa;
+  min-height: calc(100vh - 64px);
+  padding: 24px;
+}
+
+.content-placeholder {
+  background-color: white;
+  border-radius: 8px;
+  padding: 32px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.content-placeholder h3 {
+  color: #333;
+  margin-bottom: 16px;
+  font-size: 28px;
+  font-weight: 300;
+}
+
+.content-placeholder p {
+  color: #666;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+/* Custom scrollbar for main content */
+.main-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.main-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.main-content::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.main-content::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Responsive Design */
+@media (max-width: 960px) {
+  .main-wrapper {
+    margin-left: 60px; /* Adjusted for mobile sidebar width */
+  }
+
+  .main-content {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 600px) {
+  .main-wrapper {
+    margin-left: 50px; /* Adjusted for mobile sidebar width */
+  }
+
+  .content-placeholder {
+    padding: 20px;
+    min-height: 300px;
+  }
+
+  .content-placeholder h3 {
+    font-size: 24px;
+  }
+
+  .content-placeholder p {
+    font-size: 14px;
+  }
+}

@@ -1,0 +1,37 @@
+.search-filter-section {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.search-field :deep(.v-field__input) {
+  color: #2c3e50;
+}
+
+.search-field :deep(.v-field__prepend-inner) {
+  color: #6c757d;
+}
+
+.filter-btn {
+  min-width: 100px;
+}
+
+.filter-panel {
+  border-top: 1px solid #e9ecef;
+  padding-top: 16px;
+}
+
+.gap-2 {
+  gap: 8px;
+}
+
+@media (max-width: 768px) {
+  .text-right {
+    text-align: left !important;
+  }
+
+  .filter-btn {
+    width: 100%;
+  }
+}
