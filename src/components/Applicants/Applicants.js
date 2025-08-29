@@ -1,16 +1,12 @@
 // Import components
 import VendorSearchFilter from './Components/Search/ApplicantsSearch.vue'
 import VendorApplicantsTable from './Components/Table/ApplicantsTable.vue'
-import AppSidebar from '../AppSidebar/AppSidebar.vue'
-import AppHeader from '../AppHeader/AppHeader.vue'
 
 export default {
   name: 'Applicants',
   components: {
     VendorSearchFilter,
     VendorApplicantsTable,
-    AppSidebar,
-    AppHeader,
   },
   data() {
     return {
@@ -23,13 +19,6 @@ export default {
       applicantTypes: [
         { value: 'vendor', label: 'Vendor Applicants' },
         { value: 'stall', label: 'Stall Applicants' },
-      ],
-      menuItems: [
-        { id: 1, icon: 'mdi-view-dashboard', name: 'Dashboard', active: false },
-        { id: 2, icon: 'mdi-credit-card', name: 'Payments', active: false },
-        { id: 3, icon: 'mdi-account-group', name: 'Applicants', active: false },
-        { id: 4, icon: 'mdi-chart-line', name: 'Complaints', active: false },
-        { id: 5, icon: 'mdi-shield-check', name: 'Compliances', active: false },
       ],
       // Sample data for vendor applicants
       vendorApplicants: [
@@ -169,84 +158,6 @@ export default {
       const dropdown = this.$refs.applicantDropdown
       if (dropdown && !dropdown.contains(event.target)) {
         this.showDropdown = false
-      }
-    },
-
-    // Handle menu item clicks from sidebar
-    handleMenuItemClick(item) {
-      console.log('Menu item clicked:', item)
-
-      // Handle both object with id and direct item
-      const itemId = item.id || item
-
-      // Update active state in menu items
-      this.menuItems.forEach((menuItem) => {
-        if (menuItem.id) {
-          menuItem.active = menuItem.id === itemId
-        }
-      })
-
-      this.updatePageTitle(itemId)
-      this.navigateToPage(itemId, item)
-    },
-
-    // Handle notification clicks from header
-    handleNotificationClick() {
-      console.log('Notification clicked')
-      // Add notification logic here
-    },
-
-    // Handle profile clicks from header
-    handleProfileClick() {
-      console.log('Profile clicked')
-      // Add profile logic here
-    },
-
-    // Handle settings clicks from header dropdown
-    handleSettingsClick() {
-      console.log('Settings clicked')
-      // Navigate to settings or open settings modal
-    },
-
-    // Handle logout clicks from header dropdown
-    handleLogoutClick() {
-      console.log('Logout clicked')
-      // Handle logout logic - clear session, redirect to login, etc.
-    },
-
-    // Update page title based on menu selection
-    updatePageTitle(itemId) {
-      const titleMap = {
-        1: 'Dashboard',
-        2: 'Payments',
-        3: 'Applicants',
-        4: 'Complaints',
-        5: 'Compliances',
-      }
-      this.pageTitle = titleMap[itemId] || 'Applicants'
-    },
-
-    // Navigate to different pages
-    navigateToPage(itemId, item) {
-      let targetRoute
-
-      // Handle route from item object or map from itemId
-      if (item && item.route) {
-        targetRoute = item.route
-      } else {
-        const routes = {
-          1: '/dashboard',
-          2: '/payments',
-          3: '/applicants',
-          4: '/complaints',
-          5: '/compliances',
-        }
-        targetRoute = routes[itemId]
-      }
-
-      // Navigate if route exists and is different from current
-      if (targetRoute && this.$router && this.$router.currentRoute.value.path !== targetRoute) {
-        this.$router.push(targetRoute)
       }
     },
 

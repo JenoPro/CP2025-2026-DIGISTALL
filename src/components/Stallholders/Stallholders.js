@@ -1,6 +1,4 @@
 // Import the components
-import AppSidebar from '../AppSidebar/AppSidebar.vue'
-import AppHeader from '../AppHeader/AppHeader.vue'
 import SearchStall from './Components/Search/SearchStall.vue'
 import TableStall from './Components/Table/TableStall.vue'
 import DocumentsView from './Components/Documents/DocumentsView.vue'
@@ -10,8 +8,6 @@ import AddStallholder from './Components/Add/AddStallholder.vue'
 export default {
   name: 'Stallholders',
   components: {
-    AppSidebar,
-    AppHeader,
     SearchStall,
     TableStall,
     DocumentsView,
@@ -29,13 +25,6 @@ export default {
       selectedStallholder: {},
       selectedDocument: {},
       stallholdersList: [], // Add this to store stallholders data
-      menuItems: [
-        { id: 1, icon: 'mdi-view-dashboard', name: 'Dashboard', active: false },
-        { id: 2, icon: 'mdi-credit-card', name: 'Payments', active: false },
-        { id: 3, icon: 'mdi-account-group', name: 'Applicants', active: false },
-        { id: 4, icon: 'mdi-chart-line', name: 'Complaints', active: false },
-        { id: 5, icon: 'mdi-shield-check', name: 'Compliances', active: false },
-      ],
     }
   },
   mounted() {
@@ -67,7 +56,7 @@ export default {
       // You can show a confirmation dialog here
       if (confirm(`Are you sure you want to delete ${stallholder.fullName}?`)) {
         // Remove from local list (in a real app, this would be an API call)
-        this.stallholdersList = this.stallholdersList.filter(s => s.id !== stallholder.id)
+        this.stallholdersList = this.stallholdersList.filter((s) => s.id !== stallholder.id)
         console.log('Stallholder deleted successfully')
       }
     },
@@ -114,13 +103,13 @@ export default {
 
     handleAddStallholderSubmit(stallholderData) {
       console.log('New stallholder data:', stallholderData)
-      
+
       // Add to local list (in a real app, this would be an API call)
       this.stallholdersList.push(stallholderData)
-      
+
       // Close the modal
       this.showAddStallholderModal = false
-      
+
       // You can show a success notification here
       console.log('Stallholder added successfully to the list!')
     },
@@ -137,73 +126,6 @@ export default {
       }
     },
 
-    // Handle menu item clicks from sidebar
-    handleMenuItemClick(itemId) {
-      console.log('Menu item clicked:', itemId)
-      // Update page title based on selected menu item
-      this.updatePageTitle(itemId)
-      // Add navigation logic here
-      this.navigateToPage(itemId)
-    },
-
-    // Handle notification clicks from header
-    handleNotificationClick() {
-      console.log('Notification clicked in Stallholders')
-      // Add notification logic here
-    },
-
-    // Handle profile clicks from header
-    handleProfileClick() {
-      console.log('Profile clicked in Stallholders')
-    },
-
-    // Handle settings clicks from header dropdown
-    handleSettingsClick() {
-      console.log('Settings clicked in Stallholders')
-      // Navigate to settings or open settings modal
-    },
-
-    // Handle logout clicks from header dropdown
-    handleLogoutClick() {
-      console.log('Logout clicked in Stallholders')
-      // Handle logout logic - clear session, redirect to login, etc.
-    },
-
-    // Update page title based on menu selection
-    updatePageTitle(itemId) {
-      const titleMap = {
-        1: 'Dashboard',
-        2: 'Payments',
-        3: 'Applicants',
-        4: 'Complaints',
-        5: 'Compliances',
-        6: 'Vendors',
-        7: 'Stallholders',
-        8: 'Collectors',
-        9: 'Stalls',
-      }
-      this.pageTitle = titleMap[itemId] || 'Stallholders'
-    },
-
-    // Navigate to different pages
-    navigateToPage(itemId) {
-      const routes = {
-        1: '/dashboard',
-        2: '/payments',
-        3: '/applicants',
-        4: '/Complaints',
-        5: '/compliances',
-        6: '/vendors',
-        7: '/stallholders',
-        8: '/collectors',
-        9: '/stalls',
-      }
-
-      if (routes[itemId] && this.$router.currentRoute.value.path !== routes[itemId]) {
-        this.$router.push(routes[itemId])
-      }
-    },
-
     // Initialize stallholders page
     initializeStallholders() {
       console.log('Stallholders page initialized')
@@ -216,8 +138,8 @@ export default {
     async loadStallholdersData() {
       try {
         // Simulate API call delay
-        await new Promise(resolve => setTimeout(resolve, 500))
-        
+        await new Promise((resolve) => setTimeout(resolve, 500))
+
         // Sample data - replace with actual API call
         this.stallholdersList = [
           {
@@ -229,11 +151,11 @@ export default {
             status: 'Active',
             dateAdded: '2024-01-15',
             stallNumber: 'A-01',
-            businessName: 'John\'s Food Stall'
+            businessName: "John's Food Stall",
           },
           // Add more sample data as needed
         ]
-        
+
         console.log('Stallholders data loaded:', this.stallholdersList)
       } catch (error) {
         console.error('Error loading stallholders data:', error)

@@ -3,12 +3,6 @@
   padding-left: 0 !important;
 }
 
-.main-wrapper {
-  margin-left: 80px; /* Fixed margin - no longer changes with sidebar expansion */
-  transition: none; /* Remove transition to prevent shifting */
-  min-height: 100vh;
-}
-
 .main-content {
   padding: 24px;
   background-color: #fafafa;

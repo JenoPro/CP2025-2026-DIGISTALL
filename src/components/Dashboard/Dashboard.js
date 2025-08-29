@@ -1,97 +1,18 @@
-// Import the components
-import AppSidebar from '../AppSidebar/AppSidebar.vue'
-import AppHeader from '../AppHeader/AppHeader.vue'
-
 export default {
-  // eslint-disable-next-line vue/multi-word-component-names
   name: 'Dashboard',
-  components: {
-    AppSidebar,
-    AppHeader,
-  },
+  components: {},
   data() {
     return {
       pageTitle: 'Dashboard',
-      menuItems: [
-        { id: 1, icon: 'mdi-view-dashboard', name: 'Dashboard', route: '/dashboard' },
-        { id: 2, icon: 'mdi-credit-card', name: 'Payments', route: '/payments' },
-        { id: 3, icon: 'mdi-account-group', name: 'Applicants', route: '/applicants' },
-        { id: 4, icon: 'mdi-chart-line', name: 'Complaints', route: '/complaints' },
-        {
-          id: 5,
-          icon: 'mdi-clipboard-check',
-          name: 'Compliances',
-          route: '/compliances',
-        },
-      ],
     }
   },
   mounted() {
     this.initializeDashboard()
   },
   methods: {
-    // Handle menu item clicks from sidebar
-    handleMenuItemClick(itemId, route) {
-      console.log('Menu item clicked:', itemId, 'Route:', route)
-      // Update page title based on selected menu item
-      this.updatePageTitle(itemId)
-      // Navigate to the selected page
-      this.navigateToPage(route)
-    },
-
-    // Handle notification clicks from header
-    handleNotificationClick() {
-      console.log('Notification clicked in Dashboard')
-      // Add notification logic here
-    },
-
-    // Handle profile clicks from header
-    handleProfileClick() {
-      console.log('Profile clicked in Dashboard')
-    },
-
-    // Handle settings clicks from header dropdown
-    handleSettingsClick() {
-      console.log('Settings clicked in Dashboard')
-      // Navigate to settings or open settings modal
-    },
-
-    // Handle logout clicks from header dropdown
-    handleLogoutClick() {
-      console.log('Logout clicked in Dashboard')
-      // Handle logout logic - clear session, redirect to login, etc.
-      this.$router.push('/')
-    },
-
-    // Update page title based on menu selection
-    updatePageTitle(itemId) {
-      const titleMap = {
-        1: 'Dashboard',
-        2: 'Payments',
-        3: 'Applicants',
-        4: 'Complaints',
-        5: 'Compliances',
-        6: 'Vendors',
-        7: 'Stallholders',
-        8: 'Collectors',
-        9: 'Stalls',
-      }
-      this.pageTitle = titleMap[itemId] || 'Dashboard'
-    },
-
-    // Navigate to different pages
-    navigateToPage(route) {
-      if (route && this.$route.path !== route) {
-        this.$router.push(route).catch((err) => {
-          // Handle navigation errors (e.g., navigating to same route)
-          console.log('Navigation handled:', err.message)
-        })
-      }
-    },
-
-    // Initialize dashboard
+    // Initialize collectors page
     initializeDashboard() {
-      console.log('Dashboard initialized')
+      console.log('Dashboard page initialized')
       // Add any initialization logic here
     },
   },

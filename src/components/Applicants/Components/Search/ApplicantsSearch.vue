@@ -5,9 +5,10 @@
       <v-col cols="12" md="6" lg="4">
         <v-text-field
           v-model="searchQuery"
+          label="Search Applicants"
           placeholder="Search applicants..."
           variant="outlined"
-          density="comfortable"
+          clearable
           hide-details
           prepend-inner-icon="mdi-magnify"
           @input="onSearchInput"

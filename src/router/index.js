@@ -7,61 +7,80 @@ import Complaints from '../components/Complaints/Complaints.vue'
 import Compliances from '../components/Compliances/Compliances.vue'
 import Vendors from '../components/Vendors/Vendors.vue'
 import Stallholders from '../components/Stallholders/Stallholders.vue'
+import MainLayout from '../components/MainLayout/MainLayout.vue'
 import Collectors from '../components/Collectors/Collectors.vue'
 import Stalls from '../components/Stalls/Stalls.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    { path: '/', name: 'login', component: LoginPage },
+
     {
       path: '/',
-      name: 'login',
-      component: LoginPage,
-    },
-    {
-      path: '/dashboard',
-      name: 'Dashboard',
-      component: Dashboard,
-    },
-    {
-      path: '/payments',
-      name: 'Payment',
-      component: Payment,
-    },
-    {
-      path: '/applicants',
-      name: 'Applicants',
-      component: Applicants,
-    },
-    {
-      path: '/complaints',
-      name: 'Complaints',
-      component: Complaints,
-    },
-    {
-      path: '/compliances',
-      name: 'Compliances',
-      component: Compliances,
-    },
-    {
-      path: '/vendors',
-      name: 'Vendors',
-      component: Vendors,
-    },
-    {
-      path: '/stallholders',
-      name: 'Stallholders',
-      component: Stallholders,
-    },
-    {
-      path: '/collectors',
-      name: 'Collectors',
-      component: Collectors,
-    },
-    {
-      path: '/stalls',
-      name: 'Stalls',
-      component: Stalls,
+      component: MainLayout,
+      children: [
+        {
+          path: 'dashboard',
+          name: 'Dashboard',
+          component: Dashboard,
+          meta: { title: 'Dashboard' },
+        },
+        {
+          path: '/complaints',
+          name: 'Complaints',
+          component: Complaints,
+          meta: { title: 'Complaints' },
+        },
+        {
+          path: 'payment',
+          name: 'Payment',
+          component: Payment, // just blank placeholder
+          meta: { title: 'Payment' },
+        },
+        {
+          path: 'applicants',
+          name: 'Applicants',
+          component: Applicants, // placeholder too
+          meta: { title: 'Applicants' },
+        },
+        {
+          path: 'compliances',
+          name: 'Compliances',
+          component: Compliances, // placeholder too
+          meta: { title: 'Compliances' },
+        },
+        {
+          path: 'vendors',
+          name: 'Vendors',
+          component: Vendors, // placeholder too
+          meta: { title: 'Vendors' },
+        },
+        {
+          path: 'stallholders',
+          name: 'Stallholders',
+          component: Stallholders,
+          meta: { title: 'Stallholders' },
+        },
+        {
+          path: 'vendors',
+          name: 'Vendors',
+          component: Vendors,
+          meta: { title: 'Vendors' },
+        },
+        {
+          path: 'collectors',
+          name: 'Collectors',
+          component: Collectors,
+          meta: { title: 'Collectors' },
+        },
+        {
+          path: 'stalls',
+          name: 'Stalls',
+          component: Stalls,
+          meta: { title: 'Stalls' },
+        },
+      ],
     },
   ],
 })
