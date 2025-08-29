@@ -1,0 +1,326 @@
+.v-dialog {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Dialog card styling */
+.v-card {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.98);
+  overflow: hidden;
+}
+
+/* Header styling */
+.headline {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  background: #002181;
+  color: white !important;
+  font-weight: 600;
+  font-size: 1.2rem;
+}
+
+/* Tabs styling */
+.v-tabs {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.v-tab {
+  font-weight: 600;
+  font-size: 1rem;
+  text-transform: none;
+  letter-spacing: 0;
+  min-width: 140px;
+  padding: 0 24px;
+  color: #495057 !important;
+  transition: all 0.3s ease;
+}
+
+.v-tab:hover {
+  background: rgba(103, 126, 234, 0.05);
+  transform: translateY(-1px);
+}
+
+.v-tab--selected {
+  background: rgba(103, 126, 234, 0.1);
+  color: #002181 !important;
+  font-weight: 700;
+}
+
+/* Table styling */
+.v-data-table {
+  font-size: 1rem;
+  background: transparent !important;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* Table headers */
+.v-data-table__thead .v-data-table__th {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+  color: #495057 !important;
+  font-weight: 600;
+  font-size: 1rem;
+  border-bottom: 2px solid #dee2e6 !important;
+  padding: 16px 12px !important;
+  text-align: left !important;
+  vertical-align: middle !important;
+}
+
+/* Table rows */
+.v-data-table__tbody .v-data-table__td {
+  padding: 16px 12px !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06) !important;
+  text-align: left !important;
+  vertical-align: middle !important;
+  transition: all 0.3s ease;
+  color: #212529 !important;
+}
+
+/* Address cell styling */
+.address-cell {
+  max-width: 250px;
+  white-space: normal;
+  line-height: 1.4;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  hyphens: auto;
+  color: #212529 !important;
+}
+
+/* Row hover effect */
+.v-data-table__tbody tr:hover {
+  background: rgba(103, 126, 234, 0.05) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* Status chips */
+.status-chip {
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: 20px;
+  padding: 8px 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+}
+
+.status-chip:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Winner chip styling */
+.winner-chip {
+  background: linear-gradient(135deg, #28a745, #20c997) !important;
+  color: white !important;
+  animation: pulse 2s infinite;
+}
+
+/* Loser chip styling */
+.loser-chip {
+  background: linear-gradient(135deg, #dc3545, #c71f37) !important;
+  color: white !important;
+  opacity: 0.9;
+}
+
+/* Close button */
+.v-btn.v-btn--icon {
+  background: rgba(255, 255, 255, 0.2);
+  color: white !important;
+}
+
+.v-btn.v-btn--icon .v-icon {
+  color: white !important;
+}
+
+/* Winner row */
+.winner-row {
+  background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%) !important;
+  border-left: 4px solid #28a745 !important;
+}
+
+.winner-row td {
+  color: #155724 !important;
+}
+
+/* Loser row */
+.loser-row {
+  background: linear-gradient(135deg, #f8d7da 0%, #f1b2b5 100%) !important;
+  border-left: 4px solid #dc3545 !important;
+}
+
+.loser-row td {
+  color: #721c24 !important;
+}
+
+/* Pulse animation for winner chip */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(40, 167, 69, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(40, 167, 69, 0);
+  }
+}
+
+/* Empty state styling */
+.v-data-table-empty-wrapper {
+  background: rgba(248, 249, 250, 0.6);
+  border-radius: 8px;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.v-data-table-empty-wrapper .v-icon {
+  font-size: 48px;
+  color: #6c757d;
+  margin-bottom: 16px;
+  opacity: 0.6;
+}
+
+.v-data-table-empty-wrapper .v-data-table-empty {
+  font-size: 1rem;
+  color: #6c757d;
+  font-weight: 500;
+}
+
+/* Responsive design */
+@media (max-width: 960px) {
+  .headline {
+    font-size: 1.1rem;
+    padding: 16px 18px;
+  }
+
+  .v-tab {
+    font-size: 0.9rem;
+    min-width: 120px;
+    padding: 0 16px;
+  }
+
+  .v-data-table__thead .v-data-table__th {
+    font-size: 0.9rem;
+    padding: 14px 10px !important;
+  }
+
+  .v-data-table__tbody .v-data-table__td {
+    padding: 14px 10px !important;
+  }
+  
+  .address-cell {
+    max-width: 200px;
+  }
+  
+  .status-chip {
+    font-size: 0.85rem;
+    padding: 6px 14px;
+  }
+}
+
+@media (max-width: 768px) {
+  .headline {
+    font-size: 1rem;
+    padding: 14px 16px;
+  }
+
+  .v-tab {
+    font-size: 0.85rem;
+    min-width: 100px;
+    padding: 0 12px;
+  }
+
+  .v-data-table__thead .v-data-table__th {
+    font-size: 0.85rem;
+    padding: 12px 8px !important;
+  }
+
+  .v-data-table__tbody .v-data-table__td {
+    padding: 12px 8px !important;
+  }
+
+  .status-chip {
+    font-size: 0.8rem;
+    padding: 6px 12px;
+  }
+  
+  .address-cell {
+    max-width: 150px;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .v-dialog {
+    width: 95% !important;
+    margin: 0 !important;
+  }
+
+  .headline {
+    font-size: 0.95rem;
+    padding: 12px 14px;
+  }
+  
+  .v-tab {
+    font-size: 0.8rem;
+    min-width: 80px;
+    padding: 0 8px;
+  }
+
+  .v-data-table {
+    font-size: 0.9rem;
+  }
+
+  .v-data-table__wrapper {
+    overflow-x: auto;
+  }
+
+  .v-data-table__thead .v-data-table__th,
+  .v-data-table__tbody .v-data-table__td {
+    padding: 8px 6px !important;
+    min-width: 80px;
+  }
+  
+  .status-chip {
+    font-size: 0.75rem;
+    padding: 4px 10px;
+  }
+  
+  .address-cell {
+    max-width: 120px;
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .headline {
+    font-size: 0.85rem;
+    padding: 10px 12px;
+  }
+
+  .v-tab {
+    font-size: 0.75rem;
+    min-width: 70px;
+    padding: 0 6px;
+  }
+  
+  .status-chip {
+    font-size: 0.7rem;
+    padding: 4px 8px;
+  }
+  
+  .address-cell {
+    max-width: 100px;
+    font-size: 0.8rem;
+  }
+}

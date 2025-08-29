@@ -1,8 +1,11 @@
 <template>
     <div class="auction-table-wrapper">
         <v-card class="auction-card" elevation="3">
-            <v-card-title>
-                Auction Participants - {{ stall?.stallNumber || 'No Stall Selected' }}
+            <v-card-title class="d-flex justify-space-between align-center">
+                <span>Auction Participants - {{ stall?.stallNumber || 'No Stall Selected' }}</span>
+                <v-btn color="primary" size="small" prepend-icon="mdi-history" @click="showAuctionRecords = true">
+                    View Auction History
+                </v-btn>
             </v-card-title>
 
             <!-- Vuetify Data Table -->
@@ -25,6 +28,9 @@
                 </template>
             </v-data-table>
         </v-card>
+
+        <!-- Auction Records Dialog -->
+        <AuctionRecords v-if="showAuctionRecords" :stallId="stall?.id" @close="showAuctionRecords = false" />
     </div>
 </template>
 
