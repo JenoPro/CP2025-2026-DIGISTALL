@@ -95,7 +95,7 @@
   </div>
 </template>
 
-<script src="./ComplianceSearch.js"></script>
-<style scoped src="./ComplianceSearch.css"></style>
+<script src="./ComplaintsSearch.js"></script>
+<style scoped src="./ComplaintsSearch.css"></style>
 
 

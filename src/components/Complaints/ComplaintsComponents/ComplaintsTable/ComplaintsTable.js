@@ -1,6 +1,6 @@
-// ComplianceTable.js
-const ComplianceTable = {
-  name: 'ComplianceTable',
+// ComplaintsTable.js
+const ComplaintsTable = {
+  name: 'ComplaintsTable',
   props: {
     searchQuery: {
       type: String,
@@ -10,7 +10,7 @@ const ComplianceTable = {
       type: String,
       default: ''
     },
-    complianceList: {
+    complaintsList: {
       type: Array,
       default: () => []
     }
@@ -22,25 +22,25 @@ const ComplianceTable = {
     }
   },
   computed: {
-    filteredCompliance() {
-      let filtered = this.complianceList
+    filteredComplaints() {
+      let filtered = this.complaintsList
 
       // Apply search filter
       if (this.searchQuery) {
         const query = this.searchQuery.toLowerCase()
-        filtered = filtered.filter(compliance =>
-          compliance.id.toLowerCase().includes(query) ||
-          compliance.type.toLowerCase().includes(query) ||
-          compliance.inspector.toLowerCase().includes(query) ||
-          compliance.stallholder.toLowerCase().includes(query) ||
-          compliance.status.toLowerCase().includes(query)
+        filtered = filtered.filter(complaints =>
+          complaints.id.toLowerCase().includes(query) ||
+          complaints.type.toLowerCase().includes(query) ||
+          complaints.sender.toLowerCase().includes(query) ||
+          complaints.stallholder.toLowerCase().includes(query) ||
+          complaints.status.toLowerCase().includes(query)
         )
       }
 
       // Apply status filter
       if (this.activeFilter && this.activeFilter !== 'all') {
-        filtered = filtered.filter(compliance =>
-          compliance.status === this.activeFilter
+        filtered = filtered.filter(complaints =>
+          complaints.status === this.activeFilter
         )
       }
 
@@ -48,14 +48,14 @@ const ComplianceTable = {
     },
 
     // ✅ Paginated list (this is what you’ll use in template)
-    paginatedCompliance() {
+    paginatedComplaints() {
       const start = (this.currentPage - 1) * this.itemsPerPage
       const end = start + this.itemsPerPage
-      return this.filteredCompliance.slice(start, end)
+      return this.filteredComplaints.slice(start, end)
     },
 
     totalPages() {
-      return Math.ceil(this.filteredCompliance.length / this.itemsPerPage) || 1
+      return Math.ceil(this.filteredComplaints.length / this.itemsPerPage) || 1
     }
   },
   methods: {
@@ -69,24 +69,24 @@ const ComplianceTable = {
 
     getStatusClass(status) {
       const statusClasses = {
-        'complete': 'compliance-status-complete',
-        'pending': 'compliance-status-pending',
-        'incomplete': 'compliance-status-incomplete',
-        'in-progress': 'compliance-status-active'
+        'complete': 'complaints-status-complete',
+        'pending': 'complaints-status-pending',
+        'incomplete': 'complaints-status-incomplete',
+        'in-progress': 'complaints-status-active'
       }
-      return statusClasses[status] || 'compliance-status-default'
+      return statusClasses[status] || 'complaints-status-default'
     },
 
-    viewCompliance(compliance) {
-      this.$emit('view-compliance', compliance)
+    viewComplaints(complaints) {
+      this.$emit('view-complaints', complaints)
     },
 
-    editCompliance(compliance) {
-      this.$emit('edit-compliance', compliance)
+    editComplaints(complaints) {
+      this.$emit('edit-complaints', complaints)
     },
 
-    deleteCompliance(compliance) {
-      this.$emit('delete-compliance', compliance)
+    deleteComplaints(complaints) {
+      this.$emit('delete-complaints', complaints)
     },
 
     changePage(page) {
@@ -106,4 +106,4 @@ const ComplianceTable = {
   }
 }
 
-export default ComplianceTable
+export default ComplaintsTable

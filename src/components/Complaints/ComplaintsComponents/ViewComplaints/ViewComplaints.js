@@ -1,11 +1,11 @@
-//ViewCompliance.js
+//ViewComplaints.js
 export default {
   props: {
     isVisible: {
       type: Boolean,
       required: true,
     },
-    compliance: {
+    complaints: {
       type: Object,
       default: null,
     },
