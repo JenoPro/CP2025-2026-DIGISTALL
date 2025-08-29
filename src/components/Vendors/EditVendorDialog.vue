@@ -1,58 +1,62 @@
 <template>
-  <v-dialog v-model="model" max-width="1200" persistent>
-    <v-card>
+  <v-dialog v-model="model" max-width="1280" persistent>
+    <v-card class="compact-card">
+      <!-- Top bar: section title only (no page numbers) -->
       <v-card-title class="d-flex align-center justify-space-between">
-        <div class="text-h6 font-weight-bold">
-          {{ step === 1 ? 'Edit Vendor Form - Page 1' : 'Edit Vendor Form - Page 2' }}
-        </div>
+        <span class="text-h6 font-weight-bold">
+          {{ step === 1 ? 'Edit Vendor Details' : 'Edit Business Details' }}
+        </span>
       </v-card-title>
 
       <v-divider />
 
-      <v-card-text class="pt-6">
+      <v-card-text class="pt-4 pb-2">
         <v-row>
           <!-- PAGE 1 -->
           <v-col v-if="step === 1" cols="12">
-            <div class="text-h5 font-weight-bold mb-4">Edit Vendor Details</div>
-
-            <v-row>
-              <v-col cols="12" md="4"
-                ><v-text-field
+            <v-row class="tight-grid">
+              <v-col cols="12" md="4">
+                <v-text-field
                   v-model="form.lastName"
                   label="Last Name"
                   variant="outlined"
-                  density="comfortable"
-              /></v-col>
-              <v-col cols="12" md="4"
-                ><v-text-field
+                  density="compact"
+                />
+              </v-col>
+              <v-col cols="12" md="4">
+                <v-text-field
                   v-model="form.firstName"
                   label="First Name"
                   variant="outlined"
-                  density="comfortable"
-              /></v-col>
-              <v-col cols="12" md="4"
-                ><v-text-field
+                  density="compact"
+                />
+              </v-col>
+              <v-col cols="12" md="4">
+                <v-text-field
                   v-model="form.middleName"
                   label="Middle Name"
                   variant="outlined"
-                  density="comfortable"
-              /></v-col>
+                  density="compact"
+                />
+              </v-col>
 
-              <v-col cols="12" md="4"
-                ><v-text-field
+              <v-col cols="12" md="4">
+                <v-text-field
                   v-model="form.suffix"
                   label="Suffix (if any)"
                   variant="outlined"
-                  density="comfortable"
-              /></v-col>
-              <v-col cols="12" md="4"
-                ><v-text-field
+                  density="compact"
+                />
+              </v-col>
+              <v-col cols="12" md="4">
+                <v-text-field
                   v-model="form.birthdate"
                   type="date"
                   label="Birthdate"
                   variant="outlined"
-                  density="comfortable"
-              /></v-col>
+                  density="compact"
+                />
+              </v-col>
               <v-col cols="12" md="4">
                 <div class="mb-1 text-medium-emphasis">Gender</div>
                 <v-btn-toggle v-model="form.gender" divided mandatory>
@@ -61,108 +65,120 @@
                 </v-btn-toggle>
               </v-col>
 
-              <v-col cols="12" md="4"
-                ><v-text-field
+              <v-col cols="12" md="4">
+                <v-text-field
                   v-model="form.phone"
                   label="Phone Number"
                   variant="outlined"
-                  density="comfortable"
-              /></v-col>
-              <v-col cols="12" md="4"
-                ><v-text-field
+                  density="compact"
+                />
+              </v-col>
+              <v-col cols="12" md="4">
+                <v-text-field
                   v-model="form.email"
                   label="Email Address"
                   type="email"
                   variant="outlined"
-                  density="comfortable"
-              /></v-col>
-              <v-col cols="12" md="4"
-                ><v-text-field
+                  density="compact"
+                />
+              </v-col>
+              <v-col cols="12" md="4">
+                <v-text-field
                   v-model="form.vendorId"
                   label="Vendor ID"
                   variant="outlined"
-                  density="comfortable"
-              /></v-col>
+                  density="compact"
+                />
+              </v-col>
 
-              <v-col cols="12"
-                ><v-text-field
+              <v-col cols="12">
+                <v-text-field
                   v-model="form.address"
                   label="Complete Address"
                   variant="outlined"
-                  density="comfortable"
-              /></v-col>
+                  density="compact"
+                />
+              </v-col>
 
-              <v-col cols="12" md="4"
-                ><v-text-field
+              <v-col cols="12" md="4">
+                <v-text-field
                   v-model="form.spouseLast"
                   label="Spouse’s Last Name"
                   variant="outlined"
-                  density="comfortable"
-              /></v-col>
-              <v-col cols="12" md="4"
-                ><v-text-field
+                  density="compact"
+                />
+              </v-col>
+              <v-col cols="12" md="4">
+                <v-text-field
                   v-model="form.spouseFirst"
                   label="Spouse’s First Name"
                   variant="outlined"
-                  density="comfortable"
-              /></v-col>
-              <v-col cols="12" md="4"
-                ><v-text-field
+                  density="compact"
+                />
+              </v-col>
+              <v-col cols="12" md="4">
+                <v-text-field
                   v-model="form.spouseMiddle"
                   label="Spouse’s Middle Name"
                   variant="outlined"
-                  density="comfortable"
-              /></v-col>
+                  density="compact"
+                />
+              </v-col>
 
-              <v-col cols="12" md="4"
-                ><v-text-field
+              <v-col cols="12" md="4">
+                <v-text-field
                   v-model="form.childLast"
                   label="Child’s Last Name"
                   variant="outlined"
-                  density="comfortable"
-              /></v-col>
-              <v-col cols="12" md="4"
-                ><v-text-field
+                  density="compact"
+                />
+              </v-col>
+              <v-col cols="12" md="4">
+                <v-text-field
                   v-model="form.childFirst"
                   label="Child’s First Name"
                   variant="outlined"
-                  density="comfortable"
-              /></v-col>
-              <v-col cols="12" md="4"
-                ><v-text-field
+                  density="compact"
+                />
+              </v-col>
+              <v-col cols="12" md="4">
+                <v-text-field
                   v-model="form.childMiddle"
                   label="Child’s Middle Name"
                   variant="outlined"
-                  density="comfortable"
-              /></v-col>
+                  density="compact"
+                />
+              </v-col>
             </v-row>
           </v-col>
 
           <!-- PAGE 2 -->
           <v-col v-else cols="12">
-            <div class="text-h5 font-weight-bold mb-6">Edit Business Details</div>
-            <v-row>
-              <v-col cols="12" md="6"
-                ><v-text-field
+            <v-row class="tight-grid">
+              <v-col cols="12" md="6">
+                <v-text-field
                   v-model="form.businessName"
                   label="Business Name"
                   variant="outlined"
-                  density="comfortable"
-              /></v-col>
-              <v-col cols="12" md="6"
-                ><v-text-field
+                  density="compact"
+                />
+              </v-col>
+              <v-col cols="12" md="6">
+                <v-text-field
                   v-model="form.businessType"
                   label="Business Type"
                   variant="outlined"
-                  density="comfortable"
-              /></v-col>
-              <v-col cols="12" md="6"
-                ><v-text-field
+                  density="compact"
+                />
+              </v-col>
+              <v-col cols="12" md="6">
+                <v-text-field
                   v-model="form.productsSold"
                   label="Products Sold"
                   variant="outlined"
-                  density="comfortable"
-              /></v-col>
+                  density="compact"
+                />
+              </v-col>
               <v-col cols="12" md="6">
                 <div class="mb-1 text-medium-emphasis">Vending Time</div>
                 <div class="d-flex ga-2">
@@ -170,7 +186,7 @@
                     v-model="form.vendStart"
                     type="time"
                     variant="outlined"
-                    density="comfortable"
+                    density="compact"
                     hide-details
                   />
                   <span class="d-flex align-center">–</span>
@@ -178,28 +194,29 @@
                     v-model="form.vendEnd"
                     type="time"
                     variant="outlined"
-                    density="comfortable"
+                    density="compact"
                     hide-details
                   />
                 </div>
               </v-col>
-              <v-col cols="12"
-                ><v-text-field
+              <v-col cols="12">
+                <v-text-field
                   v-model="form.businessAddress"
                   label="Business Address"
                   variant="outlined"
-                  density="comfortable"
-              /></v-col>
+                  density="compact"
+                />
+              </v-col>
             </v-row>
 
-            <div class="text-h6 font-weight-bold mt-6 mb-2">Edit Uploaded Documents</div>
-            <v-row>
+            <div class="text-subtitle-1 font-weight-bold mt-3 mb-1">Edit Uploaded Documents</div>
+            <v-row class="tight-grid">
               <v-col cols="12" md="6">
                 <v-file-input
                   v-model="form.files.clearance"
                   label="Barangay Business Clearance"
                   variant="outlined"
-                  density="comfortable"
+                  density="compact"
                   prepend-inner-icon="mdi-paperclip"
                   show-size
                 />
@@ -209,7 +226,7 @@
                   v-model="form.files.votersId"
                   label="Voter’s ID"
                   variant="outlined"
-                  density="comfortable"
+                  density="compact"
                   prepend-inner-icon="mdi-paperclip"
                   show-size
                 />
@@ -219,7 +236,7 @@
                   v-model="form.files.cedula"
                   label="Cedula"
                   variant="outlined"
-                  density="comfortable"
+                  density="compact"
                   prepend-inner-icon="mdi-paperclip"
                   show-size
                 />
@@ -229,7 +246,7 @@
                   v-model="form.files.picture"
                   label="2x2 Picture (White background)"
                   variant="outlined"
-                  density="comfortable"
+                  density="compact"
                   prepend-inner-icon="mdi-paperclip"
                   show-size
                 />
@@ -239,7 +256,7 @@
                   v-model="form.files.association"
                   label="Association Clearance"
                   variant="outlined"
-                  density="comfortable"
+                  density="compact"
                   prepend-inner-icon="mdi-paperclip"
                   show-size
                 />
@@ -249,7 +266,7 @@
                   v-model="form.files.healthcard"
                   label="Health Card/Yellow Card"
                   variant="outlined"
-                  density="comfortable"
+                  density="compact"
                   prepend-inner-icon="mdi-paperclip"
                   show-size
                 />
@@ -261,7 +278,7 @@
 
       <v-divider />
 
-      <v-card-actions class="px-6 py-4">
+      <v-card-actions class="px-6 py-3">
         <v-btn variant="tonal" color="grey" @click="cancel">Cancel</v-btn>
         <v-spacer />
         <v-btn v-if="step === 2" variant="tonal" color="grey" class="mr-2" @click="step = 1"
@@ -279,7 +296,6 @@ import { computed, reactive, watch, ref } from 'vue'
 
 const props = defineProps({
   modelValue: { type: Boolean, default: false },
-  /** pass the full vendor payload (what you stored in item.raw) */
   data: { type: Object, default: () => ({}) },
 })
 const emit = defineEmits(['update:modelValue', 'update'])
@@ -291,7 +307,7 @@ const model = computed({
 
 const step = ref(1)
 
-// initialize form from props.data (keep File objects)
+// Initialize/edit state (preserve File objects)
 const form = reactive(makeInitialForm(props.data))
 watch(
   () => props.data,
@@ -303,7 +319,6 @@ watch(
 )
 
 function makeInitialForm(src) {
-  // shallow copy is enough for primitives + File refs
   const f = {
     // page 1
     lastName: '',
@@ -339,7 +354,6 @@ function makeInitialForm(src) {
       healthcard: null,
     },
   }
-  // merge incoming data if present
   if (src && typeof src === 'object') {
     Object.assign(f, src)
     f.files = { ...f.files, ...(src.files || {}) }
@@ -348,14 +362,13 @@ function makeInitialForm(src) {
 }
 
 function goNext() {
-  // very light check
-  if (!form.firstName || !form.lastName || !form.vendorId)
+  if (!form.firstName || !form.lastName || !form.vendorId) {
     return alert('Please complete required fields.')
+  }
   step.value = 2
 }
 
 function submit() {
-  // return both compact row and full raw payload
   const updatedRow = {
     id: form.vendorId,
     name: [form.firstName, form.lastName].filter(Boolean).join(' '),
@@ -373,3 +386,27 @@ function cancel() {
   step.value = 1
 }
 </script>
+
+<style scoped>
+.compact-card .v-card-title {
+  background: #f5f5f7;
+  padding: 10px 16px;
+}
+.compact-card .v-card-text {
+  padding: 12px 16px !important;
+}
+.compact-card .v-card-actions {
+  padding-top: 8px !important;
+  padding-bottom: 8px !important;
+}
+
+.tight-grid > .v-col {
+  padding-top: 6px !important;
+  padding-bottom: 6px !important;
+}
+
+:deep(.v-field) {
+  --v-input-padding-top: 4px;
+  --v-input-padding-bottom: 4px;
+}
+</style>

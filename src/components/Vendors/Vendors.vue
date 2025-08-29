@@ -42,25 +42,28 @@
               prepend-inner-icon="mdi-magnify"
             />
           </v-col>
-          <v-col cols="6" md="3">
-            <v-select
-              v-model="collectorFilter"
-              :items="collectors"
-              label="Assigned Collector"
-              variant="outlined"
-              density="comfortable"
-              clearable
-            />
-          </v-col>
-          <v-col cols="6" md="3">
-            <v-select
-              v-model="statusFilter"
-              :items="statuses"
-              label="Status"
-              variant="outlined"
-              density="comfortable"
-              clearable
-            />
+
+          <v-col cols="12" md="8">
+            <div class="filters-right d-flex justify-end ga-3">
+              <v-select
+                class="filter"
+                v-model="collectorFilter"
+                :items="collectors"
+                label="Assigned Collector"
+                variant="outlined"
+                density="comfortable"
+                clearable
+              />
+              <v-select
+                class="filter"
+                v-model="statusFilter"
+                :items="statuses"
+                label="Status"
+                variant="outlined"
+                density="comfortable"
+                clearable
+              />
+            </div>
           </v-col>
         </v-row>
 
@@ -371,5 +374,21 @@ export default {
 }
 .main-content::-webkit-scrollbar-thumb:hover {
   background: #a8a8a8;
+}
+.filters-right {
+  gap: 12px;
+}
+.filter {
+  max-width: 280px;
+  min-width: 220px;
+}
+
+@media (max-width: 959px) {
+  .filters-right {
+    justify-content: stretch;
+  }
+  .filter {
+    flex: 1;
+  }
 }
 </style>

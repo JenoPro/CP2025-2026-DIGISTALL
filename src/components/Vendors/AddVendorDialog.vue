@@ -1,38 +1,36 @@
 <template>
-  <v-dialog v-model="model" max-width="1200" persistent>
-    <v-card>
-      <!-- STEPPER HEADER -->
+  <v-dialog v-model="model" max-width="1280" persistent>
+    <v-card class="compact-card">
+      <!-- Top bar: title (no page number) + Import button -->
       <v-card-title class="d-flex align-center justify-space-between">
-        <div class="text-h6 font-weight-bold">
-          {{ step === 1 ? 'Add Vendor Form - Page 1' : 'Add Vendor Form - Page 2' }}
-        </div>
+        <span class="text-h6 font-weight-bold">
+          {{ step === 1 ? 'Add Vendor Details' : 'Add Business Details' }}
+        </span>
         <v-btn
-          v-if="step === 1"
           color="primary"
           variant="elevated"
           rounded="lg"
           size="small"
           @click="importSampleData"
-          >Import Data</v-btn
         >
+          Import Data
+        </v-btn>
       </v-card-title>
 
       <v-divider />
 
       <!-- CONTENT -->
-      <v-card-text class="pt-6">
+      <v-card-text class="pt-4 pb-2">
         <v-row>
           <!-- PAGE 1 -->
-          <v-col v-if="step === 1" cols="12" md="12">
-            <div class="text-h5 font-weight-bold mb-4">Add Vendor Details</div>
-
-            <v-row>
+          <v-col v-if="step === 1" cols="12">
+            <v-row class="tight-grid">
               <v-col cols="12" md="4">
                 <v-text-field
                   v-model="form.lastName"
                   label="Last Name"
                   variant="outlined"
-                  density="comfortable"
+                  density="compact"
                 />
               </v-col>
               <v-col cols="12" md="4">
@@ -40,7 +38,7 @@
                   v-model="form.firstName"
                   label="First Name"
                   variant="outlined"
-                  density="comfortable"
+                  density="compact"
                 />
               </v-col>
               <v-col cols="12" md="4">
@@ -48,7 +46,7 @@
                   v-model="form.middleName"
                   label="Middle Name"
                   variant="outlined"
-                  density="comfortable"
+                  density="compact"
                 />
               </v-col>
 
@@ -57,7 +55,7 @@
                   v-model="form.suffix"
                   label="Suffix (if any)"
                   variant="outlined"
-                  density="comfortable"
+                  density="compact"
                 />
               </v-col>
               <v-col cols="12" md="4">
@@ -66,7 +64,7 @@
                   type="date"
                   label="Birthdate"
                   variant="outlined"
-                  density="comfortable"
+                  density="compact"
                 />
               </v-col>
               <v-col cols="12" md="4">
@@ -82,7 +80,7 @@
                   v-model="form.phone"
                   label="Phone Number"
                   variant="outlined"
-                  density="comfortable"
+                  density="compact"
                 />
               </v-col>
               <v-col cols="12" md="4">
@@ -91,7 +89,7 @@
                   label="Email Address"
                   type="email"
                   variant="outlined"
-                  density="comfortable"
+                  density="compact"
                 />
               </v-col>
               <v-col cols="12" md="4">
@@ -99,7 +97,7 @@
                   v-model="form.vendorId"
                   label="Vendor ID"
                   variant="outlined"
-                  density="comfortable"
+                  density="compact"
                 />
               </v-col>
 
@@ -108,7 +106,7 @@
                   v-model="form.address"
                   label="Complete Address"
                   variant="outlined"
-                  density="comfortable"
+                  density="compact"
                 />
               </v-col>
 
@@ -117,7 +115,7 @@
                   v-model="form.spouseLast"
                   label="Spouse’s Last Name"
                   variant="outlined"
-                  density="comfortable"
+                  density="compact"
                 />
               </v-col>
               <v-col cols="12" md="4">
@@ -125,7 +123,7 @@
                   v-model="form.spouseFirst"
                   label="Spouse’s First Name"
                   variant="outlined"
-                  density="comfortable"
+                  density="compact"
                 />
               </v-col>
               <v-col cols="12" md="4">
@@ -133,7 +131,7 @@
                   v-model="form.spouseMiddle"
                   label="Spouse’s Middle Name"
                   variant="outlined"
-                  density="comfortable"
+                  density="compact"
                 />
               </v-col>
 
@@ -142,7 +140,7 @@
                   v-model="form.childLast"
                   label="Child’s Last Name"
                   variant="outlined"
-                  density="comfortable"
+                  density="compact"
                 />
               </v-col>
               <v-col cols="12" md="4">
@@ -150,7 +148,7 @@
                   v-model="form.childFirst"
                   label="Child’s First Name"
                   variant="outlined"
-                  density="comfortable"
+                  density="compact"
                 />
               </v-col>
               <v-col cols="12" md="4">
@@ -158,7 +156,7 @@
                   v-model="form.childMiddle"
                   label="Child’s Middle Name"
                   variant="outlined"
-                  density="comfortable"
+                  density="compact"
                 />
               </v-col>
             </v-row>
@@ -166,14 +164,13 @@
 
           <!-- PAGE 2 -->
           <v-col v-else cols="12">
-            <div class="text-h5 font-weight-bold mb-6">Add Business Details</div>
-            <v-row>
+            <v-row class="tight-grid">
               <v-col cols="12" md="6">
                 <v-text-field
                   v-model="form.businessName"
                   label="Business Name"
                   variant="outlined"
-                  density="comfortable"
+                  density="compact"
                 />
               </v-col>
               <v-col cols="12" md="6">
@@ -181,7 +178,7 @@
                   v-model="form.businessType"
                   label="Business Type"
                   variant="outlined"
-                  density="comfortable"
+                  density="compact"
                 />
               </v-col>
               <v-col cols="12" md="6">
@@ -189,7 +186,7 @@
                   v-model="form.productsSold"
                   label="Products Sold"
                   variant="outlined"
-                  density="comfortable"
+                  density="compact"
                 />
               </v-col>
               <v-col cols="12" md="6">
@@ -199,7 +196,7 @@
                     v-model="form.vendStart"
                     type="time"
                     variant="outlined"
-                    density="comfortable"
+                    density="compact"
                     hide-details
                   />
                   <span class="d-flex align-center">–</span>
@@ -207,7 +204,7 @@
                     v-model="form.vendEnd"
                     type="time"
                     variant="outlined"
-                    density="comfortable"
+                    density="compact"
                     hide-details
                   />
                 </div>
@@ -217,19 +214,19 @@
                   v-model="form.businessAddress"
                   label="Business Address"
                   variant="outlined"
-                  density="comfortable"
+                  density="compact"
                 />
               </v-col>
             </v-row>
 
-            <div class="text-h6 font-weight-bold mt-6 mb-2">Upload Documents</div>
-            <v-row>
+            <div class="text-subtitle-1 font-weight-bold mt-3 mb-1">Upload Documents</div>
+            <v-row class="tight-grid">
               <v-col cols="12" md="6">
                 <v-file-input
                   v-model="form.files.clearance"
                   label="Barangay Business Clearance"
                   variant="outlined"
-                  density="comfortable"
+                  density="compact"
                   prepend-inner-icon="mdi-paperclip"
                   show-size
                 />
@@ -239,18 +236,17 @@
                   v-model="form.files.votersId"
                   label="Voter’s ID"
                   variant="outlined"
-                  density="comfortable"
+                  density="compact"
                   prepend-inner-icon="mdi-paperclip"
                   show-size
                 />
               </v-col>
-
               <v-col cols="12" md="6">
                 <v-file-input
                   v-model="form.files.cedula"
                   label="Cedula"
                   variant="outlined"
-                  density="comfortable"
+                  density="compact"
                   prepend-inner-icon="mdi-paperclip"
                   show-size
                 />
@@ -260,18 +256,17 @@
                   v-model="form.files.picture"
                   label="2x2 Picture (White background)"
                   variant="outlined"
-                  density="comfortable"
+                  density="compact"
                   prepend-inner-icon="mdi-paperclip"
                   show-size
                 />
               </v-col>
-
               <v-col cols="12" md="6">
                 <v-file-input
                   v-model="form.files.association"
                   label="Association Clearance"
                   variant="outlined"
-                  density="comfortable"
+                  density="compact"
                   prepend-inner-icon="mdi-paperclip"
                   show-size
                 />
@@ -281,7 +276,7 @@
                   v-model="form.files.healthcard"
                   label="Health Card/Yellow Card"
                   variant="outlined"
-                  density="comfortable"
+                  density="compact"
                   prepend-inner-icon="mdi-paperclip"
                   show-size
                 />
@@ -294,7 +289,7 @@
       <v-divider />
 
       <!-- ACTIONS -->
-      <v-card-actions class="px-6 py-4">
+      <v-card-actions class="px-6 py-3">
         <v-btn variant="tonal" color="grey" @click="cancel">Cancel</v-btn>
         <v-spacer />
         <v-btn v-if="step === 2" variant="tonal" color="grey" class="mr-2" @click="step = 1"
@@ -310,10 +305,7 @@
 <script setup>
 import { computed, reactive, watch, ref } from 'vue'
 
-/** v-model for dialog */
-const props = defineProps({
-  modelValue: { type: Boolean, default: false },
-})
+const props = defineProps({ modelValue: { type: Boolean, default: false } })
 const emit = defineEmits(['update:modelValue', 'save'])
 
 const model = computed({
@@ -321,10 +313,8 @@ const model = computed({
   set: (v) => emit('update:modelValue', v),
 })
 
-/** Step control */
 const step = ref(1)
 
-/** Form state */
 const form = reactive({
   // page 1
   lastName: 'Dela Cruz',
@@ -352,7 +342,6 @@ const form = reactive({
   vendEnd: '13:00',
   businessAddress: 'Panganiban Naga City',
 
-  // files
   files: {
     clearance: null,
     votersId: null,
@@ -363,12 +352,9 @@ const form = reactive({
   },
 })
 
-function importSampleData() {
-  // already seeded above to match your mock; this function can pull from OCR/CSV in the future
-}
+function importSampleData() {}
 
 function goNext() {
-  // simple front-end validation for required fields on page 1
   const required = [
     'lastName',
     'firstName',
@@ -385,14 +371,14 @@ function goNext() {
 }
 
 function submit() {
-  // front-end only: emit a compact object back to parent to add to table
+  // keep File objects — no JSON clone
   const newRow = {
     id: form.vendorId,
     name: `${form.firstName} ${form.lastName}`,
     business: form.businessName,
-    collector: 'John Smith', // default; parent can change or show another input
+    collector: 'John Smith',
     status: 'Active',
-    raw: JSON.parse(JSON.stringify(form)), // keep whole payload if parent needs it
+    raw: { ...form, files: { ...form.files } },
   }
   emit('save', newRow)
   model.value = false
@@ -409,7 +395,25 @@ watch(model, (v) => {
 </script>
 
 <style scoped>
-.v-card-title {
+.compact-card .v-card-title {
   background: #f5f5f7;
+  padding: 10px 16px;
+}
+.compact-card .v-card-text {
+  padding: 12px 16px !important;
+}
+.compact-card .v-card-actions {
+  padding-top: 8px !important;
+  padding-bottom: 8px !important;
+}
+
+.tight-grid > .v-col {
+  padding-top: 6px !important;
+  padding-bottom: 6px !important;
+}
+
+:deep(.v-field) {
+  --v-input-padding-top: 4px;
+  --v-input-padding-bottom: 4px;
 }
 </style>
