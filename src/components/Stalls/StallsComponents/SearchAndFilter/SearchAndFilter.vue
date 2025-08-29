@@ -1,181 +1,71 @@
 <template>
-  <div class="search-filter-container">
-    <div class="search-filter-section">
-      <v-row align="center">
-        <!-- Search Bar -->
-        <v-col cols="12" md="6" lg="4">
-          <v-text-field
-            v-model="searchQuery"
-            label="Search Stalls"
-            placeholder="Search by stall number, location, or description..."
-            variant="outlined"
-            clearable
-            hide-details
-            prepend-inner-icon="mdi-magnify"
-            class="search-field"
-          ></v-text-field>
-        </v-col>
+    <div class="search-filter-container">
+        <div class="search-filter-section">
+            <v-row>
+                <!-- Search Bar -->
+                <v-col cols="12" md="6">
+                    <v-text-field v-model="searchQuery" label="Search stalls..." prepend-inner-icon="mdi-magnify"
+                        variant="outlined" clearable hide-details class="search-field"
+                        placeholder="Search by stall number, location, or description"></v-text-field>
+                </v-col>
 
-        <!-- Spacer -->
-        <v-col cols="12" md="4" lg="6" class="d-none d-md-block">
-          <!-- Empty space to push filter to the right -->
-        </v-col>
+                <!-- Toggle Filters Button -->
+                <v-col cols="12" md="6" class="d-flex align-center justify-end">
+                    <v-btn color="primary" variant="outlined" @click="showFilters = !showFilters"
+                        prepend-icon="mdi-filter">
+                        Filters
+                    </v-btn>
+                </v-col>
+            </v-row>
 
-        <!-- Filter Button -->
-        <v-col cols="12" md="2" lg="2" class="text-right">
-          <div class="filter-container" ref="filterContainer">
-            <v-btn
-              variant="outlined"
-              prepend-icon="mdi-filter-variant"
-              @click="toggleFilter"
-              class="filter-btn"
-              :class="{ 'filter-active': showFilterPanel }"
-            >
-              Filters
-              <v-icon
-                :icon="showFilterPanel ? 'mdi-chevron-up' : 'mdi-chevron-down'"
-                size="small"
-                class="ml-1"
-              ></v-icon>
-            </v-btn>
+            <v-expand-transition>
+                <div v-if="showFilters">
+                    <v-row class="mt-2 align-center">
+                        <!-- Floor Filter -->
+                        <v-col cols="6" md="2">
+                            <v-select v-model="selectedFloor" :items="floorOptions" label="Floor" variant="outlined"
+                                clearable hide-details prepend-inner-icon="mdi-floor-plan"></v-select>
+                        </v-col>
 
-            <!-- Filter Dropdown Panel -->
-            <transition name="slide-down">
-              <div v-show="showFilterPanel" class="filter-dropdown">
-                <v-card elevation="8" class="filter-card">
-                  <div class="filter-header">
-                    <div class="d-flex align-center">
-                      <v-icon
-                        icon="mdi-filter-variant"
-                        size="small"
-                        class="mr-2"
-                      ></v-icon>
-                      <span class="filter-title">FILTER OPTIONS</span>
-                    </div>
-                    <v-btn
-                      icon="mdi-close"
-                      variant="text"
-                      size="small"
-                      class="close-btn"
-                      @click="showFilterPanel = false"
-                    ></v-btn>
-                  </div>
+                        <!-- Section Filter -->
+                        <v-col cols="6" md="2">
+                            <v-select v-model="selectedSection" :items="sectionOptions" label="Section"
+                                variant="outlined" clearable hide-details prepend-inner-icon="mdi-store"></v-select>
+                        </v-col>
 
-                  <div class="filter-content">
-                    <!-- Filter Groups in Rows -->
-                    <div class="filter-groups">
-                      <!-- First Row - Floor and Section -->
-                      <div class="filter-row">
-                        <div class="filter-group">
-                          <div class="filter-label">
-                            <v-icon size="small" class="mr-1">mdi-floor-plan</v-icon>
-                            FLOOR
-                          </div>
-                          <v-select
-                            v-model="selectedFloor"
-                            :items="floorOptions"
-                            placeholder="Select floor"
-                            variant="outlined"
-                            clearable
-                            hide-details
-                            class="filter-select"
-                            density="compact"
-                          ></v-select>
-                        </div>
+                        <!-- Location Filter -->
+                        <v-col cols="6" md="2">
+                            <v-select v-model="selectedLocation" :items="locationOptions" label="Location"
+                                variant="outlined" clearable hide-details
+                                prepend-inner-icon="mdi-map-marker"></v-select>
+                        </v-col>
 
-                        <div class="filter-group">
-                          <div class="filter-label">
-                            <v-icon size="small" class="mr-1">mdi-store</v-icon>
-                            SECTION
-                          </div>
-                          <v-select
-                            v-model="selectedSection"
-                            :items="sectionOptions"
-                            placeholder="Select section"
-                            variant="outlined"
-                            clearable
-                            hide-details
-                            class="filter-select"
-                            density="compact"
-                          ></v-select>
-                        </div>
-                      </div>
+                        <!-- Price Type Filter -->
+                        <v-col cols="6" md="2">
+                            <v-select v-model="selectedPriceType" :items="priceTypeOptions" label="Price Type"
+                                variant="outlined" clearable hide-details
+                                prepend-inner-icon="mdi-currency-php"></v-select>
+                        </v-col>
 
-                      <!-- Second Row - Location and Price Type -->
-                      <div class="filter-row">
-                        <div class="filter-group">
-                          <div class="filter-label">
-                            <v-icon size="small" class="mr-1">mdi-map-marker</v-icon>
-                            LOCATION
-                          </div>
-                          <v-select
-                            v-model="selectedLocation"
-                            :items="locationOptions"
-                            placeholder="Select location"
-                            variant="outlined"
-                            clearable
-                            hide-details
-                            class="filter-select"
-                            density="compact"
-                          ></v-select>
-                        </div>
+                        <!-- Clear Filters Button on the side -->
+                        <v-col cols="6" md="2">
+                            <v-btn color="secondary" variant="outlined" @click="clearAllFilters"
+                                prepend-icon="mdi-filter-remove" class="clear-filters-btn">
+                                Clear Filters
+                            </v-btn>
+                        </v-col>
+                    </v-row>
+                </div>
+            </v-expand-transition>
+        </div>
 
-                        <div class="filter-group">
-                          <div class="filter-label">
-                            <v-icon size="small" class="mr-1">mdi-currency-php</v-icon>
-                            PRICE TYPE
-                          </div>
-                          <v-select
-                            v-model="selectedPriceType"
-                            :items="priceTypeOptions"
-                            placeholder="Select price type"
-                            variant="outlined"
-                            clearable
-                            hide-details
-                            class="filter-select"
-                            density="compact"
-                          ></v-select>
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- Action Buttons -->
-                    <div class="filter-actions">
-                      <v-btn
-                        variant="outlined"
-                        color="grey"
-                        class="action-btn clear-btn"
-                        prepend-icon="mdi-filter-remove"
-                        @click="clearAllFilters"
-                      >
-                        Clear Filters
-                      </v-btn>
-                      <v-btn
-                        variant="flat"
-                        color="primary"
-                        class="action-btn apply-btn"
-                        @click="applyFilters"
-                      >
-                        Apply Filters
-                      </v-btn>
-                    </div>
-                  </div>
-                </v-card>
-              </div>
-            </transition>
-          </div>
-        </v-col>
-      </v-row>
+        <!-- Results Info -->
+        <div class="results-info mt-2">
+            <v-chip variant="outlined">
+                {{ resultCount }} stall{{ resultCount !== 1 ? 's' : '' }} found
+            </v-chip>
+        </div>
     </div>
-
-    <!-- Results Info -->
-    <div class="results-info">
-      <v-chip variant="outlined" class="results-chip">
-        <v-icon size="small" class="mr-1">mdi-store</v-icon>
-        {{ resultCount }} stall{{ resultCount !== 1 ? "s" : "" }} found
-      </v-chip>
-    </div>
-  </div>
 </template>
 
 <script src="../SearchAndFilter/SearchAndFilter.js"></script>

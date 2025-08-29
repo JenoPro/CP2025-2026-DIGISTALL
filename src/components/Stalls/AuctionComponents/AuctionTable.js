@@ -1,5 +1,10 @@
+import AuctionRecords from '../AuctionRecordComponent/AuctionRecords.vue';
+
 export default {
   name: 'AuctionTable',
+  components: {
+    AuctionRecords
+  },
   props: {
     stall: {
       type: Object,
@@ -8,6 +13,7 @@ export default {
   },
   data() {
     return {
+      showAuctionRecords: false,
       headers: [
         { title: 'ID', key: 'id' },
         { title: 'Full Name', key: 'fullName' },
@@ -122,5 +128,8 @@ export default {
     closeAuction() {
       this.$emit('close-auction')
     },
+    viewAuctionRecords() {
+      this.showAuctionRecords = true;
+    }
   },
 }
