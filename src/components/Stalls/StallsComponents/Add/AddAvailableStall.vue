@@ -23,9 +23,9 @@
 
                             <!-- Price -->
                             <v-col cols="12" sm="6">
-                                <v-text-field v-model="newStall.price" :rules="[rules.required]" label="Price"
-                                    placeholder="e.g., 1,500 Php / Raffle" prepend-icon="mdi-currency-php" outlined
-                                    dense persistent-hint hint="Include currency and type (Raffle/Auction)" />
+                                <v-text-field v-model="newStall.price" :rules="[rules.required, rules.priceNumber]" label="Price"
+                                    placeholder="e.g., 1,500" prepend-icon="mdi-currency-php" outlined
+                                    dense persistent-hint hint="Enter price amount only (type will be added automatically)" />
                             </v-col>
 
                             <!-- Floor -->

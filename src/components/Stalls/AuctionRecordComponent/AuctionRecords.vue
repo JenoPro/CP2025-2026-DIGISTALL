@@ -27,7 +27,6 @@
                     >
                         <template v-slot:item="{ props, item }">
                             <v-list-item v-bind="props">
-                                <v-list-item-title>{{ item.raw.stallNumber }}</v-list-item-title>
                                 <v-list-item-subtitle>{{ item.raw.location }}</v-list-item-subtitle>
                             </v-list-item>
                         </template>
