@@ -10,13 +10,49 @@
             </v-card-title>
 
             <v-card-text>
-                <v-tabs v-model="activeTab">
-                    <v-tab value="winners">Winners</v-tab>
-                    <v-tab value="losers">Non-Winners</v-tab>
-                    <v-tab value="all">All Participants</v-tab>
-                </v-tabs>
+                <!-- Stall Selector -->
+                <div class="stall-selector mb-4">
+                    <v-select
+                        v-model="selectedStallId"
+                        :items="availableStalls"
+                        item-title="stallNumber"
+                        item-value="id"
+                        label="Select Stall"
+                        placeholder="Choose a stall to view auction records"
+                        variant="outlined"
+                        density="comfortable"
+                        prepend-inner-icon="mdi-store"
+                        clearable
+                        class="stall-dropdown"
+                    >
+                        <template v-slot:item="{ props, item }">
+                            <v-list-item v-bind="props">
+                                <v-list-item-title>{{ item.raw.stallNumber }}</v-list-item-title>
+                                <v-list-item-subtitle>{{ item.raw.location }}</v-list-item-subtitle>
+                            </v-list-item>
+                        </template>
+                    </v-select>
+                </div>
 
-                <v-window v-model="activeTab">
+                <!-- Show message when no stall is selected -->
+                <v-alert
+                    v-if="!selectedStallId"
+                    type="info"
+                    variant="tonal"
+                    class="mb-4"
+                >
+                    Please select a stall to view auction records.
+                </v-alert>
+
+                <!-- Show tabs and data only when stall is selected -->
+                <div v-if="selectedStallId">
+                    <v-tabs v-model="activeTab">
+                        <v-tab value="winners">Winners</v-tab>
+                        <v-tab value="losers">Non-Winners</v-tab>
+                        <v-tab value="all">All Participants</v-tab>
+                    </v-tabs>
+
+                    <v-window v-model="activeTab">
                     <!-- Winners Tab -->
                     <v-window-item value="winners">
                         <v-data-table :headers="headers" :items="filteredWinners" class="mt-4" density="compact"
@@ -72,6 +108,7 @@
                         </v-data-table>
                     </v-window-item>
                 </v-window>
+                </div>
             </v-card-text>
         </v-card>
     </v-dialog>

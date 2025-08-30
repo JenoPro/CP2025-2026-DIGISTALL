@@ -24,6 +24,32 @@
   font-size: 1.2rem;
 }
 
+/* Stall Selector styling */
+.stall-selector {
+  padding: 16px 24px 0;
+  background: #f8f9fa;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.stall-dropdown {
+  max-width: 400px;
+}
+
+.stall-dropdown .v-field {
+  border-radius: 8px;
+  background: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.stall-dropdown .v-field--focused {
+  box-shadow: 0 4px 8px rgba(0, 33, 129, 0.1);
+}
+
+.v-alert {
+  margin: 0 24px;
+  border-radius: 8px;
+}
+
 /* Tabs styling */
 .v-tabs {
   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);

@@ -6,7 +6,8 @@
       <v-row>
         <v-col cols="12">
           <!-- Search Filter Component -->
-          <SearchFilter :stallsData="stallsData" @filtered-stalls="handleFilteredStalls" />
+          <SearchFilter :stallsData="stallsData" @filtered-stalls="handleFilteredStalls"
+            @show-auction-records="showGeneralAuctionRecords = true" />
 
           <!-- Card Stalls Component -->
           <CardStallsComponent :stalls="displayStalls" @stall-edit="handleStallEdit" @stall-auction="handleStallAuction"
@@ -51,6 +52,9 @@
           </v-card-text>
         </v-card>
       </v-dialog>
+
+      <!-- General Auction Records Modal -->
+      <AuctionRecords v-if="showGeneralAuctionRecords" @close="showGeneralAuctionRecords = false" />
     </v-main>
 
     <!-- Success/Error Snackbar -->

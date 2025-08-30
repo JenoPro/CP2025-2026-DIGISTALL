@@ -4,6 +4,7 @@ import AddAvailableStall from '../Stalls/StallsComponents/Add/AddAvailableStall.
 import EditStall from '../Stalls/StallsComponents/Edit/EditStall.vue'
 
 import AuctionTable from '../Stalls/AuctionComponents/AuctionTable.vue' // New import for AuctionTable 28/08/25
+import AuctionRecords from '../Stalls/AuctionRecordComponent/AuctionRecords.vue' // Import for general auction records 30/08/25
 
 export default {
   name: 'Stalls',
@@ -13,6 +14,7 @@ export default {
     AddAvailableStall,
     EditStall,
     AuctionTable,
+    AuctionRecords,
   },
   data() {
     return {
@@ -20,6 +22,7 @@ export default {
       showModal: false,
       showEditModal: false,
       showAuctionModal: false,
+      showGeneralAuctionRecords: false,
       selectedStall: {},
       stallsData: [
         {
@@ -92,13 +95,66 @@ export default {
           id: 6,
           stallNumber: 'STALL# 06',
           price: '2,000 Php Min. / Auction',
-          floor: '1st Floor',
+          floor: '3rd Floor',
           section: 'Fresh Produce',
           dimensions: '3x4 meters',
           location: 'Satellite Market',
           description:
             'Large corner stall with water access and drainage. Ideal for vegetable and fruit vendors with washing facilities.',
           image: 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=400',
+          isAvailable: true,
+        },
+        {
+          id: 7,
+          stallNumber: 'STALL# 07',
+          price: '1,500 Php Min. / Auction',
+          floor: '1st Floor',
+          section: 'Dry Goods',
+          dimensions: '2x3 meters',
+          location: 'Satellite Market',
+          description:
+            'Compact stall suited for clothing, accessories, or household goods. High foot traffic area near main entrance.',
+          image: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=400',
+          isAvailable: true,
+        },
+        {
+          id: 8,
+          stallNumber: 'STALL# 08',
+          price: '4,800 Php / Raffle',
+          floor: '2nd Floor',
+          section: 'Food Court',
+          dimensions: '4x5 meters',
+          location: "Naga City People's Mall",
+          description:
+            'Spacious stall with ventilation, ideal for prepared meals or snacks. Close to seating area.',
+          image: 'https://images.unsplash.com/photo-1528605248644-14dd04022da1?w=400', // food court vibe
+          isAvailable: true,
+        },
+        {
+          id: 9,
+          stallNumber: 'STALL# 09',
+          price: '2,000 Php / Raffle',
+          floor: '1st Floor',
+          section: 'Meat Section',
+          dimensions: '3x3 meters',
+          location: "Naga City People's Mall",
+          description:
+            'Equipped with tiled flooring and drainage. Designed for meat vendors requiring sanitary conditions.',
+          image:
+            'https://img.freepik.com/premium-photo/rustic-market-stall-with-traditional-red-white-striped-canopy_795881-15044.jpg?w=2000',
+          isAvailable: true,
+        },
+        {
+          id: 10,
+          stallNumber: 'STALL# 10',
+          price: '1,800 Php Min. / Auction',
+          floor: '3rd Floor',
+          section: 'Storage / Supplies',
+          dimensions: '3x4 meters',
+          location: 'Satellite Market',
+          description:
+            'Affordable stall suitable for wholesale supplies or storage use. Accessible by service entrance.',
+          image: 'https://images.unsplash.com/photo-1578916171728-46686eac8d58?w=400',
           isAvailable: true,
         },
       ],

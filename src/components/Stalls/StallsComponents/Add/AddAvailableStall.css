@@ -97,23 +97,62 @@
   100% { transform: scale(2.5); opacity: 0; }
 }
 
-/* Placeholder styling */
+/* Placeholder text with better contrast */
 .v-input input::placeholder,
 .v-input textarea::placeholder {
-  color: rgba(0, 0, 0, 0.874) !important;
-  font-style: italic;
-}
-
-/* Helper / hint text */
-.v-messages__message {
-  font-size: 12.5px !important;
-  opacity: 0.85 !important;
-}
-
-/* Switch label */
-.v-input--switch .v-label {
+  color: #6c757d !important;
+  font-style: normal !important;
   font-weight: 500 !important;
-  color: rgba(0, 0, 0, 0.8) !important;
+  font-size: 15px !important;
+  opacity: 1 !important;
+}
+
+/* Helper / hint text with improved readability */
+.v-messages__message {
+  font-size: 14px !important;
+  color: #495057 !important;
+  font-weight: 500 !important;
+  opacity: 1 !important;
+  margin-top: 4px !important;
+}
+
+/* Switch improvements for better visibility */
+.v-input--switch {
+  padding: 16px 0 !important;
+}
+
+.v-input--switch .v-selection-control {
+  min-height: 48px !important;
+}
+
+.v-input--switch .v-label {
+  font-weight: 600 !important;
+  color: #212529 !important;
+  font-size: 16px !important;
+  opacity: 1 !important;
+}
+
+/* Switch thumb and track styling */
+.v-input--switch .v-selection-control__input {
+  width: 64px !important;
+  height: 32px !important;
+}
+
+.v-input--switch .v-switch__thumb {
+  width: 28px !important;
+  height: 28px !important;
+}
+
+.v-input--switch .v-switch__track {
+  height: 32px !important;
+  border-radius: 16px !important;
+}
+
+/* Form validation messages */
+.v-messages--error .v-messages__message {
+  color: #dc3545 !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
 }
 
 /* Card text (inside modal body) */
@@ -161,25 +200,193 @@
   transform: translateY(-2px);
 }
 
-/*Mobile Responsive FAB*/
+/*Enhanced Form Field Visibility for Better Accessibility*/
+.v-text-field,
+.v-select,
+.v-textarea,
+.v-file-input {
+  margin-bottom: 8px !important;
+}
+
+/* Input field containers with better visibility */
+.v-text-field .v-field,
+.v-select .v-field,
+.v-textarea .v-field,
+.v-file-input .v-field {
+  background: #f8f9fa !important;
+  border: 2px solid #dee2e6 !important;
+  border-radius: 8px !important;
+  font-size: 16px !important;
+  min-height: 56px !important;
+  transition: all 0.3s ease !important;
+}
+
+/* Focused state with high contrast */
+.v-text-field .v-field--focused,
+.v-select .v-field--focused,
+.v-textarea .v-field--focused,
+.v-file-input .v-field--focused {
+  background: #ffffff !important;
+  border-color: #002181 !important;
+  box-shadow: 0 0 0 3px rgba(0, 33, 129, 0.15) !important;
+}
+
+/* Input text styling for better readability */
+.v-text-field input,
+.v-select input,
+.v-textarea textarea,
+.v-file-input input {
+  color: #212529 !important;
+  font-size: 16px !important;
+  font-weight: 500 !important;
+  line-height: 1.5 !important;
+  padding: 12px 16px !important;
+}
+
+/* Label styling with better contrast */
+.v-text-field .v-field-label,
+.v-select .v-field-label,
+.v-textarea .v-field-label,
+.v-file-input .v-field-label {
+  color: #495057 !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  background: transparent !important;
+}
+
+/* Focused label state */
+.v-text-field .v-field--focused .v-field-label,
+.v-select .v-field--focused .v-field-label,
+.v-textarea .v-field--focused .v-field-label,
+.v-file-input .v-field--focused .v-field-label {
+  color: #002181 !important;
+  font-weight: 700 !important;
+}
+
+/* Prepend icons with better visibility */
+.v-text-field .v-field__prepend-inner,
+.v-select .v-field__prepend-inner,
+.v-textarea .v-field__prepend-inner,
+.v-file-input .v-field__prepend-inner {
+  padding-left: 12px !important;
+}
+
+.v-text-field .v-field__prepend-inner .v-icon,
+.v-select .v-field__prepend-inner .v-icon,
+.v-textarea .v-field__prepend-inner .v-icon,
+.v-file-input .v-field__prepend-inner .v-icon {
+  color: #6c757d !important;
+  font-size: 20px !important;
+}
+
+/* Focused prepend icon */
+.v-text-field .v-field--focused .v-field__prepend-inner .v-icon,
+.v-select .v-field--focused .v-field__prepend-inner .v-icon,
+.v-textarea .v-field--focused .v-field__prepend-inner .v-icon,
+.v-file-input .v-field--focused .v-field__prepend-inner .v-icon {
+  color: #002181 !important;
+}
+
+/* Enhanced textarea specific styling */
+.v-textarea .v-field {
+  min-height: 120px !important;
+}
+
+.v-textarea textarea {
+  padding: 16px !important;
+  font-size: 16px !important;
+  line-height: 1.6 !important;
+}
+
+/* Select dropdown improvements */
+.v-select .v-field__append-inner .v-icon {
+  color: #6c757d !important;
+  font-size: 20px !important;
+}
+
+.v-select .v-field--focused .v-field__append-inner .v-icon {
+  color: #002181 !important;
+}
+
+/* File input enhancements */
+.v-file-input .v-field__input {
+  padding: 12px 16px !important;
+}
+
+/* Error state styling */
+.v-text-field.v-input--error .v-field,
+.v-select.v-input--error .v-field,
+.v-textarea.v-input--error .v-field,
+.v-file-input.v-input--error .v-field {
+  border-color: #dc3545 !important;
+  background: #fef2f2 !important;
+}
+
+/* Success/valid state */
+.v-text-field.v-input--valid .v-field,
+.v-select.v-input--valid .v-field,
+.v-textarea.v-input--valid .v-field,
+.v-file-input.v-input--valid .v-field {
+  border-color: #28a745 !important;
+}
+
+/* Mobile responsive form enhancements */
 @media (max-width: 600px) {
-  .add-stall-btn {
-    width: 52px !important;
-    height: 52px !important;
-    font-size: 22px !important;
-    bottom: 16px !important;
-    right: 16px !important;
+  .v-text-field .v-field,
+  .v-select .v-field,
+  .v-textarea .v-field,
+  .v-file-input .v-field {
+    min-height: 60px !important;
+    font-size: 18px !important;
   }
 
-  .pulse-rings {
-    width: 52px;
-    height: 52px;
-    bottom: 16px;
-    right: 16px;
+  .v-text-field input,
+  .v-select input,
+  .v-textarea textarea,
+  .v-file-input input {
+    font-size: 18px !important;
+    padding: 14px 18px !important;
   }
 
-  .pulse-ring {
-    width: 52px;
-    height: 52px;
+  .v-text-field .v-field-label,
+  .v-select .v-field-label,
+  .v-textarea .v-field-label,
+  .v-file-input .v-field-label {
+    font-size: 16px !important;
+  }
+
+  .v-messages__message {
+    font-size: 15px !important;
+  }
+
+  .v-input--switch .v-label {
+    font-size: 18px !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .v-text-field .v-field,
+  .v-select .v-field,
+  .v-textarea .v-field,
+  .v-file-input .v-field {
+    border-width: 3px !important;
+    background: #ffffff !important;
+  }
+
+  .v-text-field input,
+  .v-select input,
+  .v-textarea textarea,
+  .v-file-input input {
+    color: #000000 !important;
+    font-weight: 600 !important;
+  }
+
+  .v-text-field .v-field-label,
+  .v-select .v-field-label,
+  .v-textarea .v-field-label,
+  .v-file-input .v-field-label {
+    color: #000000 !important;
+    font-weight: 700 !important;
   }
 }
