@@ -1,3 +1,5 @@
+import axios from 'axios'
+
 export default {
   name: 'LoginPage',
   data() {
@@ -6,7 +8,8 @@ export default {
       loading: false,
       username: '',
       password: '',
-      errorMessage: '', // Add error message state
+      showPassword: false, // Added for password visibility toggle
+      errorMessage: '',
       usernameRules: [
         (v) => !!v || 'Username is required',
         (v) => (v && v.length >= 3) || 'Username must be at least 3 characters',
@@ -33,69 +36,76 @@ export default {
       this.loading = true
 
       try {
-        // Simulate API call
-        await this.simulateLogin()
-
-        // Store the username in localStorage for use across components
-        localStorage.setItem('currentUser', this.username);
-        
-        // If you're using Vuex store, you can also commit the username
-        if (this.$store && this.$store.commit) {
-          this.$store.commit('auth/setUser', {
-            username: this.username,
-            // Add other user data as needed
-          });
-        }
-
-        // Handle successful login
-        this.$router.push('/dashboard') // Navigate to dashboard
-
-        // Or you can emit an event to parent component
-        this.$emit('login-success', {
+        // Call backend API
+        const response = await axios.post('http://localhost:3001/api/admin', {
           username: this.username,
+          password: this.password,
         })
+
+        if (response.data.success) {
+          // Store the token and user data
+          const { token, user } = response.data.data
+
+          // Store in sessionStorage for security
+          sessionStorage.setItem('authToken', token)
+          sessionStorage.setItem('currentUser', JSON.stringify(user))
+
+          // If you're using Vuex store, commit the user data
+          if (this.$store && this.$store.commit) {
+            this.$store.commit('auth/setUser', user)
+            this.$store.commit('auth/setToken', token)
+          }
+
+          // Set axios default authorization header for future requests
+          axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
+
+          // Show success message
+          console.log('Login successful!', user)
+
+          // Handle successful login
+          this.$router.push('/dashboard')
+
+          // Emit success event to parent component
+          this.$emit('login-success', {
+            user: user,
+            token: token,
+          })
+        }
       } catch (error) {
         // Handle different types of errors
-        if (error.message === 'Invalid credentials') {
-          this.showErrorMessage('Invalid username or password. Please try again.')
-        } else if (error.message === 'Network error') {
-          this.showErrorMessage('Unable to connect to server. Please check your internet connection.')
-        } else if (error.message === 'Server error') {
-          this.showErrorMessage('Server is currently unavailable. Please try again later.')
+        if (error.response) {
+          // Server responded with error status
+          const { status, data } = error.response
+
+          if (status === 401) {
+            this.showErrorMessage(data.message || 'Invalid username or password.')
+          } else if (status === 400) {
+            this.showErrorMessage(data.message || 'Please check your input.')
+          } else if (status >= 500) {
+            this.showErrorMessage('Server error. Please try again later.')
+          } else {
+            this.showErrorMessage(data.message || 'Login failed. Please try again.')
+          }
+        } else if (error.request) {
+          // Network error
+          this.showErrorMessage(
+            'Unable to connect to server. Please check your internet connection.',
+          )
         } else {
-          this.showErrorMessage('Login failed. Please try again.')
+          // Other error
+          this.showErrorMessage('An unexpected error occurred. Please try again.')
         }
-        
+
         console.error('Login failed:', error)
       } finally {
         this.loading = false
       }
     },
 
-    async simulateLogin() {
-      // Simulate API delay
-      return new Promise((resolve, reject) => {
-        setTimeout(() => {
-          // Updated credentials: admin / admin123
-          if (this.username === 'admin' && this.password === 'admin123') {
-            resolve({ success: true })
-          } else if (this.username === 'network-error') {
-            // Simulate network error for testing
-            reject(new Error('Network error'))
-          } else if (this.username === 'server-error') {
-            // Simulate server error for testing
-            reject(new Error('Server error'))
-          } else {
-            reject(new Error('Invalid credentials'))
-          }
-        }, 1500)
-      })
-    },
-
-    handleForgotPassword() {
+    async handleForgotPassword() {
       // Clear error message when navigating away
       this.clearError()
-      
+
       // Handle forgot password logic
       console.log('Forgot password clicked')
 
@@ -108,12 +118,12 @@ export default {
 
     showErrorMessage(message) {
       this.errorMessage = message
-      
+
       // Auto-clear error message after 5 seconds
       setTimeout(() => {
         this.clearError()
       }, 5000)
-      
+
       // You can also emit event to parent if needed
       this.$emit('show-error', message)
     },
@@ -125,8 +135,13 @@ export default {
     resetForm() {
       this.username = ''
       this.password = ''
+      this.showPassword = false
       this.clearError()
       this.$refs.loginForm.resetValidation()
+    },
+
+    togglePasswordVisibility() {
+      this.showPassword = !this.showPassword
     },
   },
 
@@ -141,14 +156,17 @@ export default {
       if (this.errorMessage) {
         this.clearError()
       }
-    }
+    },
   },
 
   mounted() {
     // Clear any existing user data when login page is mounted
-    localStorage.removeItem('currentUser');
-    localStorage.removeItem('authToken');
-    
+    sessionStorage.removeItem('currentUser')
+    sessionStorage.removeItem('authToken')
+
+    // Remove axios default authorization header
+    delete axios.defaults.headers.common['Authorization']
+
     // Any initialization logic when component is mounted
     console.log('Login page mounted')
   },

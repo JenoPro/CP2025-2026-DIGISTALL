@@ -35,6 +35,16 @@
   line-height: 1.5;
 }
 
+/* Table Styles */
+.vendors-table :deep(thead tr) {
+  background: #0e2e6f;
+}
+
+.vendors-table :deep(thead th) {
+  color: #fff;
+  font-weight: 700;
+}
+
 /* Custom scrollbar for main content */
 .main-content::-webkit-scrollbar {
   width: 6px;
@@ -51,6 +61,17 @@
 
 .main-content::-webkit-scrollbar-thumb:hover {
   background: #a8a8a8;
+}
+
+/* Utilities */
+.text-md-right {
+  text-align: right;
+}
+
+@media (max-width: 959px) {
+  .text-md-right {
+    text-align: left;
+  }
 }
 
 /* Responsive Design */

@@ -34,11 +34,13 @@
               <v-text-field
                 v-model="password"
                 label="Password"
-                type="password"
+                :type="showPassword ? 'text' : 'password'"
                 :rules="passwordRules"
                 variant="outlined"
                 class="mb-4"
                 required
+                :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                @click:append-inner="togglePasswordVisibility"
               ></v-text-field>
 
               <v-btn

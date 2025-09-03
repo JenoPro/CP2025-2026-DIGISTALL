@@ -169,12 +169,15 @@
     </div>
 
     <!-- Results Info -->
-    <div class="results-info">
-      <v-chip variant="outlined" class="results-chip">
-        <v-icon size="small" class="mr-1">mdi-store</v-icon>
-        {{ resultCount }} stall{{ resultCount !== 1 ? "s" : "" }} found
-      </v-chip>
-    </div>
+        <div class="results-info mt-4 d-flex justify-space-between align-center">
+            <v-chip variant="outlined" class="results-chip">
+                {{ resultCount }} stall{{ resultCount !== 1 ? 's' : '' }} found
+            </v-chip>
+            <v-btn color="info" variant="outlined" size="small" prepend-icon="mdi-history"
+                @click="$emit('show-auction-records')">
+                View All Auction Records
+            </v-btn>
+        </div>
   </div>
 </template>
 

@@ -258,6 +258,19 @@
   transform: translateY(0) scale(1);
 }
 
+/* Results info */
+.results-info {
+  padding: 16px 0 0;
+  border-top: 1px solid #f3f4f6;
+}
+
+.results-chip {
+  background: #f8f9fa;
+  color: #374151;
+  font-weight: 500;
+  border: 1px solid #e9ecef;
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
   .search-filter-section {

@@ -27,19 +27,44 @@
         >
           <div class="popup-arrow"></div>
           <div class="popup-content">
-            <div class="profile-info" @click="handleProfileClick">
+            <!-- Loading state -->
+            <div v-if="loading" class="profile-loading">
+              <v-progress-circular
+                indeterminate
+                size="20"
+                color="primary"
+              ></v-progress-circular>
+              <span class="ml-2">Loading profile...</span>
+            </div>
+
+            <!-- Error state -->
+            <div v-else-if="error" class="profile-error">
+              <v-icon color="error" class="mr-2">mdi-alert</v-icon>
+              <span>{{ error }}</span>
+            </div>
+
+            <!-- Profile info -->
+            <div v-else class="profile-info" @click="handleProfileClick">
               <v-icon class="profile-icon">mdi-account</v-icon>
               <div class="profile-details">
-                <div class="profile-name">{{ currentUsername || "User" }}</div>
-                <div class="profile-role">Designation</div>
+                <!-- Username from database -->
+                <div class="profile-name">{{ displayUsername }}</div>
+                <!-- First name + Last name as designation -->
+                <div class="profile-role">{{ displayDesignation }}</div>
               </div>
             </div>
+
             <div class="popup-divider"></div>
+
+            <!-- Menu items -->
             <div class="popup-item" @click="handleSettingsClick">
               <v-icon class="item-icon">mdi-cog</v-icon>
               <span>Settings</span>
             </div>
-            <div class="popup-item" @click="handleLogoutClick">
+
+            <div class="popup-divider"></div>
+
+            <div class="popup-item logout-item" @click="handleLogoutClick">
               <v-icon class="item-icon">mdi-logout</v-icon>
               <span>Logout</span>
             </div>

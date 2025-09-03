@@ -3,12 +3,6 @@
   padding-left: 0 !important;
 }
 
-.main-wrapper {
-  margin-left: 80px;
-  transition: none;
-  min-height: 100vh;
-}
-
 .main-content {
   background-color: #fafafa;
   min-height: calc(100vh - 64px);
@@ -65,6 +59,22 @@
   width: 80%;
   max-height: 90vh;
   height: 80vh;
+}
+
+.empty-state {
+  margin: 2rem 0;
+}
+
+.refresh-btn {
+  margin-bottom: 80px; /* Space above the add button */
+}
+
+.v-overlay {
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+.v-overlay .v-progress-circular {
+  margin-bottom: 1rem;
 }
 
 /* Responsive Design */
