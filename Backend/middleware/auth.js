@@ -14,17 +14,21 @@ const authenticateToken = (req, res, next) => {
     })
   }
 
-  verify(token, process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-this-in-production', (err, user) => {
-    if (err) {
-      return res.status(403).json({
-        success: false,
-        message: 'Invalid or expired token',
-      })
-    }
+  verify(
+    token,
+    process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-this-in-production',
+    (err, user) => {
+      if (err) {
+        return res.status(403).json({
+          success: false,
+          message: 'Invalid or expired token',
+        })
+      }
 
-    req.user = user
-    next()
-  })
+      req.user = user
+      next()
+    },
+  )
 }
 
 const authorizeRole = (...roles) => {

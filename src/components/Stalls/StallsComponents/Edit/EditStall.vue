@@ -28,98 +28,40 @@
             <!-- Left Column -->
             <v-col cols="12" md="6">
               <!-- Stall Number -->
-              <v-text-field
-                v-model="editForm.stallNumber"
-                label="Stall Number"
-                :rules="rules.stallNumber"
-                required
-                variant="outlined"
-                prepend-inner-icon="mdi-numeric"
-              ></v-text-field>
+              <v-text-field v-model="editForm.stallNumber" label="Stall Number" :rules="rules.stallNumber" required
+                variant="outlined" prepend-inner-icon="mdi-numeric"></v-text-field>
 
               <!-- Price -->
-              <v-text-field
-                v-model="editForm.price"
-                label="Price"
-                :rules="rules.price"
-                required
-                variant="outlined"
-                prepend-inner-icon="mdi-currency-php"
-                placeholder="1,500 Php / Raffle"
-              ></v-text-field>
+              <v-text-field v-model="editForm.price" label="Price" :rules="rules.price" required variant="outlined"
+                prepend-inner-icon="mdi-currency-php" placeholder="1,500 Php / Raffle"></v-text-field>
 
               <!-- Floor -->
-              <v-select
-                v-model="editForm.floor"
-                label="Floor"
-                :items="getFloorOptions()"
-                :rules="rules.floor"
-                required
-                variant="outlined"
-                prepend-inner-icon="mdi-floor-plan"
-              ></v-select>
+              <v-select v-model="editForm.floor" label="Floor" :items="getFloorOptions()" :rules="rules.floor" required
+                variant="outlined" prepend-inner-icon="mdi-floor-plan"></v-select>
 
               <!-- Section -->
-              <v-select
-                v-model="editForm.section"
-                label="Section"
-                :items="getSectionOptions()"
-                :rules="rules.section"
-                required
-                variant="outlined"
-                prepend-inner-icon="mdi-store"
-              ></v-select>
+              <v-select v-model="editForm.section" label="Section" :items="getSectionOptions()" :rules="rules.section"
+                required variant="outlined" prepend-inner-icon="mdi-store"></v-select>
 
               <!-- Dimensions -->
-              <v-text-field
-                v-model="editForm.dimensions"
-                label="Dimensions"
-                :rules="rules.dimensions"
-                required
-                variant="outlined"
-                prepend-inner-icon="mdi-ruler"
-                placeholder="3x3 meters"
-              ></v-text-field>
+              <v-text-field v-model="editForm.dimensions" label="Dimensions" :rules="rules.dimensions" required
+                variant="outlined" prepend-inner-icon="mdi-ruler" placeholder="3x3 meters"></v-text-field>
             </v-col>
 
             <!-- Right Column -->
             <v-col cols="12" md="6">
               <!-- Location -->
-              <v-select
-                v-model="editForm.location"
-                label="Location"
-                :items="getLocationOptions()"
-                :rules="rules.location"
-                required
-                variant="outlined"
-                prepend-inner-icon="mdi-map-marker"
-              ></v-select>
+              <v-select v-model="editForm.location" label="Location" :items="getLocationOptions()"
+                :rules="rules.location" required variant="outlined" prepend-inner-icon="mdi-map-marker"></v-select>
 
               <!-- Description -->
-              <v-textarea
-                v-model="editForm.description"
-                label="Description"
-                :rules="rules.description"
-                required
-                variant="outlined"
-                prepend-inner-icon="mdi-text"
-                rows="3"
-                counter="200"
-                maxlength="200"
-              ></v-textarea>
+              <v-textarea v-model="editForm.description" label="Description" :rules="rules.description" required
+                variant="outlined" prepend-inner-icon="mdi-text" rows="3" counter="200" maxlength="200"></v-textarea>
 
               <!-- Image Upload -->
-              <v-file-input
-                v-model="selectedImageFile"
-                label="Upload Stall Image"
-                variant="outlined"
-                prepend-inner-icon="mdi-camera"
-                accept="image/*"
-                @change="handleImageUpload"
-                :rules="imageRules"
-                show-size
-                counter
-              >
+              <v-file-input v-model="selectedImageFile" label="Upload Stall Image" variant="outlined"
+                prepend-inner-icon="mdi-camera" accept="image/*" @change="handleImageUpload" :rules="imageRules"
+                show-size counter>
                 <template v-slot:selection="{ fileNames }">
                   <template v-for="fileName in fileNames" :key="fileName">
                     <v-chip size="small" color="primary" class="me-2">
@@ -135,10 +77,7 @@
                   <v-img :src="imagePreview" height="150" cover class="rounded">
                     <template v-slot:placeholder>
                       <div class="d-flex align-center justify-center fill-height">
-                        <v-progress-circular
-                          color="grey-lighten-4"
-                          indeterminate
-                        ></v-progress-circular>
+                        <v-progress-circular color="grey-lighten-4" indeterminate></v-progress-circular>
                       </div>
                     </template>
                     <template v-slot:error>
@@ -166,10 +105,7 @@
                   <v-img :src="editForm.image" height="150" cover class="rounded">
                     <template v-slot:placeholder>
                       <div class="d-flex align-center justify-center fill-height">
-                        <v-progress-circular
-                          color="grey-lighten-4"
-                          indeterminate
-                        ></v-progress-circular>
+                        <v-progress-circular color="grey-lighten-4" indeterminate></v-progress-circular>
                       </div>
                     </template>
                     <template v-slot:error>
@@ -185,13 +121,8 @@
               </div>
 
               <!-- Availability Toggle -->
-              <v-switch
-                v-model="editForm.isAvailable"
-                label="Available for Rent"
-                color="success"
-                inset
-                class="mt-3"
-              ></v-switch>
+              <v-switch v-model="editForm.isAvailable" label="Available for Rent" color="success" inset
+                class="mt-3"></v-switch>
             </v-col>
           </v-row>
         </v-form>
@@ -209,22 +140,11 @@
         <v-spacer></v-spacer>
 
         <!-- Cancel and Save Buttons (Right Side) -->
-        <v-btn
-          variant="text"
-          color="grey-darken-1"
-          @click="handleClose"
-          :disabled="loading"
-        >
+        <v-btn variant="text" color="grey-darken-1" @click="handleClose" :disabled="loading">
           Cancel
         </v-btn>
 
-        <v-btn
-          color="primary"
-          variant="elevated"
-          @click="handleSave"
-          :loading="loading"
-          class="ml-2"
-        >
+        <v-btn color="primary" variant="elevated" @click="handleSave" :loading="loading" class="ml-2">
           <v-icon left>mdi-content-save</v-icon>
           Update Stall
         </v-btn>
@@ -242,8 +162,7 @@
 
         <v-card-text class="py-4">
           <p class="text-body-1 mb-3">
-            Are you sure you want to delete <strong>{{ editForm.stallNumber }}</strong
-            >?
+            Are you sure you want to delete <strong>{{ editForm.stallNumber }}</strong>?
           </p>
 
           <v-alert color="error" variant="tonal" density="compact" class="text-caption">
@@ -255,22 +174,11 @@
         <v-card-actions class="pa-4">
           <v-spacer></v-spacer>
 
-          <v-btn
-            variant="text"
-            color="grey-darken-1"
-            @click="cancelDelete"
-            :disabled="deleteLoading"
-          >
+          <v-btn variant="text" color="grey-darken-1" @click="cancelDelete" :disabled="deleteLoading">
             Cancel
           </v-btn>
 
-          <v-btn
-            color="error"
-            variant="elevated"
-            @click="confirmDelete"
-            :loading="deleteLoading"
-            class="ml-2"
-          >
+          <v-btn color="error" variant="elevated" @click="confirmDelete" :loading="deleteLoading" class="ml-2">
             <v-icon left>mdi-delete</v-icon>
             Delete
           </v-btn>
@@ -282,6 +190,39 @@
     <v-overlay v-if="loading" class="align-center justify-center">
       <v-progress-circular indeterminate size="64" color="primary"></v-progress-circular>
     </v-overlay>
+  </v-dialog>
+
+  <!-- Success Popup Modal -->
+  <v-dialog v-model="showSuccessPopup" max-width="400px" persistent>
+    <v-card class="success-popup-card">
+      <div class="popup-content">
+        <!-- Close Button -->
+        <v-btn icon class="close-btn" @click="closeSuccessPopup">
+          <v-icon color="white">mdi-close</v-icon>
+        </v-btn>
+
+        <!-- Loading State -->
+        <div v-if="popupState === 'loading'" class="popup-state">
+          <div class="loading-spinner">
+            <div class="spinner-ring"></div>
+            <div class="spinner-ring"></div>
+            <div class="spinner-ring"></div>
+          </div>
+          <p class="popup-text">Processing...</p>
+        </div>
+
+        <!-- Success State -->
+        <div v-else-if="popupState === 'success'" class="popup-state">
+          <div class="success-icon">
+            <div class="checkmark-circle">
+              <div class="checkmark"></div>
+            </div>
+          </div>
+          <h3 class="success-title">Success!</h3>
+          <p class="popup-text">{{ successMessage }}</p>
+        </div>
+      </div>
+    </v-card>
   </v-dialog>
 </template>
 

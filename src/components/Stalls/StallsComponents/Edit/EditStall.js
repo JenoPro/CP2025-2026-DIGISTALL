@@ -20,6 +20,10 @@ export default {
       deleteLoading: false,
       valid: false,
       loading: false,
+      showSuccessPopup: false,
+      popupState: 'loading', // 'loading' or 'success'
+      successMessage: '',
+      popupTimeout: null,
       rules: {
         stallNumber: [
           (v) => !!v || 'Stall number is required',
@@ -71,6 +75,41 @@ export default {
     },
   },
   methods: {
+    showSuccessAnimation(message) {
+      console.log('✅ Showing success popup:', message)
+      this.successMessage = message
+      this.popupState = 'loading'
+      this.showSuccessPopup = true
+
+      // Transition to success state after loading animation
+      setTimeout(() => {
+        this.popupState = 'success'
+
+        // Auto close after 2 seconds
+        this.popupTimeout = setTimeout(() => {
+          this.closeSuccessPopup()
+        }, 2000)
+      }, 1500)
+    },
+
+    closeSuccessPopup() {
+      if (this.popupTimeout) {
+        clearTimeout(this.popupTimeout)
+        this.popupTimeout = null
+      }
+      this.showSuccessPopup = false
+      this.popupState = 'loading'
+      this.successMessage = ''
+
+      // Close the main modal after success popup closes
+      this.handleClose()
+    },
+
+    closeModal() {
+      this.resetForm()
+      this.$emit('close')
+    },
+
     getEmptyForm() {
       return {
         id: null,
@@ -219,7 +258,8 @@ export default {
         console.log('Sending update data to API:', updateData)
 
         // Make API call to update stall
-        const response = await fetch(`/api/stalls/${this.editForm.id}`, {
+        const backendUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001'
+        const response = await fetch(`${backendUrl}/api/stalls/${this.editForm.id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -231,7 +271,13 @@ export default {
           body: JSON.stringify(updateData),
         })
 
-        const result = await response.json()
+        const result = await response.json().catch(() => {
+          // If JSON parsing fails, return a generic error object
+          return {
+            success: false,
+            message: response.statusText || 'Server error',
+          }
+        })
         console.log('API Response:', result)
 
         if (!response.ok) {
@@ -239,12 +285,17 @@ export default {
         }
 
         if (result.success && result.data) {
+          console.log('Stall update successful')
+
           // Transform the response data back to frontend format
           const transformedData = this.transformBackendData(result.data)
 
+          // Show success animation with backend message or fallback
+          const successMessage = result.message || 'Stall updated successfully'
+          this.showSuccessAnimation(successMessage)
+
+          // Emit the updated data to parent (no need to close modal here - let popup handle it)
           this.$emit('stall-updated', transformedData)
-          this.$emit('success', 'Stall updated successfully!')
-          this.handleClose()
         } else {
           throw new Error(result.message || 'Failed to update stall')
         }
@@ -303,7 +354,8 @@ export default {
       try {
         console.log('Deleting stall ID:', this.editForm.id)
 
-        const response = await fetch(`/api/stalls/${this.editForm.id}`, {
+        const backendUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001'
+        const response = await fetch(`${backendUrl}/api/stalls/${this.editForm.id}`, {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',
@@ -314,7 +366,13 @@ export default {
           },
         })
 
-        const result = await response.json()
+        const result = await response.json().catch(() => {
+          // If JSON parsing fails, return a generic error object
+          return {
+            success: false,
+            message: response.statusText || 'Server error',
+          }
+        })
         console.log('Delete API Response:', result)
 
         if (!response.ok) {
@@ -322,9 +380,14 @@ export default {
         }
 
         if (result.success) {
+          console.log('🗑️ Stall deletion successful')
+
+          // Show success animation with backend message or fallback
+          const successMessage = result.message || 'Stall deleted successfully'
+          this.showSuccessAnimation(successMessage)
+
+          // Emit the deleted stall ID to parent
           this.$emit('stall-deleted', this.editForm.id)
-          this.$emit('success', 'Stall deleted successfully!')
-          this.handleClose()
         } else {
           throw new Error(result.message || 'Failed to delete stall')
         }
@@ -456,5 +519,12 @@ export default {
 
       this.editForm.price = value
     },
+  },
+
+  beforeDestroy() {
+    // Clean up timeout when component is destroyed
+    if (this.popupTimeout) {
+      clearTimeout(this.popupTimeout)
+    }
   },
 }

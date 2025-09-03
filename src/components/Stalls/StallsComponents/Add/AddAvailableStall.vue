@@ -96,7 +96,7 @@
                     <v-btn icon class="close-btn" @click="closeSuccessPopup">
                         <v-icon color="white">mdi-close</v-icon>
                     </v-btn>
-                    
+
                     <!-- Loading State -->
                     <div v-if="popupState === 'loading'" class="popup-state">
                         <div class="loading-spinner">
@@ -106,7 +106,7 @@
                         </div>
                         <p class="popup-text">Adding stall...</p>
                     </div>
-                    
+
                     <!-- Success State -->
                     <div v-else-if="popupState === 'success'" class="popup-state">
                         <div class="success-icon">

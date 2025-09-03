@@ -48,18 +48,18 @@ export default {
     async fetchStalls() {
       this.loading = true
       this.error = null
-      
+
       try {
         console.log('Fetching stalls from:', `${this.apiBaseUrl}/api/stalls`)
-        
+
         const response = await fetch(`${this.apiBaseUrl}/api/stalls`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
             // Add auth header if token exists
             ...(localStorage.getItem('authToken') && {
-              'Authorization': `Bearer ${localStorage.getItem('authToken')}`
-            })
+              Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+            }),
           },
         })
 
@@ -72,24 +72,19 @@ export default {
 
         if (result.success) {
           // Transform backend data to match frontend format
-          this.stallsData = result.data.map(stall => this.transformStallData(stall))
+          this.stallsData = result.data.map((stall) => this.transformStallData(stall))
           this.displayStalls = [...this.stallsData]
-          
+
           console.log(`Successfully loaded ${this.stallsData.length} stalls`)
         } else {
           throw new Error(result.message || 'Failed to fetch stalls')
         }
-
       } catch (error) {
         console.error('Error fetching stalls:', error)
         this.error = error.message
-        
+
         // Show error message
-        this.showMessage(
-          `Failed to load stalls: ${error.message}`,
-          'error'
-        )
-        
+        this.showMessage(`Failed to load stalls: ${error.message}`, 'error')
       } finally {
         this.loading = false
       }
@@ -122,7 +117,7 @@ export default {
     // Format price display based on type
     formatPrice(price, priceType) {
       const formattedPrice = `₱${parseFloat(price).toLocaleString()}`
-      
+
       switch (priceType) {
         case 'Raffle':
           return `${formattedPrice} / Raffle`
@@ -144,7 +139,10 @@ export default {
         'Electronics Section': 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400',
         'Food Court': 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400',
       }
-      return defaultImages[section] || 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400'
+      return (
+        defaultImages[section] ||
+        'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400'
+      )
     },
 
     // Refresh stalls data
@@ -166,10 +164,9 @@ export default {
           this.stallsData[index] = { ...updatedStall }
           this.displayStalls = [...this.stallsData]
         }
-        
-        this.showMessage('Stall updated successfully!', 'success')
+
         this.closeEditModal()
-        
+
         // Optionally refresh from server to ensure consistency
         // await this.fetchStalls()
       } catch (error) {
@@ -191,9 +188,7 @@ export default {
           this.stallsData.splice(index, 1)
           this.displayStalls = [...this.stallsData]
         }
-        
-        this.showMessage('Stall deleted successfully!', 'success')
-        
+
         // Optionally refresh from server
         // await this.fetchStalls()
       } catch (error) {
@@ -222,9 +217,9 @@ export default {
         const transformedStall = this.transformStallData(newStall)
         this.stallsData.unshift(transformedStall) // Add to beginning
         this.displayStalls = [...this.stallsData]
-        
+
         this.showMessage('Stall added successfully!', 'success')
-        
+
         // Optionally refresh entire list to ensure consistency
         // await this.fetchStalls()
       } catch (error) {
@@ -296,14 +291,14 @@ export default {
     hasStalls() {
       return this.stallsData.length > 0
     },
-    
+
     availableStallsCount() {
-      return this.stallsData.filter(stall => stall.isAvailable).length
+      return this.stallsData.filter((stall) => stall.isAvailable).length
     },
-    
+
     totalStallsCount() {
       return this.stallsData.length
-    }
+    },
   },
 
   // Watch for data changes
@@ -315,8 +310,8 @@ export default {
           this.displayStalls = [...newStalls]
         }
       },
-      deep: true
-    }
+      deep: true,
+    },
   },
 
   // Error handling for component
@@ -324,5 +319,5 @@ export default {
     console.error('Component error captured:', err, info)
     this.showMessage('A component error occurred. Please refresh the page.', 'error')
     return false
-  }
+  },
 }
