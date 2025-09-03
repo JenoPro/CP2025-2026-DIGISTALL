@@ -16,7 +16,7 @@ export default {
       selectedPriceType: null,
       selectedAvailability: null,
       priceRange: [0, 100000],
-      showFilterPanel: false,
+      showFilters: false,
       searchTimeout: null,
       loading: false,
       // API configuration
@@ -184,11 +184,11 @@ export default {
       }, 150)
     },
     toggleFilter() {
-      this.showFilterPanel = !this.showFilterPanel
+      this.showFilters = !this.showFilters
     },
     applyFilters() {
       // The computed filteredStalls and watcher will handle the filtering
-      this.showFilterPanel = false
+      this.showFilters = false
       console.log('Filters applied:', {
         floor: this.selectedFloor,
         section: this.selectedSection,
@@ -288,13 +288,13 @@ export default {
     },
     handleOutsideClick(event) {
       if (this.$refs.filterContainer && !this.$refs.filterContainer.contains(event.target)) {
-        this.showFilterPanel = false
+        this.showFilters = false
       }
     },
     handleKeyDown(event) {
       // Close on Escape key
-      if (event.key === 'Escape' && this.showFilterPanel) {
-        this.showFilterPanel = false
+      if (event.key === 'Escape' && this.showFilters) {
+        this.showFilters = false
       }
     },
   },

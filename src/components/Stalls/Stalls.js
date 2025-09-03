@@ -3,6 +3,7 @@ import SearchFilter from '../Stalls/StallsComponents/SearchAndFilter/SearchAndFi
 import AddAvailableStall from '../Stalls/StallsComponents/Add/AddAvailableStall.vue'
 import EditStall from '../Stalls/StallsComponents/Edit/EditStall.vue'
 import AuctionTable from '../Stalls/AuctionComponents/AuctionTable.vue'
+import AuctionRecords from '../Stalls/AuctionComponents/AuctionRecords.vue'
 
 export default {
   name: 'Stalls',
@@ -12,6 +13,7 @@ export default {
     AddAvailableStall,
     EditStall,
     AuctionTable,
+    AuctionRecords,
   },
   data() {
     return {
@@ -19,6 +21,7 @@ export default {
       showModal: false,
       showEditModal: false,
       showAuctionModal: false,
+      showGeneralAuctionRecords: false,
       selectedStall: {},
       stallsData: [], // Now empty - will be populated from API
       displayStalls: [],

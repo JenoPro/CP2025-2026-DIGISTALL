@@ -372,39 +372,77 @@ export const getAvailableStalls = async (req, res) => {
 export const getStallsByFilter = async (req, res) => {
   let connection
   try {
-    const { floor, section, location, isAvailable, priceType } = req.query
+    const { floor, section, location, isAvailable, priceType, search, minPrice, maxPrice } =
+      req.query
 
     connection = await createConnection()
 
-    let query = 'SELECT * FROM Stall WHERE 1=1'
+    let query = `
+      SELECT 
+        s.*,
+        CONCAT(a1.first_name, ' ', a1.last_name) as created_by_name,
+        CONCAT(a2.first_name, ' ', a2.last_name) as updated_by_name
+      FROM Stall s
+      LEFT JOIN Admin a1 ON s.created_by = a1.ID
+      LEFT JOIN Admin a2 ON s.updated_by = a2.ID
+      WHERE 1=1
+    `
     const queryParams = []
 
+    // Floor filter
     if (floor) {
-      query += ' AND floor = ?'
+      query += ' AND s.floor = ?'
       queryParams.push(floor)
     }
 
+    // Section filter
     if (section) {
-      query += ' AND section = ?'
+      query += ' AND s.section = ?'
       queryParams.push(section)
     }
 
+    // Location filter
     if (location) {
-      query += ' AND location = ?'
+      query += ' AND s.location = ?'
       queryParams.push(location)
     }
 
+    // Availability filter
     if (isAvailable !== undefined) {
-      query += ' AND is_available = ?'
+      query += ' AND s.is_available = ?'
       queryParams.push(isAvailable === 'true')
     }
 
+    // Price type filter
     if (priceType) {
-      query += ' AND price_type = ?'
+      query += ' AND s.price_type = ?'
       queryParams.push(priceType)
     }
 
-    query += ' ORDER BY created_at DESC'
+    // Search filter (search in stall number, location, description, section)
+    if (search) {
+      query += ` AND (
+        s.stall_number LIKE ? OR 
+        s.location LIKE ? OR 
+        s.description LIKE ? OR 
+        s.section LIKE ?
+      )`
+      const searchPattern = `%${search}%`
+      queryParams.push(searchPattern, searchPattern, searchPattern, searchPattern)
+    }
+
+    // Price range filter
+    if (minPrice !== undefined && !isNaN(minPrice)) {
+      query += ' AND s.price >= ?'
+      queryParams.push(parseFloat(minPrice))
+    }
+
+    if (maxPrice !== undefined && !isNaN(maxPrice)) {
+      query += ' AND s.price <= ?'
+      queryParams.push(parseFloat(maxPrice))
+    }
+
+    query += ' ORDER BY s.created_at DESC'
 
     const [stalls] = await connection.execute(query, queryParams)
 
@@ -413,6 +451,16 @@ export const getStallsByFilter = async (req, res) => {
       message: 'Stalls retrieved successfully',
       data: stalls,
       count: stalls.length,
+      filters: {
+        floor,
+        section,
+        location,
+        isAvailable,
+        priceType,
+        search,
+        minPrice,
+        maxPrice,
+      },
     })
   } catch (error) {
     console.error('❌ Get stalls by filter error:', error)

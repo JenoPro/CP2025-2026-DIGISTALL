@@ -1,0 +1,267 @@
+/* ComplaintsTable.css */
+.complaints-table-container {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.complaints-table-wrapper {
+  overflow-x: auto;
+}
+
+.complaints-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.complaints-table thead {
+  background: #1976d2;
+  color: white;
+}
+
+/* ✅ Rounded header corners */
+.complaints-table thead th:first-child {
+  border-top-left-radius: 8px;
+}
+
+.complaints-table thead th:last-child {
+  border-top-right-radius: 8px;
+}
+
+.complaints-table th {
+  padding: 16px 12px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.complaints-table tbody tr {
+  border-bottom: 1px solid #e0e0e0;
+  transition: background-color 0.2s ease;
+}
+
+.complaints-table tbody tr:hover {
+  background: #f8f9fa;
+}
+
+.complaints-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.complaints-table td {
+  padding: 16px 12px;
+  vertical-align: middle;
+}
+
+.complaints-name-cell {
+  min-width: 200px;
+}
+
+.complaints-name-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.complaints-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1976d2, #42a5f5);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.complaints-status-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.complaints-status-active {
+  background: #e8f5e8;
+  color: #2e7d32;
+}
+
+.complaints-status-incomplete {
+  background: #ffebee;
+  color: #c62828;
+}
+
+.complaints-status-pending {
+  background: #fff3e0;
+  color: #ef6c00;
+}
+
+.complaints-status-complete {
+  background: #e3f2fd;
+  color: #1565c0;
+}
+
+.complaints-actions-cell {
+  min-width: 120px;
+  text-align: center;
+}
+
+.complaints-action-btn {
+  padding: 8px;
+  margin: 0 2px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.complaints-action-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.complaints-view-btn {
+  background: #e3f2fd;
+  color: #1565c0;
+}
+
+.complaints-view-btn:hover {
+  background: #1565c0;
+  color: white;
+}
+
+.complaints-edit-btn {
+  background: #fff3e0;
+  color: #ef6c00;
+}
+
+.complaints-edit-btn:hover {
+  background: #ef6c00;
+  color: white;
+}
+
+.complaints-delete-btn {
+  background: #ffebee;
+  color: #c62828;
+}
+
+.complaints-delete-btn:hover {
+  background: #c62828;
+  color: white;
+}
+
+.complaints-empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #666;
+}
+
+.complaints-empty-icon {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 16px auto;
+  opacity: 0.5;
+  color: #666;
+}
+
+.complaints-empty-state h3 {
+  margin: 0 0 8px 0;
+  font-size: 20px;
+  font-weight: 500;
+  color: #333;
+}
+
+.complaints-empty-state p {
+  margin: 0;
+  font-size: 14px;
+}
+
+/* Pagination */
+.complaints-pagination-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.complaints-page-btn {
+  padding: 8px 16px;
+  border: 1px solid #ddd;
+  background: white;
+  color: #666;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.complaints-page-btn:hover:not(:disabled) {
+  background: #1976d2;
+  color: white;
+  border-color: #1976d2;
+}
+
+.complaints-page-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.complaints-page-info {
+  font-size: 14px;
+  color: #666;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .complaints-table {
+    font-size: 12px;
+  }
+
+  .complaints-table th,
+  .complaints-table td {
+    padding: 12px 8px;
+  }
+
+  .complaints-name-cell {
+    min-width: 150px;
+  }
+}
+
+@media (max-width: 480px) {
+  .complaints-table-wrapper {
+    overflow-x: scroll;
+  }
+
+  .complaints-table {
+    min-width: 800px;
+  }
+
+  .complaints-pagination-wrapper {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .complaints-action-btn {
+    padding: 6px;
+    margin: 0 1px;
+  }
+
+  .complaints-action-btn svg {
+    width: 14px;
+    height: 14px;
+  }
+}
