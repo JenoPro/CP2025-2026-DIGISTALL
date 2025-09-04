@@ -14,6 +14,11 @@
   gap: 20px;
 }
 
+.filter-sort-container {
+  display: flex;
+  gap: 12px;
+}
+
 /* Search input */
 .search-field {
   flex: 1;
@@ -32,6 +37,7 @@
   background: white;
   box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
 }
+
 
 /* Filter button */
 .filter-container {
@@ -214,6 +220,22 @@
   box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
 }
 
+.sort-group .v-select {
+  background: white;
+}
+
+.sort-group .v-field {
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  background: white;
+  transition: all 0.2s ease;
+}
+
+.sort-group .v-field--focused {
+  border-color: #28a745;
+  box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
+}
+
 /* Action buttons */
 .filter-actions {
   display: flex;
@@ -263,11 +285,27 @@
   border-top: 1px solid #f3f4f6;
 }
 
+.results-left {
+  display: flex;
+  align-items: center;
+}
+
 .results-chip {
   background: #f8f9fa;
   color: #374151;
   font-weight: 500;
   border: 1px solid #e9ecef;
+}
+
+.sort-indicator {
+  background: #f0fff4;
+  color: #28a745;
+  font-weight: 500;
+  border: 1px solid #d4edda;
+}
+
+.cursor-pointer {
+  cursor: pointer;
 }
 
 /* Animations */
@@ -298,10 +336,15 @@
     max-width: none;
   }
 
-  .filter-dropdown {
+  .filter-dropdown,
+  .sort-dropdown {
     right: auto;
     left: 0;
     min-width: 100%;
+  }
+
+  .filter-sort-container {
+    justify-content: center;
   }
 }
 
@@ -310,31 +353,51 @@
     padding: 20px;
   }
 
-  .clear-filters-btn {
-    margin-top: 10px;
+  .filter-sort-container {
+    flex-direction: column;
+    gap: 8px;
   }
 
-  .results-info .v-chip {
-    font-size: 16px;
-    padding: 10px 20px;
+  .sort-btn,
+  .filter-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .results-info {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .results-left {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .results-info .v-btn {
+    align-self: flex-start;
   }
 }
 
 @media (max-width: 480px) {
   .search-filter-section {
-    padding: 14px;
+    padding: 16px;
   }
 
   .search-field .v-input__control {
     height: 50px;
   }
 
-  .clear-filters-btn {
-    height: 38px;
+  .sort-btn,
+  .filter-btn {
+    height: 44px;
+    font-size: 13px;
   }
 
-  .results-info .v-chip {
-    font-size: 14px;
-    padding: 8px 16px;
+  .results-chip,
+  .sort-indicator {
+    font-size: 12px;
+    padding: 6px 12px;
   }
 }

@@ -36,7 +36,6 @@ export default {
         'Food Court',
       ],
       locationOptions: ["Naga City People's Mall", 'Satellite Market'],
-      priceTypeOptions: ['Raffle', 'Auction', 'Fixed Price'],
       loading: false,
       // Success popup states
       showSuccessPopup: false,
@@ -267,6 +266,15 @@ export default {
   },
 
   watch: {
+    // Watch for location changes to automatically set price type
+    'newStall.location'(newLocation) {
+      if (newLocation === "Naga City People's Mall") {
+        this.newStall.priceType = 'Fixed Price'
+      } else if (newLocation === 'Satellite Market') {
+        this.newStall.priceType = 'Auction'
+      }
+    },
+
     // Watch for image file changes
     'newStall.image'(newFile) {
       if (newFile) {

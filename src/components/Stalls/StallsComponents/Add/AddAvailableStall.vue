@@ -24,8 +24,8 @@
                             <!-- Price -->
                             <v-col cols="12" sm="6">
                                 <v-text-field v-model="newStall.price" :rules="[rules.required]" label="Price"
-                                    placeholder="e.g., 1,500 Php / Raffle" prepend-icon="mdi-currency-php" outlined
-                                    dense persistent-hint hint="Include currency and type (Raffle/Auction)" />
+                                    placeholder="e.g., 1,500" prepend-icon="mdi-currency-php" outlined dense
+                                    persistent-hint hint="Enter price amount" />
                             </v-col>
 
                             <!-- Floor -->
@@ -52,8 +52,15 @@
                                     label="Location" prepend-icon="mdi-map-marker" outlined dense />
                             </v-col>
 
+                            <!-- Price Type (Auto-determined) -->
+                            <v-col cols="12" sm="6">
+                                <v-text-field :value="newStall.priceType" label="Price Type" prepend-icon="mdi-tag"
+                                    outlined dense readonly persistent-hint
+                                    hint="Automatically set based on location" />
+                            </v-col>
+
                             <!-- Image Upload -->
-                            <v-col cols="12" sm="12">
+                            <v-col cols="12" sm="6">
                                 <v-file-input v-model="newStall.image" accept="image/*" label="Upload Stall Image"
                                     prepend-icon="mdi-image" outlined dense show-size truncate-length="25" />
                             </v-col>

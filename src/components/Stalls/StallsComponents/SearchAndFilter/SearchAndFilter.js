@@ -17,6 +17,7 @@ export default {
       selectedAvailability: null,
       priceRange: [0, 100000],
       showFilters: false,
+      sortField: 'default',
       searchTimeout: null,
       loading: false,
       // API configuration
@@ -25,6 +26,13 @@ export default {
     }
   },
   computed: {
+    sortOptions() {
+      return [
+        { title: 'Default', value: 'default' },
+        { title: 'Stall ID', value: 'stallNumber' },
+        { title: 'Price', value: 'price' },
+      ]
+    },
     floorOptions() {
       const floors = [...new Set(this.stallsData.map((stall) => stall.floor))].filter(Boolean)
       return floors.sort()
@@ -39,7 +47,6 @@ export default {
     },
     priceTypeOptions() {
       const types = this.stallsData.map((stall) => {
-        if (stall.price.includes('Raffle')) return 'Raffle'
         if (stall.price.includes('Auction')) return 'Auction'
         if (stall.price.includes('Fixed Price')) return 'Fixed Price'
         return 'Other'
@@ -67,8 +74,8 @@ export default {
       const maxPrice = Math.max(...prices)
       return [Math.floor(minPrice), Math.ceil(maxPrice)]
     },
-    filteredStalls() {
-      return this.stallsData.filter((stall) => {
+    filteredAndSortedStalls() {
+      let filtered = this.stallsData.filter((stall) => {
         const matchesSearch =
           !this.searchQuery ||
           stall.stallNumber.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
@@ -82,11 +89,9 @@ export default {
 
         const matchesPriceType =
           !this.selectedPriceType ||
-          (this.selectedPriceType === 'Raffle' && stall.price.includes('Raffle')) ||
           (this.selectedPriceType === 'Auction' && stall.price.includes('Auction')) ||
           (this.selectedPriceType === 'Fixed Price' && stall.price.includes('Fixed Price')) ||
           (this.selectedPriceType === 'Other' &&
-            !stall.price.includes('Raffle') &&
             !stall.price.includes('Auction') &&
             !stall.price.includes('Fixed Price'))
 
@@ -114,9 +119,16 @@ export default {
           matchesPriceRange
         )
       })
+
+      // Apply sorting
+      if (this.sortField && this.sortField !== 'default') {
+        filtered = this.sortStalls(filtered)
+      }
+
+      return filtered
     },
     resultCount() {
-      return this.filteredStalls.length
+      return this.filteredAndSortedStalls.length
     },
     hasActiveFilters() {
       return (
@@ -139,7 +151,7 @@ export default {
       },
       immediate: true,
     },
-    filteredStalls: {
+    filteredAndSortedStalls: {
       handler(newFilteredStalls) {
         this.$emit('filtered-stalls', newFilteredStalls)
       },
@@ -180,16 +192,16 @@ export default {
 
       // Debounce search to avoid too many emissions
       this.searchTimeout = setTimeout(() => {
-        // The watcher on filteredStalls will automatically emit the filtered results
+        // The watcher on filteredAndSortedStalls will automatically emit the filtered results
       }, 150)
     },
     toggleFilter() {
       this.showFilters = !this.showFilters
     },
     applyFilters() {
-      // The computed filteredStalls and watcher will handle the filtering
+      // The computed filteredAndSortedStalls and watcher will handle the filtering and sorting
       this.showFilters = false
-      console.log('Filters applied:', {
+      console.log('Filters and sort applied:', {
         floor: this.selectedFloor,
         section: this.selectedSection,
         location: this.selectedLocation,
@@ -197,7 +209,84 @@ export default {
         availability: this.selectedAvailability,
         priceRange: this.priceRange,
         search: this.searchQuery.trim(),
+        sortField: this.sortField,
       })
+    },
+    sortStalls(stalls) {
+      return [...stalls].sort((a, b) => {
+        let aValue, bValue
+
+        switch (this.sortField) {
+          case 'stallNumber':
+            // Extract numeric part for proper sorting
+            aValue = this.extractNumericId(a.stallNumber)
+            bValue = this.extractNumericId(b.stallNumber)
+            break
+          case 'price':
+            // Extract numeric price for sorting
+            aValue = this.extractPrice(a.price)
+            bValue = this.extractPrice(b.price)
+            break
+          default:
+            return 0
+        }
+
+        // Handle numeric vs string comparison (always ascending)
+        if (typeof aValue === 'number' && typeof bValue === 'number') {
+          return aValue - bValue
+        } else {
+          // String comparison (always ascending)
+          aValue = String(aValue).toLowerCase()
+          bValue = String(bValue).toLowerCase()
+          return aValue.localeCompare(bValue)
+        }
+      })
+    },
+    extractNumericId(stallNumber) {
+      // Extract numbers from stall ID (e.g., "STALL-001" -> 1, "A-15" -> 15)
+      const match = stallNumber.match(/\d+/)
+      return match ? parseInt(match[0], 10) : 0
+    },
+    extractPrice(priceString) {
+      // Extract numeric price from formatted string
+      const match = priceString.match(/₱([\d,]+)/)
+      return match ? parseFloat(match[1].replace(/,/g, '')) : 0
+    },
+    getSortFieldLabel(field) {
+      const option = this.sortOptions.find((opt) => opt.value === field)
+      return option ? option.title : field
+    },
+    clearSort() {
+      this.sortField = 'default'
+    },
+    clearAllFilters() {
+      this.searchQuery = ''
+      this.selectedFloor = null
+      this.selectedSection = null
+      this.selectedLocation = null
+      this.selectedPriceType = null
+      this.selectedAvailability = null
+      this.priceRange = this.actualPriceRange
+      this.clearSort()
+
+      console.log('All filters and sort cleared')
+      // The watcher will automatically emit the unfiltered data
+    },
+    resetFilters() {
+      this.clearAllFilters()
+    },
+    handleOutsideClick(event) {
+      if (this.$refs.filterContainer && !this.$refs.filterContainer.contains(event.target)) {
+        this.showFilters = false
+      }
+    },
+    handleKeyDown(event) {
+      // Close on Escape key
+      if (event.key === 'Escape') {
+        if (this.showFilters) {
+          this.showFilters = false
+        }
+      }
     },
     // Alternative: Use backend filtering (if you want to implement server-side filtering)
     async fetchFilteredStalls() {
@@ -215,6 +304,10 @@ export default {
         if (this.priceRange && this.priceRange.length === 2) {
           params.append('minPrice', this.priceRange[0])
           params.append('maxPrice', this.priceRange[1])
+        }
+        // Add sorting parameters
+        if (this.sortField && this.sortField !== 'default') {
+          params.append('sortBy', this.sortField)
         }
 
         const url = `${this.apiBaseUrl}/api/stalls/filter?${params.toString()}`
@@ -262,39 +355,11 @@ export default {
       const formattedPrice = `₱${parseFloat(price).toLocaleString()}`
 
       switch (priceType) {
-        case 'Raffle':
-          return `${formattedPrice} / Raffle`
         case 'Auction':
           return `${formattedPrice} Min. / Auction`
         case 'Fixed Price':
         default:
           return `${formattedPrice} / Fixed Price`
-      }
-    },
-    clearAllFilters() {
-      this.searchQuery = ''
-      this.selectedFloor = null
-      this.selectedSection = null
-      this.selectedLocation = null
-      this.selectedPriceType = null
-      this.selectedAvailability = null
-      this.priceRange = this.actualPriceRange
-
-      console.log('All filters cleared')
-      // The watcher will automatically emit the unfiltered data
-    },
-    resetFilters() {
-      this.clearAllFilters()
-    },
-    handleOutsideClick(event) {
-      if (this.$refs.filterContainer && !this.$refs.filterContainer.contains(event.target)) {
-        this.showFilters = false
-      }
-    },
-    handleKeyDown(event) {
-      // Close on Escape key
-      if (event.key === 'Escape' && this.showFilters) {
-        this.showFilters = false
       }
     },
   },
