@@ -1,5 +1,10 @@
+import DeleteStall from '../Delete/DeleteStall.vue'
+
 export default {
   name: 'EditStall',
+  components: {
+    DeleteStall,
+  },
   props: {
     stallData: {
       type: Object,
@@ -17,7 +22,6 @@ export default {
       selectedImageFile: null,
       imagePreview: null,
       showDeleteConfirm: false,
-      deleteLoading: false,
       valid: false,
       loading: false,
       showSuccessPopup: false,
@@ -344,60 +348,24 @@ export default {
       }
     },
 
-    async confirmDelete() {
-      if (!this.editForm.id) {
-        this.$emit('error', 'No stall selected for deletion')
-        return
-      }
+    handleStallDeleted(event) {
+      console.log('✅ Stall deleted successfully:', event)
 
-      this.deleteLoading = true
-      try {
-        console.log('Deleting stall ID:', this.editForm.id)
+      // Emit the delete event to parent component
+      this.$emit('stall-deleted', event.stallId)
 
-        const backendUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001'
-        const response = await fetch(`${backendUrl}/api/stalls/${this.editForm.id}`, {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
-            // Add authorization header if you have authentication
-            ...(localStorage.getItem('authToken') && {
-              Authorization: `Bearer ${localStorage.getItem('authToken')}`,
-            }),
-          },
-        })
+      // Close the edit modal
+      this.handleClose()
+    },
 
-        const result = await response.json().catch(() => {
-          // If JSON parsing fails, return a generic error object
-          return {
-            success: false,
-            message: response.statusText || 'Server error',
-          }
-        })
-        console.log('Delete API Response:', result)
+    handleDeleteError(error) {
+      console.error('❌ Delete error:', error)
 
-        if (!response.ok) {
-          throw new Error(result.message || `Server error: ${response.status}`)
-        }
+      // Emit error to parent component
+      this.$emit('error', error.message || 'Failed to delete stall')
 
-        if (result.success) {
-          console.log('🗑️ Stall deletion successful')
-
-          // Show success animation with backend message or fallback
-          const successMessage = result.message || 'Stall deleted successfully'
-          this.showSuccessAnimation(successMessage)
-
-          // Emit the deleted stall ID to parent
-          this.$emit('stall-deleted', this.editForm.id)
-        } else {
-          throw new Error(result.message || 'Failed to delete stall')
-        }
-      } catch (error) {
-        console.error('Delete stall error:', error)
-        this.$emit('error', error.message || 'Failed to delete stall. Please try again.')
-      } finally {
-        this.deleteLoading = false
-        this.showDeleteConfirm = false
-      }
+      // Close delete dialog
+      this.showDeleteConfirm = false
     },
 
     handleClose() {

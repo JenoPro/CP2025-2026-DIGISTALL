@@ -182,17 +182,25 @@ export default {
 
     async handleStallDeleted(stallId) {
       try {
+        console.log('🗑️ Processing stall deletion for ID:', stallId)
+
         // Remove from local data
         const index = this.stallsData.findIndex((s) => s.id === stallId)
         if (index > -1) {
+          const deletedStall = this.stallsData[index]
           this.stallsData.splice(index, 1)
           this.displayStalls = [...this.stallsData]
+
+          console.log(`✅ Stall "${deletedStall.stallNumber}" removed from local data`)
+          console.log(`📊 Remaining stalls: ${this.stallsData.length}`)
+        } else {
+          console.warn('⚠️ Stall not found in local data for deletion')
         }
 
-        // Optionally refresh from server
+        // Optionally refresh from server to ensure consistency
         // await this.fetchStalls()
       } catch (error) {
-        console.error('Error handling stall deletion:', error)
+        console.error('❌ Error handling stall deletion:', error)
         this.showMessage('Error removing stall from display', 'error')
       }
     },
