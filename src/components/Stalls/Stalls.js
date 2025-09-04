@@ -258,10 +258,8 @@ export default {
     },
 
     handleAuctionStatus({ participant, status }) {
-      this.showMessage(
-        `${participant.fullName} marked as ${status}`,
-        status === 'Won' ? 'success' : 'error',
-      )
+      // The custom popup in AuctionTable will handle the user feedback
+      console.log(`Auction status updated: ${participant.fullName} marked as ${status}`)
     },
 
     handleStallLive(stall) {

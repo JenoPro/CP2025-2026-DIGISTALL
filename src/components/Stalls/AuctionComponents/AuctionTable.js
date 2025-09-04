@@ -88,9 +88,39 @@ export default {
           status: 'Pending',
         },
       ],
+      // Success popup states
+      showSuccessPopup: false,
+      popupState: 'loading', // 'loading' or 'success'
+      successMessage: '',
+      popupTimeout: null,
     }
   },
   methods: {
+    showSuccessAnimation(message) {
+      this.successMessage = message
+      this.popupState = 'loading'
+      this.showSuccessPopup = true
+
+      // Transition to success state after loading animation
+      setTimeout(() => {
+        this.popupState = 'success'
+
+        // Auto close after 2 seconds
+        this.popupTimeout = setTimeout(() => {
+          this.closeSuccessPopup()
+        }, 2000)
+      }, 1500)
+    },
+
+    closeSuccessPopup() {
+      if (this.popupTimeout) {
+        clearTimeout(this.popupTimeout)
+        this.popupTimeout = null
+      }
+      this.showSuccessPopup = false
+      this.popupState = 'loading'
+      this.successMessage = ''
+    },
     markAsWon(participant) {
       // Count participants that will be marked as lost
       const pendingParticipants = this.participants.filter(
@@ -108,10 +138,13 @@ export default {
         }
       })
 
-      // Emit update for the winner
+      // Show custom success popup instead of emitting alerts
+      const message = `${participant.fullName} has been marked as the winner! ${lostCount} other participant${lostCount !== 1 ? 's' : ''} marked as lost.`
+      this.showSuccessAnimation(message)
+
+      // Still emit the update events for parent component logic
       this.$emit('update-status', { participant, status: 'Won' })
 
-      // Emit a single consolidated update for all lost participants
       if (lostCount > 0) {
         this.$emit('update-status', {
           participant: { fullName: `${lostCount} participant${lostCount > 1 ? 's' : ''}` },
@@ -122,5 +155,12 @@ export default {
     closeAuction() {
       this.$emit('close-auction')
     },
+  },
+
+  beforeDestroy() {
+    // Clean up timeout when component is destroyed
+    if (this.popupTimeout) {
+      clearTimeout(this.popupTimeout)
+    }
   },
 }

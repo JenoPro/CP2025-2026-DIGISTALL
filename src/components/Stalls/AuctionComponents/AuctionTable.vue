@@ -25,6 +25,39 @@
                 </template>
             </v-data-table>
         </v-card>
+
+        <!-- Custom Success Popup Modal -->
+        <v-dialog v-model="showSuccessPopup" max-width="400px" persistent @click:outside="closeSuccessPopup">
+            <v-card class="success-popup-card">
+                <div class="popup-content">
+                    <!-- Close Button -->
+                    <v-btn icon class="close-btn" @click="closeSuccessPopup">
+                        <v-icon color="white">mdi-close</v-icon>
+                    </v-btn>
+
+                    <!-- Loading State -->
+                    <div v-if="popupState === 'loading'" class="popup-state">
+                        <div class="loading-spinner">
+                            <div class="spinner-ring"></div>
+                            <div class="spinner-ring"></div>
+                            <div class="spinner-ring"></div>
+                        </div>
+                        <p class="popup-text">Processing auction result...</p>
+                    </div>
+
+                    <!-- Success State -->
+                    <div v-else-if="popupState === 'success'" class="popup-state">
+                        <div class="success-icon">
+                            <div class="checkmark-circle">
+                                <div class="checkmark"></div>
+                            </div>
+                        </div>
+                        <h3 class="success-title">Success!</h3>
+                        <p class="popup-text">{{ successMessage }}</p>
+                    </div>
+                </div>
+            </v-card>
+        </v-dialog>
     </div>
 </template>
 
