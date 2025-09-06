@@ -62,6 +62,7 @@ export async function initializeDatabase() {
         first_name VARCHAR(50),
         last_name VARCHAR(50),
         role VARCHAR(20) DEFAULT 'admin',
+        branch VARCHAR(100) DEFAULT 'Naga Branch',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         is_active BOOLEAN DEFAULT TRUE
       )
@@ -69,6 +70,21 @@ export async function initializeDatabase() {
 
     console.log('🔧 Creating Admin table if not exists...')
     await dbConnection.execute(createAdminTable)
+
+    // Add branch column if it doesn't exist (for existing databases)
+    try {
+      await dbConnection.execute(`
+        ALTER TABLE Admin 
+        ADD COLUMN branch VARCHAR(100) DEFAULT 'Naga Branch'
+      `)
+      console.log('✅ Branch column added to Admin table')
+    } catch (error) {
+      if (error.message.includes('Duplicate column name')) {
+        console.log('✅ Branch column already exists in Admin table')
+      } else {
+        console.log('Branch column error:', error.message)
+      }
+    }
 
     // Create Stall table
     const createStallTable = `
@@ -129,33 +145,88 @@ export async function initializeDatabase() {
       }
     }
 
-    // Check if admin user exists
-    const [existingAdmin] = await dbConnection.execute('SELECT * FROM Admin WHERE username = ?', [
-      'admin',
-    ])
+    // Check and create admin users for each branch
+    const adminUsers = [
+      {
+        username: 'admin_naga',
+        password: await hash('admin123', 12),
+        email: 'admin@nagastall.com',
+        first_name: 'System',
+        last_name: 'Administrator',
+        role: 'admin',
+        branch: 'Naga Branch',
+      },
+      {
+        username: 'admin_albay',
+        password: await hash('admin123', 12),
+        email: 'admin.albay@nagastall.com',
+        first_name: 'Albay',
+        last_name: 'Administrator',
+        role: 'admin',
+        branch: 'Albay Branch',
+      },
+      {
+        username: 'admin_legaspi',
+        password: await hash('admin123', 12),
+        email: 'admin.legaspi@nagastall.com',
+        first_name: 'Legaspi',
+        last_name: 'Administrator',
+        role: 'admin',
+        branch: 'Legaspi Branch',
+      },
+      {
+        username: 'admin_milaor',
+        password: await hash('admin123', 12),
+        email: 'admin.milaor@nagastall.com',
+        first_name: 'Milaor',
+        last_name: 'Administrator',
+        role: 'admin',
+        branch: 'Milaor Branch',
+      },
+    ]
 
-    if (existingAdmin.length === 0) {
-      console.log('🔧 Creating default admin user...')
-      const hashedPassword = await hash('admin123', 12)
+    console.log('🔧 Checking and creating admin users...')
 
-      await dbConnection.execute(
-        'INSERT INTO Admin (username, password, email, first_name, last_name, role) VALUES (?, ?, ?, ?, ?, ?)',
-        ['admin', hashedPassword, 'admin@nagastall.com', 'System', 'Administrator', 'admin'],
-      )
-
-      console.log('✅ Default admin user created successfully!')
-    } else {
-      console.log('✅ Admin user already exists')
-
-      // FORCE UPDATE the password to ensure it works
-      console.log('🔧 Updating admin password to ensure compatibility...')
-      const hashedPassword = await hash('admin123', 12)
-      await dbConnection.execute('UPDATE Admin SET password = ? WHERE username = ?', [
-        hashedPassword,
-        'admin',
+    for (const admin of adminUsers) {
+      const [existingAdmin] = await dbConnection.execute('SELECT * FROM Admin WHERE username = ?', [
+        admin.username,
       ])
-      console.log('✅ Admin password updated!')
+
+      if (existingAdmin.length === 0) {
+        console.log(`👤 Creating admin: ${admin.username} for ${admin.branch}`)
+        await dbConnection.execute(
+          'INSERT INTO Admin (username, password, email, first_name, last_name, role, branch) VALUES (?, ?, ?, ?, ?, ?, ?)',
+          [
+            admin.username,
+            admin.password,
+            admin.email,
+            admin.first_name,
+            admin.last_name,
+            admin.role,
+            admin.branch,
+          ],
+        )
+        console.log(`✅ ${admin.username} created successfully!`)
+      } else {
+        console.log(`✅ ${admin.username} already exists`)
+
+        // Update password and branch for existing admin
+        console.log(`🔧 Updating password and branch for ${admin.username}...`)
+        await dbConnection.execute('UPDATE Admin SET password = ?, branch = ? WHERE username = ?', [
+          admin.password,
+          admin.branch,
+          admin.username,
+        ])
+        console.log(`✅ ${admin.username} updated!`)
+      }
     }
+
+    console.log('✅ All admin users processed successfully!')
+
+    // Clean up any unwanted admin users (like removed CamSur)
+    console.log('🔧 Cleaning up unwanted admin users...')
+    await dbConnection.execute('DELETE FROM Admin WHERE username = ?', ['admin_camsur'])
+    console.log('✅ Cleanup completed!')
 
     // Check if sample stalls exist
     const [existingStalls] = await dbConnection.execute('SELECT COUNT(*) as count FROM Stall')
@@ -217,8 +288,13 @@ export async function initializeDatabase() {
     }
 
     console.log('📋 Login Credentials:')
-    console.log('   Username: admin')
-    console.log('   Password: admin123')
+    // Dynamically show all admin users
+    const [allAdmins] = await dbConnection.execute(
+      'SELECT username, branch FROM Admin ORDER BY branch, username',
+    )
+    allAdmins.forEach((admin) => {
+      console.log(`   ${admin.branch} - Username: ${admin.username}, Password: admin123`)
+    })
   } catch (error) {
     console.error('❌ Database initialization failed:', error)
     throw error

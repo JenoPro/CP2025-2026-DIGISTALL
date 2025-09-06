@@ -11,9 +11,9 @@ export async function login(req, res) {
   let connection
 
   try {
-    const { username, password } = req.body
+    const { username, password, branch } = req.body
 
-    console.log('🔐 Login attempt for username:', username)
+    console.log('🔐 Login attempt for username:', username, 'branch:', branch)
 
     // Validation
     if (!username || !password) {
@@ -24,21 +24,29 @@ export async function login(req, res) {
       })
     }
 
+    if (!branch) {
+      console.log('❌ Missing branch')
+      return res.status(400).json({
+        success: false,
+        message: 'Branch selection is required',
+      })
+    }
+
     connection = await createConnection()
 
-    // Find admin user by username
+    // Find admin user by username and branch
     const [admins] = await connection.execute(
-      'SELECT * FROM Admin WHERE username = ? AND is_active = TRUE',
-      [username],
+      'SELECT * FROM Admin WHERE username = ? AND branch = ? AND is_active = TRUE',
+      [username, branch],
     )
 
     console.log('🔍 Found admins:', admins.length)
 
     if (admins.length === 0) {
-      console.log('❌ No admin found with username:', username)
+      console.log('❌ No admin found with username:', username, 'and branch:', branch)
       return res.status(401).json({
         success: false,
-        message: 'Invalid credentials',
+        message: 'Invalid credentials or unauthorized branch access',
       })
     }
 
@@ -47,6 +55,7 @@ export async function login(req, res) {
       id: admin.ID,
       username: admin.username,
       email: admin.email,
+      branch: admin.branch,
       hasPassword: !!admin.password,
     })
 
@@ -73,6 +82,7 @@ export async function login(req, res) {
         userId: admin.ID,
         username: admin.username,
         role: admin.role,
+        branch: admin.branch,
       },
       jwtSecret,
       { expiresIn: '24h' },
@@ -90,6 +100,7 @@ export async function login(req, res) {
           username: admin.username,
           email: admin.email,
           role: admin.role,
+          branch: admin.branch,
           first_name: admin.first_name,
           last_name: admin.last_name,
         },
@@ -130,6 +141,7 @@ export async function verifyToken(req, res) {
           id: decoded.userId,
           username: decoded.username,
           role: decoded.role,
+          branch: decoded.branch,
         },
       },
     })
@@ -226,5 +238,101 @@ export async function testDb(req, res) {
       message: 'Database connection failed',
       error: error.message,
     })
+  }
+}
+
+// Get available branches for dropdown
+export async function getBranches(req, res) {
+  let connection
+
+  try {
+    connection = await createConnection()
+
+    // Get all unique branches from the Admin table
+    const [branches] = await connection.execute(
+      'SELECT DISTINCT branch FROM Admin WHERE is_active = TRUE ORDER BY branch ASC',
+    )
+
+    console.log('🏢 Found branches:', branches.length)
+
+    res.json({
+      success: true,
+      message: 'Branches retrieved successfully',
+      data: branches.map((b) => b.branch),
+    })
+  } catch (error) {
+    console.error('❌ Get branches error:', error)
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+      error: error.message,
+    })
+  } finally {
+    if (connection) await connection.end()
+  }
+}
+
+// Create additional admin user for testing
+export async function createAdminUser(req, res) {
+  let connection
+
+  try {
+    const { username, password, email, firstName, lastName, branch, role = 'admin' } = req.body
+
+    // Validation
+    if (!username || !password || !branch) {
+      return res.status(400).json({
+        success: false,
+        message: 'Username, password, and branch are required',
+      })
+    }
+
+    connection = await createConnection()
+
+    // Check if username already exists
+    const [existingUsers] = await connection.execute('SELECT * FROM Admin WHERE username = ?', [
+      username,
+    ])
+
+    if (existingUsers.length > 0) {
+      return res.status(409).json({
+        success: false,
+        message: 'Username already exists',
+      })
+    }
+
+    // Hash password
+    const hashedPassword = await hash(password, 12)
+
+    // Insert new admin user
+    const [result] = await connection.execute(
+      'INSERT INTO Admin (username, password, email, first_name, last_name, branch, role) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [username, hashedPassword, email, firstName, lastName, branch, role],
+    )
+
+    console.log('✅ New admin user created:', username, 'for branch:', branch)
+
+    res.status(201).json({
+      success: true,
+      message: 'Admin user created successfully',
+      data: {
+        id: result.insertId,
+        username,
+        email,
+        first_name: firstName,
+        last_name: lastName,
+        branch,
+        role,
+      },
+    })
+  } catch (error) {
+    console.error('❌ Create admin user error:', error)
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+      error: error.message,
+    })
+  } finally {
+    if (connection) await connection.end()
   }
 }

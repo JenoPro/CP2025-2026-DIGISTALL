@@ -1,0 +1,283 @@
+/* Use higher specificity and !important for stubborn Vuetify overrides */
+.register-modal .v-card-title {
+  background: #002181 !important;
+  background-color: #002181 !important;
+  border-radius: 0 !important;
+}
+
+/* Alternative: Target the specific class combination */
+.v-dialog .register-modal .v-card-title.bg-primary {
+  background: #002181 !important;
+  background-color: #002181 !important;
+}
+
+/* Or use deep selector if you're in a scoped style */
+.register-modal :deep(.v-card-title) {
+  background: #002181 !important;
+  background-color: #002181 !important;
+  border-radius: 0 !important;
+}
+
+/* Description section styling */
+.register-modal .v-card-subtitle {
+  background: #f8f9fa !important;
+  background-color: #f8f9fa !important;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 16px 24px !important;
+}
+
+.register-modal .v-card-subtitle p {
+  color: #424242 !important;
+  font-size: 0.875rem !important;
+  line-height: 1.5 !important;
+  margin: 0 !important;
+  font-weight: 400 !important;
+}
+
+/* Alternative styling with gradient background */
+.register-modal .v-card-subtitle.gradient-bg {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%) !important;
+}
+
+/* Icon styling in description */
+.register-modal .v-card-subtitle .mdi {
+  color: #002181 !important;
+  margin-right: 8px;
+}
+
+/* Rest of your styles */
+.register-modal {
+  border-radius: 10px !important;
+  overflow: hidden;
+}
+
+.register-btn {
+  font-weight: 500;
+  text-transform: none;
+  border-radius: 8px;
+}
+
+/* Form styling */
+.v-text-field .v-input__control .v-field {
+  border-radius: 8px;
+}
+
+.v-select .v-input__control .v-field {
+  border-radius: 8px;
+}
+
+/* Password strength indicator */
+.password-strength {
+  margin-top: 4px;
+  font-size: 0.75rem;
+}
+
+.password-strength.weak {
+  color: #f44336;
+}
+
+.password-strength.medium {
+  color: #ff9800;
+}
+
+.password-strength.strong {
+  color: #4caf50;
+}
+
+/* Enhanced form spacing */
+.v-form .v-row {
+  margin-bottom: 0;
+}
+
+.v-form .v-col {
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+/* Alert styling */
+.v-alert {
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+/* Button styling */
+.v-card-actions .v-btn {
+  border-radius: 8px;
+  font-weight: 500;
+  text-transform: none;
+  padding: 0 24px;
+}
+
+/* New branch input animation */
+.v-enter-active,
+.v-leave-active {
+  transition: all 0.3s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+/* Icon styling */
+.mdi::before {
+  font-size: 1.2rem;
+}
+
+/* Field focus effects */
+.v-field--focused {
+  box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.2);
+}
+
+/* Modal backdrop */
+.v-overlay__scrim {
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+/* Responsive adjustments */
+@media (max-width: 960px) {
+  .register-modal {
+    margin: 12px;
+    max-width: calc(100vw - 24px) !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .register-modal {
+    margin: 8px;
+    max-width: calc(100vw - 16px) !important;
+  }
+  
+  .register-modal .v-card-title {
+    padding: 20px !important;
+  }
+  
+  .register-modal .v-card-title .text-body-2 {
+    font-size: 0.8125rem !important;
+    line-height: 1.3 !important;
+    margin-top: 4px !important;
+  }
+  
+  .v-card-text {
+    padding: 20px !important;
+  }
+  
+  .v-card-actions {
+    padding: 20px !important;
+    padding-top: 0 !important;
+    flex-direction: column-reverse;
+    gap: 12px;
+  }
+  
+  .v-card-actions .v-btn {
+    width: 100%;
+    min-height: 44px;
+  }
+}
+
+@media (max-width: 480px) {
+  .register-modal {
+    margin: 4px;
+    max-width: calc(100vw - 8px) !important;
+  }
+  
+  .register-modal .v-card-title {
+    padding: 16px !important;
+  }
+  
+  .register-modal .v-card-title .text-h6 {
+    font-size: 1.1rem !important;
+  }
+  
+  .register-modal .v-card-title .text-body-2 {
+    font-size: 0.75rem !important;
+    line-height: 1.2 !important;
+    margin-top: 6px !important;
+  }
+  
+  .v-card-text {
+    padding: 16px !important;
+  }
+  
+  .v-card-actions {
+    padding: 16px !important;
+    padding-top: 0 !important;
+  }
+  
+  /* Stack form fields on very small screens */
+  .register-modal .v-col[class*="md-6"] {
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+  }
+  
+  /* Reduce icon sizes on mobile */
+  .register-modal .mdi {
+    font-size: 1rem !important;
+  }
+  
+  /* Adjust input field padding */
+  .register-modal .v-field__input {
+    padding: 12px !important;
+    min-height: 44px !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .register-modal .v-card-title .description-text {
+    font-size: 0.7rem !important;
+    line-height: 1.1 !important;
+  }
+  
+  .register-modal .v-card-title .text-h6,
+  .register-modal .title-text {
+    font-size: 1rem !important;
+  }
+  
+  .register-modal .v-card-title {
+    padding: 12px !important;
+  }
+  
+  .v-card-text {
+    padding: 12px !important;
+  }
+  
+  .v-card-actions {
+    padding: 12px !important;
+    padding-top: 0 !important;
+  }
+}
+
+/* Loading state */
+.v-btn--loading {
+  pointer-events: none;
+}
+
+/* Success/Error message styling */
+.v-alert--density-compact {
+  padding: 12px 16px;
+}
+
+.v-alert .v-alert__content {
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+/* Custom scrollbar for modal content */
+.v-card-text::-webkit-scrollbar {
+  width: 6px;
+}
+
+.v-card-text::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.v-card-text::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.v-card-text::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a1;
+}

@@ -1,14 +1,24 @@
 import axios from 'axios'
+import RegisterModal from '../Register/RegisterModal.vue'
 
 export default {
   name: 'LoginPage',
+  components: {
+    RegisterModal,
+  },
   data() {
     return {
       valid: false,
       loading: false,
+      loadingBranches: false,
       username: '',
       password: '',
+      selectedBranch: '',
+      availableBranches: [],
       showPassword: false, // Added for password visibility toggle
+      showRegisterModal: false, // For controlling registration modal
+      showSuccessSnackbar: false, // For success notifications
+      successMessage: '', // Success message content
       errorMessage: '',
       usernameRules: [
         (v) => !!v || 'Username is required',
@@ -18,6 +28,7 @@ export default {
         (v) => !!v || 'Password is required',
         (v) => (v && v.length >= 6) || 'Password must be at least 6 characters',
       ],
+      branchRules: [(v) => !!v || 'Branch selection is required'],
     }
   },
   methods: {
@@ -36,10 +47,11 @@ export default {
       this.loading = true
 
       try {
-        // Call backend API
-        const response = await axios.post('http://localhost:3001/api/admin', {
+        // Call backend API with branch
+        const response = await axios.post('http://localhost:3001/api/admin/login', {
           username: this.username,
           password: this.password,
+          branch: this.selectedBranch,
         })
 
         if (response.data.success) {
@@ -132,16 +144,61 @@ export default {
       this.errorMessage = ''
     },
 
+    clearSuccess() {
+      this.successMessage = ''
+      this.showSuccessSnackbar = false
+    },
+
     resetForm() {
       this.username = ''
       this.password = ''
+      this.selectedBranch = ''
       this.showPassword = false
       this.clearError()
+      this.clearSuccess()
       this.$refs.loginForm.resetValidation()
     },
 
     togglePasswordVisibility() {
       this.showPassword = !this.showPassword
+    },
+
+    async fetchBranches() {
+      this.loadingBranches = true
+      try {
+        const response = await axios.get('http://localhost:3001/api/admin/branches')
+        if (response.data.success) {
+          this.availableBranches = response.data.data
+          console.log('Branches loaded:', this.availableBranches)
+        }
+      } catch (error) {
+        console.error('Failed to fetch branches:', error)
+        this.showErrorMessage('Failed to load available branches. Please refresh the page.')
+      } finally {
+        this.loadingBranches = false
+      }
+    },
+
+    onAdminRegistered(newAdmin) {
+      console.log('New admin registered:', newAdmin)
+
+      // Show success notification (we'll create a proper notification system)
+      this.showSuccessNotification(`Admin "${newAdmin.username}" has been successfully registered!`)
+
+      // Refresh branches list to include any new branches
+      this.fetchBranches()
+
+      // Close the modal
+      this.showRegisterModal = false
+    },
+
+    showSuccessNotification(message) {
+      // Use Vuetify snackbar for better UX
+      this.successMessage = message
+      this.showSuccessSnackbar = true
+
+      // Clear any existing error messages
+      this.clearError()
     },
   },
 
@@ -151,10 +208,24 @@ export default {
       if (this.errorMessage) {
         this.clearError()
       }
+      if (this.showSuccessSnackbar) {
+        this.clearSuccess()
+      }
     },
     password() {
       if (this.errorMessage) {
         this.clearError()
+      }
+      if (this.showSuccessSnackbar) {
+        this.clearSuccess()
+      }
+    },
+    selectedBranch() {
+      if (this.errorMessage) {
+        this.clearError()
+      }
+      if (this.showSuccessSnackbar) {
+        this.clearSuccess()
       }
     },
   },
@@ -166,6 +237,9 @@ export default {
 
     // Remove axios default authorization header
     delete axios.defaults.headers.common['Authorization']
+
+    // Fetch available branches on component mount
+    this.fetchBranches()
 
     // Any initialization logic when component is mounted
     console.log('Login page mounted')
