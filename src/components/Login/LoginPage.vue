@@ -13,44 +13,57 @@
 
       <!-- Right Side - Login Form -->
       <v-col cols="12" md="3" class="right-section d-flex align-center justify-center">
-        <v-card class="login-card" elevation="0" width="100%" max-width="400">
-          <v-card-text class="pa-8">
-            <h3 class="form-title text-center mb-6">Sign In</h3>
+        <v-card class="login-card" elevation="0" width="100%" max-width="400" min-height="600">
+          <v-card-text class="pa-6">
+            <h3 class="form-title text-center mb-4">Sign In</h3>
 
             <v-form ref="loginForm" v-model="valid" @submit.prevent="handleLogin">
+              <!-- City Selection Dropdown -->
+              <v-select v-model="selectedCity" :items="availableCities" label="Select City" :rules="cityRules"
+                variant="outlined" class="mb-3" :loading="loadingCities" required prepend-inner-icon="mdi-city"
+                @update:model-value="onCityChange">
+              </v-select>
+
               <!-- Branch Selection Dropdown -->
               <v-select v-model="selectedBranch" :items="availableBranches" label="Select Branch" :rules="branchRules"
-                variant="outlined" class="mb-4" :loading="loadingBranches" required
-                prepend-inner-icon="mdi-domain"></v-select>
+                variant="outlined" class="mb-3" :loading="loadingBranches" required :disabled="!selectedCity"
+                prepend-inner-icon="mdi-domain">
+              </v-select>
 
-              <v-text-field v-model="username" label="Username" :rules="usernameRules" variant="outlined" class="mb-4"
-                required prepend-inner-icon="mdi-account"></v-text-field>
+              <!-- Username Field -->
+              <v-text-field v-model="username" label="Username" :rules="usernameRules" variant="outlined" class="mb-3"
+                required prepend-inner-icon="mdi-account">
+              </v-text-field>
 
+              <!-- Password Field -->
               <v-text-field v-model="password" label="Password" :type="showPassword ? 'text' : 'password'"
-                :rules="passwordRules" variant="outlined" class="mb-4" required prepend-inner-icon="mdi-lock"
+                :rules="passwordRules" variant="outlined" class="mb-3" required prepend-inner-icon="mdi-lock"
                 :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-                @click:append-inner="togglePasswordVisibility"></v-text-field>
+                @click:append-inner="togglePasswordVisibility">
+              </v-text-field>
 
+              <!-- Login Button -->
               <v-btn type="submit" class="login-btn mb-3" block size="large" :loading="loading" :disabled="!valid">
                 Login
               </v-btn>
 
               <!-- Error Message Display -->
-              <v-alert v-if="errorMessage" type="error" density="compact" class="error-alert mb-4" closable
+              <v-alert v-if="errorMessage" type="error" density="compact" class="error-alert mb-3" closable
                 @click:close="clearError">
                 {{ errorMessage }}
               </v-alert>
 
-              <div class="text-center">
-                <v-btn variant="text" class="forgot-password-btn" @click="handleForgotPassword">
+              <!-- Forgot Password -->
+              <div class="text-center mb-3">
+                <v-btn variant="text" class="forgot-password-btn" size="small" @click="handleForgotPassword">
                   Forgot Password?
                 </v-btn>
               </div>
 
               <!-- Admin Registration Section -->
-              <v-divider class="my-4"></v-divider>
+              <v-divider class="my-3"></v-divider>
               <div class="text-center">
-                <p class="text-caption mb-3">Need to register a new admin?</p>
+                <p class="text-caption mb-2">Need to register a new admin?</p>
                 <RegisterModal v-model="showRegisterModal" @admin-registered="onAdminRegistered" />
               </div>
             </v-form>

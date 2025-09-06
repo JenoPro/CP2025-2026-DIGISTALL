@@ -34,9 +34,14 @@ export async function login(req, res) {
 
     connection = await createConnection()
 
-    // Find admin user by username and branch
+    // Find admin user by username and branch, including area information
     const [admins] = await connection.execute(
-      'SELECT * FROM Admin WHERE username = ? AND branch = ? AND is_active = TRUE',
+      `
+      SELECT a.*, ar.city, ar.branch as area_branch 
+      FROM Admin a 
+      LEFT JOIN Area ar ON a.area_id = ar.ID 
+      WHERE a.username = ? AND a.branch = ? AND a.is_active = TRUE
+    `,
       [username, branch],
     )
 
@@ -56,6 +61,8 @@ export async function login(req, res) {
       username: admin.username,
       email: admin.email,
       branch: admin.branch,
+      city: admin.city,
+      area_id: admin.area_id,
       hasPassword: !!admin.password,
     })
 
@@ -83,6 +90,8 @@ export async function login(req, res) {
         username: admin.username,
         role: admin.role,
         branch: admin.branch,
+        city: admin.city,
+        area_id: admin.area_id,
       },
       jwtSecret,
       { expiresIn: '24h' },
@@ -101,6 +110,8 @@ export async function login(req, res) {
           email: admin.email,
           role: admin.role,
           branch: admin.branch,
+          city: admin.city,
+          area_id: admin.area_id,
           first_name: admin.first_name,
           last_name: admin.last_name,
         },
@@ -277,7 +288,17 @@ export async function createAdminUser(req, res) {
   let connection
 
   try {
-    const { username, password, email, firstName, lastName, branch, role = 'admin' } = req.body
+    const {
+      username,
+      password,
+      email,
+      firstName,
+      lastName,
+      city,
+      branch,
+      area_id,
+      role = 'admin',
+    } = req.body
 
     // Validation
     if (!username || !password || !branch) {
@@ -301,16 +322,39 @@ export async function createAdminUser(req, res) {
       })
     }
 
+    let finalAreaId = area_id
+
+    // If area_id is not provided but city and branch are, try to find or create the area
+    if (!finalAreaId && city && branch) {
+      // First, try to find existing area
+      const [existingAreas] = await connection.execute(
+        'SELECT ID FROM Area WHERE city = ? AND branch = ?',
+        [city, branch],
+      )
+
+      if (existingAreas.length > 0) {
+        finalAreaId = existingAreas[0].ID
+      } else {
+        // Create new area
+        const [areaResult] = await connection.execute(
+          'INSERT INTO Area (city, branch, description) VALUES (?, ?, ?)',
+          [city, branch, `${branch} in ${city}`],
+        )
+        finalAreaId = areaResult.insertId
+        console.log('✅ New area created:', city, '-', branch, 'with ID:', finalAreaId)
+      }
+    }
+
     // Hash password
     const hashedPassword = await hash(password, 12)
 
-    // Insert new admin user
+    // Insert new admin user with area_id
     const [result] = await connection.execute(
-      'INSERT INTO Admin (username, password, email, first_name, last_name, branch, role) VALUES (?, ?, ?, ?, ?, ?, ?)',
-      [username, hashedPassword, email, firstName, lastName, branch, role],
+      'INSERT INTO Admin (username, password, email, first_name, last_name, branch, area_id, role) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+      [username, hashedPassword, email, firstName, lastName, branch, finalAreaId, role],
     )
 
-    console.log('✅ New admin user created:', username, 'for branch:', branch)
+    console.log('✅ New admin user created:', username, 'for branch:', branch, 'in city:', city)
 
     res.status(201).json({
       success: true,
@@ -321,7 +365,9 @@ export async function createAdminUser(req, res) {
         email,
         first_name: firstName,
         last_name: lastName,
+        city,
         branch,
+        area_id: finalAreaId,
         role,
       },
     })

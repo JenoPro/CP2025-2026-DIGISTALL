@@ -10,11 +10,15 @@ export default {
     return {
       valid: false,
       loading: false,
+      loadingCities: false,
       loadingBranches: false,
       username: '',
       password: '',
+      selectedCity: '',
       selectedBranch: '',
+      availableCities: [],
       availableBranches: [],
+      allAreas: [], // Store all areas to filter by city
       showPassword: false, // Added for password visibility toggle
       showRegisterModal: false, // For controlling registration modal
       showSuccessSnackbar: false, // For success notifications
@@ -28,6 +32,7 @@ export default {
         (v) => !!v || 'Password is required',
         (v) => (v && v.length >= 6) || 'Password must be at least 6 characters',
       ],
+      cityRules: [(v) => !!v || 'City selection is required'],
       branchRules: [(v) => !!v || 'Branch selection is required'],
     }
   },
@@ -152,6 +157,7 @@ export default {
     resetForm() {
       this.username = ''
       this.password = ''
+      this.selectedCity = ''
       this.selectedBranch = ''
       this.showPassword = false
       this.clearError()
@@ -163,20 +169,50 @@ export default {
       this.showPassword = !this.showPassword
     },
 
-    async fetchBranches() {
-      this.loadingBranches = true
+    async fetchAreas() {
+      this.loadingCities = true
       try {
-        const response = await axios.get('http://localhost:3001/api/admin/branches')
+        const response = await axios.get('http://localhost:3001/api/areas')
         if (response.data.success) {
-          this.availableBranches = response.data.data
-          console.log('Branches loaded:', this.availableBranches)
+          this.allAreas = response.data.data
+
+          // Extract unique cities for the city dropdown
+          const uniqueCities = [...new Set(this.allAreas.map((area) => area.city))]
+          this.availableCities = uniqueCities.sort()
+
+          console.log('Areas loaded:', this.allAreas)
+          console.log('Cities loaded:', this.availableCities)
         }
       } catch (error) {
-        console.error('Failed to fetch branches:', error)
-        this.showErrorMessage('Failed to load available branches. Please refresh the page.')
+        console.error('Failed to fetch areas:', error)
+        this.showErrorMessage(
+          'Failed to load available cities and branches. Please refresh the page.',
+        )
       } finally {
-        this.loadingBranches = false
+        this.loadingCities = false
       }
+    },
+
+    onCityChange() {
+      // Clear branch selection when city changes
+      this.selectedBranch = ''
+
+      // Filter branches based on selected city
+      if (this.selectedCity) {
+        const cityAreas = this.allAreas.filter((area) => area.city === this.selectedCity)
+        this.availableBranches = cityAreas.map((area) => area.branch).sort()
+      } else {
+        this.availableBranches = []
+      }
+
+      console.log('City changed to:', this.selectedCity)
+      console.log('Available branches:', this.availableBranches)
+    },
+
+    async fetchBranches() {
+      // This method is now handled by fetchAreas and onCityChange
+      // Keeping for backward compatibility but will be deprecated
+      console.log('fetchBranches called - now handled by fetchAreas')
     },
 
     onAdminRegistered(newAdmin) {
@@ -185,8 +221,8 @@ export default {
       // Show success notification (we'll create a proper notification system)
       this.showSuccessNotification(`Admin "${newAdmin.username}" has been successfully registered!`)
 
-      // Refresh branches list to include any new branches
-      this.fetchBranches()
+      // Refresh areas list to include any new areas/branches
+      this.fetchAreas()
 
       // Close the modal
       this.showRegisterModal = false
@@ -220,6 +256,14 @@ export default {
         this.clearSuccess()
       }
     },
+    selectedCity() {
+      if (this.errorMessage) {
+        this.clearError()
+      }
+      if (this.showSuccessSnackbar) {
+        this.clearSuccess()
+      }
+    },
     selectedBranch() {
       if (this.errorMessage) {
         this.clearError()
@@ -238,8 +282,8 @@ export default {
     // Remove axios default authorization header
     delete axios.defaults.headers.common['Authorization']
 
-    // Fetch available branches on component mount
-    this.fetchBranches()
+    // Fetch available areas and cities on component mount
+    this.fetchAreas()
 
     // Any initialization logic when component is mounted
     console.log('Login page mounted')

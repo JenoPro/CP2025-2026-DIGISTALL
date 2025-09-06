@@ -14,7 +14,9 @@ export default {
       dialog: this.modelValue,
       valid: false,
       loading: false,
+      loadingCities: false,
       loadingBranches: false,
+      showNewCityInput: false,
       showNewBranchInput: false,
 
       // Form fields
@@ -24,7 +26,9 @@ export default {
       username: '',
       password: '',
       confirmPassword: '',
+      selectedCity: '',
       selectedBranch: '',
+      newCityName: '',
       newBranchName: '',
       role: 'admin',
 
@@ -33,7 +37,9 @@ export default {
       showConfirmPassword: false,
 
       // Available options
+      availableCities: [],
       availableBranches: [],
+      allAreas: [], // Store all areas to filter by city
       roleOptions: [{ title: 'Admin', value: 'admin' }],
 
       // Messages
@@ -62,7 +68,15 @@ export default {
         (v) => /(?=.*[A-Z])/.test(v) || 'Must contain at least one uppercase letter',
         (v) => /(?=.*\d)/.test(v) || 'Must contain at least one number',
       ],
+      cityRules: [(v) => !!v || 'City selection is required'],
       branchRules: [(v) => !!v || 'Branch selection is required'],
+      newCityRules: [
+        (v) => !this.showNewCityInput || !!v || 'New city name is required',
+        (v) =>
+          !this.showNewCityInput ||
+          (v && v.length >= 3) ||
+          'City name must be at least 3 characters',
+      ],
       newBranchRules: [
         (v) => !this.showNewBranchInput || !!v || 'New branch name is required',
         (v) =>
@@ -88,7 +102,7 @@ export default {
     dialog(newVal) {
       this.$emit('update:modelValue', newVal)
       if (newVal) {
-        this.fetchBranches()
+        this.fetchAreas()
       }
     },
   },
@@ -111,24 +125,46 @@ export default {
         return
       }
 
+      // Handle new city creation
+      let cityToUse = this.selectedCity
+      if (this.showNewCityInput && this.newCityName.trim()) {
+        cityToUse = this.newCityName.trim()
+      }
+
       // Handle new branch creation
       let branchToUse = this.selectedBranch
       if (this.showNewBranchInput && this.newBranchName.trim()) {
         branchToUse = this.newBranchName.trim()
       }
 
+      // Find area_id for the selected city and branch
+      let areaId = null
+      const existingArea = this.allAreas.find(
+        (area) => area.city === cityToUse && area.branch === branchToUse,
+      )
+      if (existingArea) {
+        areaId = existingArea.ID
+      }
+
       this.loading = true
 
       try {
-        const response = await axios.post('http://localhost:3001/api/admin/create-user', {
+        const registrationData = {
           username: this.username.trim(),
           password: this.password,
           email: this.email.trim(),
           firstName: this.firstName.trim(),
           lastName: this.lastName.trim(),
+          city: cityToUse,
           branch: branchToUse,
+          area_id: areaId,
           role: this.role,
-        })
+        }
+
+        const response = await axios.post(
+          'http://localhost:3001/api/admin/create-user',
+          registrationData,
+        )
 
         if (response.data.success) {
           this.showSuccessMessage(`Admin "${this.username}" has been successfully registered!`)
@@ -169,27 +205,72 @@ export default {
       }
     },
 
-    async fetchBranches() {
-      this.loadingBranches = true
+    async fetchAreas() {
+      this.loadingCities = true
       try {
-        const response = await axios.get('http://localhost:3001/api/admin/branches')
+        const response = await axios.get('http://localhost:3001/api/areas')
         if (response.data.success) {
-          this.availableBranches = response.data.data
-          console.log('Branches loaded for registration:', this.availableBranches)
+          this.allAreas = response.data.data
+
+          // Extract unique cities for the city dropdown
+          const uniqueCities = [...new Set(this.allAreas.map((area) => area.city))]
+          this.availableCities = uniqueCities.sort()
+
+          console.log('Areas loaded for registration:', this.allAreas)
+          console.log('Cities loaded for registration:', this.availableCities)
         }
       } catch (error) {
-        console.error('Failed to fetch branches:', error)
-        this.showErrorMessage('Failed to load available branches.')
+        console.error('Failed to fetch areas:', error)
+        this.showErrorMessage('Failed to load available cities and branches.')
       } finally {
-        this.loadingBranches = false
+        this.loadingCities = false
       }
     },
 
+    onCityChange() {
+      // Clear branch selection when city changes
+      this.selectedBranch = ''
+
+      // Filter branches based on selected city
+      if (this.selectedCity) {
+        const cityAreas = this.allAreas.filter((area) => area.city === this.selectedCity)
+        this.availableBranches = cityAreas.map((area) => area.branch).sort()
+      } else {
+        this.availableBranches = []
+      }
+
+      console.log('City changed to:', this.selectedCity)
+      console.log('Available branches for registration:', this.availableBranches)
+    },
+
+    addNewCity() {
+      if (this.newCityName.trim()) {
+        const newCity = this.newCityName.trim()
+        if (!this.availableCities.includes(newCity)) {
+          this.availableCities.push(newCity)
+          this.availableCities.sort()
+          this.selectedCity = newCity
+          // Clear branches when new city is added
+          this.availableBranches = []
+          this.selectedBranch = ''
+        }
+        this.showNewCityInput = false
+        this.newCityName = ''
+      }
+    },
+
+    async fetchBranches() {
+      // This method is now handled by fetchAreas and onCityChange
+      // Keeping for backward compatibility but will be deprecated
+      console.log('fetchBranches called - now handled by fetchAreas')
+    },
+
     addNewBranch() {
-      if (this.newBranchName.trim()) {
+      if (this.newBranchName.trim() && this.selectedCity) {
         const newBranch = this.newBranchName.trim()
         if (!this.availableBranches.includes(newBranch)) {
           this.availableBranches.push(newBranch)
+          this.availableBranches.sort()
           this.selectedBranch = newBranch
         }
         this.showNewBranchInput = false
@@ -235,11 +316,14 @@ export default {
       this.username = ''
       this.password = ''
       this.confirmPassword = ''
+      this.selectedCity = ''
       this.selectedBranch = ''
+      this.newCityName = ''
       this.newBranchName = ''
       this.role = 'admin'
       this.showPassword = false
       this.showConfirmPassword = false
+      this.showNewCityInput = false
       this.showNewBranchInput = false
       this.clearError()
       this.clearSuccess()

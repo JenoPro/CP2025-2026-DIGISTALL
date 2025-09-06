@@ -25,11 +25,35 @@
             <v-card-text class="pa-6">
                 <v-form ref="registerForm" v-model="valid" @submit.prevent="handleRegister">
                     <v-row>
+                        <!-- City Selection -->
+                        <v-col cols="12" md="6">
+                            <v-select v-model="selectedCity" :items="availableCities" label="Select City / Location *"
+                                :rules="cityRules" variant="outlined" prepend-inner-icon="mdi-city"
+                                :loading="loadingCities" required @update:model-value="onCityChange">
+                                <template v-slot:append-item>
+                                    <v-divider class="mt-2"></v-divider>
+                                    <v-list-item @click="showNewCityInput = !showNewCityInput">
+                                        <v-list-item-title>
+                                            <v-icon class="me-2">mdi-plus</v-icon>
+                                            Add New City
+                                        </v-list-item-title>
+                                    </v-list-item>
+                                </template>
+                            </v-select>
+                        </v-col>
+
+                        <!-- New City Input (conditionally shown) -->
+                        <v-col cols="12" v-if="showNewCityInput">
+                            <v-text-field v-model="newCityName" label="New City Name *" :rules="newCityRules"
+                                variant="outlined" prepend-inner-icon="mdi-city-variant"
+                                placeholder="e.g., Iriga City, Camarines Sur" @blur="addNewCity"></v-text-field>
+                        </v-col>
+
                         <!-- Branch Selection -->
-                        <v-col cols="12">
+                        <v-col cols="12" md="6">
                             <v-select v-model="selectedBranch" :items="availableBranches" label="Select Branch *"
                                 :rules="branchRules" variant="outlined" prepend-inner-icon="mdi-domain"
-                                :loading="loadingBranches" required>
+                                :loading="loadingBranches" required :disabled="!selectedCity">
                                 <template v-slot:append-item>
                                     <v-divider class="mt-2"></v-divider>
                                     <v-list-item @click="showNewBranchInput = !showNewBranchInput">
@@ -46,7 +70,8 @@
                         <v-col cols="12" v-if="showNewBranchInput">
                             <v-text-field v-model="newBranchName" label="New Branch Name *" :rules="newBranchRules"
                                 variant="outlined" prepend-inner-icon="mdi-office-building"
-                                placeholder="e.g., Legazpi Branch, Iriga Branch" @blur="addNewBranch"></v-text-field>
+                                placeholder="e.g., Main Public Market, Central Plaza Market"
+                                @blur="addNewBranch"></v-text-field>
                         </v-col>
 
                         <!-- Personal Information -->

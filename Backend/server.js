@@ -8,6 +8,7 @@ import adminRoutes from './Admin/adminRoutes.js'
 import { login, testDb } from './Admin/adminController.js'
 import { errorHandler } from './middleware/errorHandler.js'
 import stallRoutes from './Stall/stallRoutes.js'
+import areaRoutes from './Area/areaRoutes.js'
 
 // Configure dotenv FIRST
 dotenv.config()
@@ -22,6 +23,7 @@ app.use(express.json())
 // Routes
 app.use('/api/admin', adminRoutes)
 app.use('/api/stalls', stallRoutes)
+app.use('/api/areas', areaRoutes)
 
 // Backward compatibility route for old frontend
 app.post('/api/Admin', login)
@@ -54,7 +56,7 @@ app.listen(PORT, async () => {
   console.log(`🔧 Environment: ${process.env.NODE_ENV || 'development'}`)
   console.log(`🌐 CORS enabled for frontend URLs`)
   console.log('🔧 Available endpoints:')
-  console.log('   POST /api/Admin - Ad min login (backward compatibility)')
+  console.log('   POST /api/Admin - Admin login (backward compatibility)')
   console.log('   POST /api/admin/login - Admin login (new)')
   console.log('   GET  /api/admin/verify-token - Verify JWT token')
   console.log('   POST /api/admin/logout - Admin logout')
@@ -67,6 +69,12 @@ app.listen(PORT, async () => {
   console.log('   GET  /api/stalls/:id - Get stall by ID')
   console.log('   PUT  /api/stalls/:id - Update stall')
   console.log('   DELETE /api/stalls/:id - Delete stall')
+  console.log('   GET  /api/areas - Get all areas')
+  console.log('   GET  /api/areas/city/:city - Get areas by city')
+  console.log('   GET  /api/areas/:id - Get area by ID')
+  console.log('   POST /api/areas - Create new area')
+  console.log('   PUT  /api/areas/:id - Update area')
+  console.log('   DELETE /api/areas/:id - Delete area')
   console.log('   GET  /api/health - Health check')
   console.log('   GET  /api/test-db - Test database connection')
 

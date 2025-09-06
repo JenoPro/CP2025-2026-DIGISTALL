@@ -52,6 +52,24 @@ export async function initializeDatabase() {
     // Now connect to the specific database
     dbConnection = await _createConnection(dbConfig)
 
+    // Create Area table first
+    const createAreaTable = `
+      CREATE TABLE IF NOT EXISTS Area (
+        ID INT AUTO_INCREMENT PRIMARY KEY,
+        city VARCHAR(100) NOT NULL,
+        branch VARCHAR(100) NOT NULL,
+        description TEXT,
+        is_active BOOLEAN DEFAULT TRUE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        
+        INDEX idx_city (city),
+        INDEX idx_branch (branch)
+      )
+    `
+
+    console.log('🔧 Creating Area table if not exists...')
+    await dbConnection.execute(createAreaTable)
+
     // Create Admin table
     const createAdminTable = `
       CREATE TABLE IF NOT EXISTS Admin (
@@ -62,14 +80,32 @@ export async function initializeDatabase() {
         first_name VARCHAR(50),
         last_name VARCHAR(50),
         role VARCHAR(20) DEFAULT 'admin',
+        area_id INT,
         branch VARCHAR(100) DEFAULT 'Naga Branch',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        is_active BOOLEAN DEFAULT TRUE
+        is_active BOOLEAN DEFAULT TRUE,
+        
+        INDEX idx_area_id (area_id)
       )
     `
 
     console.log('🔧 Creating Admin table if not exists...')
     await dbConnection.execute(createAdminTable)
+
+    // Add area_id column if it doesn't exist (for existing databases)
+    try {
+      await dbConnection.execute(`
+        ALTER TABLE Admin 
+        ADD COLUMN area_id INT
+      `)
+      console.log('✅ Area_id column added to Admin table')
+    } catch (error) {
+      if (error.message.includes('Duplicate column name')) {
+        console.log('✅ Area_id column already exists in Admin table')
+      } else {
+        console.log('Area_id column error:', error.message)
+      }
+    }
 
     // Add branch column if it doesn't exist (for existing databases)
     try {
@@ -121,6 +157,19 @@ export async function initializeDatabase() {
     // Add foreign key constraints after both tables are created
     try {
       await dbConnection.execute(`
+        ALTER TABLE Admin 
+        ADD CONSTRAINT fk_admin_area_id 
+        FOREIGN KEY (area_id) REFERENCES Area(ID) ON DELETE SET NULL
+      `)
+    } catch (error) {
+      // Constraint might already exist, ignore error
+      if (!error.message.includes('Duplicate key name')) {
+        console.log('Admin-Area foreign key constraint already exists or error:', error.message)
+      }
+    }
+
+    try {
+      await dbConnection.execute(`
         ALTER TABLE Stall 
         ADD CONSTRAINT fk_stall_created_by 
         FOREIGN KEY (created_by) REFERENCES Admin(ID) ON DELETE SET NULL
@@ -145,43 +194,128 @@ export async function initializeDatabase() {
       }
     }
 
+    // Check and create sample areas
+    console.log('🔧 Creating sample areas...')
+    const sampleAreas = [
+      {
+        city: 'Naga City',
+        branch: "Naga City People's Mall",
+        description: 'Main mall in Naga City',
+      },
+      {
+        city: 'Naga City',
+        branch: 'Satellite Market 1',
+        description: 'Satellite market location 1',
+      },
+      { city: 'Pili', branch: 'Pili Public Market', description: 'Main market in Pili' },
+      { city: 'Sipocot', branch: 'Sipocot Public Market', description: 'Main market in Sipocot' },
+      { city: 'Albay', branch: 'Albay Central Market', description: 'Central market in Albay' },
+      {
+        city: 'Legaspi',
+        branch: 'Legaspi City Market',
+        description: 'Main market in Legaspi City',
+      },
+      { city: 'Milaor', branch: 'Milaor Public Market', description: 'Main market in Milaor' },
+    ]
+
+    for (const area of sampleAreas) {
+      const [existingArea] = await dbConnection.execute(
+        'SELECT * FROM Area WHERE city = ? AND branch = ?',
+        [area.city, area.branch],
+      )
+
+      if (existingArea.length === 0) {
+        console.log(`🏢 Creating area: ${area.city} - ${area.branch}`)
+        await dbConnection.execute(
+          'INSERT INTO Area (city, branch, description) VALUES (?, ?, ?)',
+          [area.city, area.branch, area.description],
+        )
+        console.log(`✅ ${area.city} - ${area.branch} created successfully!`)
+      } else {
+        console.log(`✅ ${area.city} - ${area.branch} already exists`)
+      }
+    }
+
+    // Get area IDs for admin user creation
+    const [areas] = await dbConnection.execute(
+      'SELECT ID, city, branch FROM Area ORDER BY city, branch',
+    )
+    const areaMap = new Map()
+    areas.forEach((area) => {
+      areaMap.set(`${area.city}-${area.branch}`, area.ID)
+    })
+
     // Check and create admin users for each branch
     const adminUsers = [
       {
         username: 'admin_naga',
-        password: await hash('admin123', 12),
+        password: await hash('Admin123', 12),
         email: 'admin@nagastall.com',
         first_name: 'System',
         last_name: 'Administrator',
         role: 'admin',
-        branch: 'Naga Branch',
+        branch: "Naga City People's Mall",
+        area_id: areaMap.get("Naga City-Naga City People's Mall"),
+      },
+      {
+        username: 'admin_satellite1',
+        password: await hash('Admin123', 12),
+        email: 'admin.satellite1@nagastall.com',
+        first_name: 'Satellite1',
+        last_name: 'Administrator',
+        role: 'admin',
+        branch: 'Satellite Market 1',
+        area_id: areaMap.get('Naga City-Satellite Market 1'),
+      },
+      {
+        username: 'admin_pili',
+        password: await hash('Admin123', 12),
+        email: 'admin.pili@nagastall.com',
+        first_name: 'Pili',
+        last_name: 'Administrator',
+        role: 'admin',
+        branch: 'Pili Public Market',
+        area_id: areaMap.get('Pili-Pili Public Market'),
+      },
+      {
+        username: 'admin_sipocot',
+        password: await hash('Admin123', 12),
+        email: 'admin.sipocot@nagastall.com',
+        first_name: 'Sipocot',
+        last_name: 'Administrator',
+        role: 'admin',
+        branch: 'Sipocot Public Market',
+        area_id: areaMap.get('Sipocot-Sipocot Public Market'),
       },
       {
         username: 'admin_albay',
-        password: await hash('admin123', 12),
+        password: await hash('Admin123', 12),
         email: 'admin.albay@nagastall.com',
         first_name: 'Albay',
         last_name: 'Administrator',
         role: 'admin',
-        branch: 'Albay Branch',
+        branch: 'Albay Central Market',
+        area_id: areaMap.get('Albay-Albay Central Market'),
       },
       {
         username: 'admin_legaspi',
-        password: await hash('admin123', 12),
+        password: await hash('Admin123', 12),
         email: 'admin.legaspi@nagastall.com',
         first_name: 'Legaspi',
         last_name: 'Administrator',
         role: 'admin',
-        branch: 'Legaspi Branch',
+        branch: 'Legaspi City Market',
+        area_id: areaMap.get('Legaspi-Legaspi City Market'),
       },
       {
         username: 'admin_milaor',
-        password: await hash('admin123', 12),
+        password: await hash('Admin123', 12),
         email: 'admin.milaor@nagastall.com',
         first_name: 'Milaor',
         last_name: 'Administrator',
         role: 'admin',
-        branch: 'Milaor Branch',
+        branch: 'Milaor Public Market',
+        area_id: areaMap.get('Milaor-Milaor Public Market'),
       },
     ]
 
@@ -195,7 +329,7 @@ export async function initializeDatabase() {
       if (existingAdmin.length === 0) {
         console.log(`👤 Creating admin: ${admin.username} for ${admin.branch}`)
         await dbConnection.execute(
-          'INSERT INTO Admin (username, password, email, first_name, last_name, role, branch) VALUES (?, ?, ?, ?, ?, ?, ?)',
+          'INSERT INTO Admin (username, password, email, first_name, last_name, role, branch, area_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
           [
             admin.username,
             admin.password,
@@ -204,20 +338,13 @@ export async function initializeDatabase() {
             admin.last_name,
             admin.role,
             admin.branch,
+            admin.area_id,
           ],
         )
         console.log(`✅ ${admin.username} created successfully!`)
       } else {
         console.log(`✅ ${admin.username} already exists`)
-
-        // Update password and branch for existing admin
-        console.log(`🔧 Updating password and branch for ${admin.username}...`)
-        await dbConnection.execute('UPDATE Admin SET password = ?, branch = ? WHERE username = ?', [
-          admin.password,
-          admin.branch,
-          admin.username,
-        ])
-        console.log(`✅ ${admin.username} updated!`)
+        // No password update for existing admins
       }
     }
 
@@ -227,6 +354,22 @@ export async function initializeDatabase() {
     console.log('🔧 Cleaning up unwanted admin users...')
     await dbConnection.execute('DELETE FROM Admin WHERE username = ?', ['admin_camsur'])
     console.log('✅ Cleanup completed!')
+
+    // Remove unwanted admins
+    const unwantedAdmins = [
+      'admin_satellite2',
+      'pamplona_admin',
+      // Add more usernames if needed
+    ]
+    for (const username of unwantedAdmins) {
+      await dbConnection.execute('DELETE FROM Admin WHERE username = ?', [username])
+    }
+
+    // Remove this section after running once if you don't want auto-updates
+    const newPasswordHash = await hash('Admin123', 12)
+    console.log('🔧 One-time password update to Admin123...')
+    await dbConnection.execute('UPDATE Admin SET password = ?', [newPasswordHash])
+    console.log('✅ All admin passwords updated to Admin123')
 
     // Check if sample stalls exist
     const [existingStalls] = await dbConnection.execute('SELECT COUNT(*) as count FROM Stall')
@@ -288,12 +431,17 @@ export async function initializeDatabase() {
     }
 
     console.log('📋 Login Credentials:')
-    // Dynamically show all admin users
-    const [allAdmins] = await dbConnection.execute(
-      'SELECT username, branch FROM Admin ORDER BY branch, username',
-    )
+    // Dynamically show all admin users with their areas
+    const [allAdmins] = await dbConnection.execute(`
+      SELECT a.username, a.branch, ar.city 
+      FROM Admin a 
+      LEFT JOIN Area ar ON a.area_id = ar.ID 
+      ORDER BY ar.city, a.branch, a.username
+    `)
     allAdmins.forEach((admin) => {
-      console.log(`   ${admin.branch} - Username: ${admin.username}, Password: admin123`)
+      console.log(
+        `   ${admin.city || 'Unknown'} - ${admin.branch} - Username: ${admin.username}, Password: Admin123`,
+      )
     })
   } catch (error) {
     console.error('❌ Database initialization failed:', error)
