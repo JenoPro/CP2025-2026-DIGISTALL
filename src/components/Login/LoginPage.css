@@ -8,12 +8,11 @@
   background-attachment: fixed;
   padding: 0;
   position: relative;
-  /* Fallback for devices that don't support background-attachment: fixed */
 }
 
 @media (max-width: 768px) {
   .login-container {
-    background-attachment: scroll; /* Better performance on mobile */
+    background-attachment: scroll;
   }
 }
 
@@ -25,7 +24,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.1); /* Subtle overlay */
+  background: rgba(0, 0, 0, 0.016);
   z-index: 1;
 }
 
@@ -34,7 +33,7 @@
   background: transparent;
   position: relative;
   z-index: 2;
-  padding: 2rem;
+  padding: clamp(1rem, 4vw, 3rem);
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -45,6 +44,8 @@
   z-index: 3;
   text-align: center;
   max-width: 100%;
+  padding: 1rem;
+  animation: slideInLeft 0.8s ease-out;
 }
 
 /* Right Section - Login Form */
@@ -54,120 +55,141 @@
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  padding: 2rem;
+  padding: clamp(1rem, 4vw, 2rem);
   min-height: 100vh;
+  animation: slideInRight 0.8s ease-out;
 }
 
-/* White box background - Responsive approach */
+/* Responsive white box background */
 .right-section::before {
   content: '';
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: rgb(255, 255, 255);
+  background: rgba(255, 255, 255, 0.98);
   backdrop-filter: blur(15px);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
   z-index: 1;
-  /* Dynamic sizing */
-  width: min(90vw, 480px);
+  width: min(95vw, 500px);
   height: auto;
-  min-height: min(80vh, 600px);
-  max-height: 90vh;
+  min-height: min(85vh, 700px);
+  max-height: 95vh;
 }
 
-/* Card Styling - Responsive */
+/* Card Styling */
 .login-card {
   background: transparent !important;
   box-shadow: none !important;
-  width: min(90vw, 480px) !important;
-  max-width: 480px !important;
+  width: min(95vw, 500px) !important;
+  max-width: 500px !important;
   position: relative;
   z-index: 2;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  min-height: min(80vh, 600px);
+  min-height: min(85vh, 700px);
 }
 
 /* Form container */
 .login-card .v-card-text {
   width: 100% !important;
-  padding: clamp(1.5rem, 4vw, 3rem) !important;
+  padding: clamp(1.5rem, 5vw, 3rem) !important;
   display: flex !important;
   flex-direction: column !important;
   justify-content: center !important;
   height: 100% !important;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
-/* Logo and Title Section - Responsive Typography */
+/* Logo and Title Section */
 .city-logo {
   width: clamp(60px, 15vw, 120px);
   height: clamp(60px, 15vw, 120px);
   object-fit: contain;
   filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.25));
   margin-bottom: clamp(1rem, 3vw, 2rem);
+  transition: transform 0.3s ease;
+}
+
+.city-logo:hover {
+  transform: scale(1.05);
 }
 
 .main-title {
-  font-size: clamp(1.75rem, 5vw, 3rem);
+  font-size: clamp(1.75rem, 5vw, 3.2rem);
   font-weight: 700;
   color: #000000;
   margin-bottom: 0.5rem;
   line-height: 1.1;
   word-wrap: break-word;
-  hyphens: auto;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .sub-title {
-  font-size: clamp(1.25rem, 4vw, 2.2rem);
+  font-size: clamp(1.25rem, 4vw, 2.4rem);
   font-weight: 600;
   color: #000000;
   margin-bottom: 1rem;
   line-height: 1.2;
   word-wrap: break-word;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .powered-by {
-  font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+  font-size: clamp(0.9rem, 2.5vw, 1.2rem);
   color: #002181;
   font-weight: 600;
   margin: 0;
 }
 
-/* Form Section - Responsive */
+/* Form Section */
 .form-title {
-  font-size: clamp(1.25rem, 4vw, 1.75rem);
+  font-size: clamp(1.25rem, 4vw, 1.875rem);
   font-weight: 600;
   color: #2c3e50;
   text-align: center;
   margin-bottom: 2rem !important;
 }
 
-/* Input Fields - Enhanced for mobile */
-.v-text-field {
+/* Input Fields */
+.v-text-field,
+.v-select {
   margin-bottom: 1rem;
 }
 
-.v-text-field .v-field {
+.v-text-field .v-field,
+.v-select .v-field {
   border-radius: 12px;
   background-color: rgba(255, 255, 255, 0.98);
   border: 1px solid #e0e0e0;
-  min-height: 56px; /* Minimum touch target */
+  min-height: 56px;
+  transition: all 0.3s ease;
 }
 
-.v-text-field .v-field--focused {
+.v-text-field .v-field--focused,
+.v-select .v-field--focused {
   box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
   border-color: #3498db;
+  background-color: #ffffff;
 }
 
-.v-text-field .v-field__input {
-  font-size: 16px; /* Prevents zoom on iOS */
+.v-text-field .v-field__input,
+.v-select .v-field__input {
+  font-size: 16px;
   padding: 12px 16px;
 }
 
-/* Login Button - Enhanced touch targets */
+.v-text-field .v-field--error,
+.v-select .v-field--error {
+  border-color: #e74c3c;
+  box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.2);
+}
+
+/* Login Button */
 .login-btn {
   background: linear-gradient(135deg, #4f7cff, #3b5bdb) !important;
   color: white !important;
@@ -175,10 +197,27 @@
   text-transform: none !important;
   font-weight: 600 !important;
   font-size: clamp(0.9rem, 2.5vw, 1rem) !important;
-  height: 56px !important; /* Minimum touch target */
+  height: 56px !important;
   box-shadow: 0 4px 12px rgba(79, 124, 255, 0.3) !important;
   transition: all 0.3s ease !important;
   margin-bottom: 1rem !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.login-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.login-btn:hover:not(:disabled)::before {
+  left: 100%;
 }
 
 .login-btn:hover:not(:disabled) {
@@ -189,6 +228,28 @@
 .login-btn:disabled {
   opacity: 0.6 !important;
   transform: none !important;
+  cursor: not-allowed;
+}
+
+/* Alert Messages */
+.error-alert,
+.success-alert {
+  border-radius: 12px !important;
+  margin-bottom: 1rem !important;
+  font-size: 0.9rem;
+  border-left-width: 4px !important;
+}
+
+.error-alert {
+  background-color: rgba(244, 67, 54, 0.1) !important;
+  border-left-color: #f44336 !important;
+  color: #c62828 !important;
+}
+
+.success-alert {
+  background-color: rgba(76, 175, 80, 0.1) !important;
+  border-left-color: #4caf50 !important;
+  color: #2e7d32 !important;
 }
 
 /* Forgot Password Button */
@@ -198,171 +259,158 @@
   font-weight: 500 !important;
   text-decoration: underline;
   font-size: clamp(0.8rem, 2vw, 0.9rem) !important;
-  min-height: 48px !important; /* Touch target */
+  min-height: 48px !important;
+  transition: all 0.3s ease;
 }
 
-.forgot-password-btn:hover {
+.forgot-password-btn:hover:not(:disabled) {
   color: #3b5bdb !important;
   background-color: rgba(79, 124, 255, 0.1) !important;
+  text-decoration: none;
 }
 
-/* Tablet Landscape (1024px - 1200px) */
-@media (min-width: 1024px) and (max-width: 1200px) {
-  .left-section {
-    padding: 3rem 2rem;
-  }
-
-  .right-section::before {
-    width: 450px;
-    min-height: 580px;
-  }
-
-  .login-card {
-    width: 450px !important;
-  }
+.forgot-password-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
-/* Tablet Portrait (768px - 1024px) */
-@media (max-width: 1024px) and (min-width: 768px) {
-  .left-section {
-    padding: 2rem 1.5rem;
-  }
-
-  .right-section::before {
-    width: min(85vw, 420px);
-    min-height: min(75vh, 550px);
-  }
-
-  .login-card {
-    width: min(85vw, 420px) !important;
-  }
+/* FIXED: Loading Overlay - Centered and Properly Sized */
+.loading-overlay {
+  background: rgba(0, 0, 0, 0.041) !important; /* Lighter background */
+  z-index: 9999;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 
-/* Mobile Landscape (568px - 768px) */
-@media (max-width: 768px) and (orientation: landscape) {
-  .login-container {
-    flex-direction: row;
-  }
-
-  .left-section {
-    min-height: 100vh;
-    flex: 1;
-    padding: 1rem;
-  }
-
-  .right-section {
-    min-height: 100vh;
-    flex: 1;
-    padding: 1rem;
-  }
-
-  .right-section::before {
-    width: min(90%, 380px);
-    min-height: min(85vh, 480px);
-  }
-
-  .login-card {
-    width: min(90%, 380px) !important;
-    min-height: min(85vh, 480px) !important;
-  }
-
-  .city-logo {
-    width: clamp(50px, 12vw, 80px);
-    height: clamp(50px, 12vw, 80px);
-  }
+.loading-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  position: relative;
 }
 
-/* Mobile Portrait (up to 768px) */
-@media (max-width: 768px) and (orientation: portrait) {
-  .login-container {
-    flex-direction: column;
-  }
-
-  .left-section {
-    min-height: 40vh;
-    padding: 1.5rem 1rem;
-  }
-
-  .right-section {
-    min-height: 60vh;
-    padding: 1rem;
-  }
-
-  .right-section::before {
-    width: min(95vw, 400px);
-    min-height: min(60vh, 450px);
-  }
-
-  .login-card {
-    width: min(95vw, 400px) !important;
-    min-height: min(60vh, 450px) !important;
-  }
-
-  .login-card .v-card-text {
-    padding: clamp(1rem, 3vw, 2rem) !important;
-  }
+.loading-card {
+  background: rgba(255, 255, 255, 0.98) !important;
+  border-radius: 20px !important;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(15px);
+  min-width: 350px !important; /* Bigger */
+  max-width: 450px !important; /* Bigger */
+  min-height: 300px !important; /* Bigger */
+  animation: slideIn 0.5s ease-out;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
 }
 
-/* Small Mobile (up to 480px) */
-@media (max-width: 480px) {
-  .left-section {
-    min-height: 35vh;
-    padding: 1rem 0.75rem;
-  }
+.loading-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
 
-  .right-section {
-    min-height: 65vh;
-    padding: 0.75rem;
-  }
+.loading-logo-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
 
-  .right-section::before {
-    width: calc(100vw - 1.5rem);
-    min-height: min(65vh, 420px);
-    border-radius: 12px;
-  }
+.loading-logo {
+  width: 80px; /* Bigger */
+  height: 80px; /* Bigger */
+  object-fit: contain;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+}
 
-  .login-card {
-    width: calc(100vw - 1.5rem) !important;
-    min-height: min(65vh, 420px) !important;
-  }
+.pulse-animation {
+  animation: pulse 2s infinite;
+}
 
-  .login-card .v-card-text {
-    padding: clamp(1rem, 4vw, 1.5rem) !important;
-  }
+.loading-title {
+  font-size: 1.75rem; /* Bigger */
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0 0 0.5rem 0;
+}
 
-  .form-title {
-    margin-bottom: 1.5rem !important;
-  }
+.loading-subtitle {
+  font-size: 1.1rem; /* Bigger */
+  color: #6c757d;
+  margin: 0 0 2rem 0;
+  text-align: center;
+}
 
-  .v-text-field {
-    margin-bottom: 0.75rem;
+/* Loading Dots Animation */
+.loading-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px; /* Bigger gaps */
+}
+
+.dot {
+  width: 10px; /* Bigger dots */
+  height: 10px; /* Bigger dots */
+  background-color: #4f7cff;
+  border-radius: 50%;
+  animation: bounce 1.4s infinite ease-in-out both;
+}
+
+.dot:nth-child(1) {
+  animation-delay: -0.32s;
+}
+
+.dot:nth-child(2) {
+  animation-delay: -0.16s;
+}
+
+.dot:nth-child(3) {
+  animation-delay: 0;
+}
+
+/* Animations */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-50px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
 }
 
-/* Very Small Mobile (up to 360px) */
-@media (max-width: 360px) {
-  .right-section::before {
-    width: calc(100vw - 1rem);
-    min-height: min(70vh, 400px);
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
   }
-
-  .login-card {
-    width: calc(100vw - 1rem) !important;
-    min-height: min(70vh, 400px) !important;
-  }
-
-  .login-card .v-card-text {
-    padding: 1rem 0.75rem !important;
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
   }
 }
 
-/* Animation for form elements */
-.right-section {
-  animation: slideInRight 0.8s ease-out;
-}
-
-.left-section .logo-title-section {
-  animation: slideInLeft 0.8s ease-out;
+@keyframes bounce {
+  0%,
+  80%,
+  100% {
+    transform: scale(0);
+  }
+  40% {
+    transform: scale(1);
+  }
 }
 
 @keyframes slideInRight {
@@ -387,27 +435,82 @@
   }
 }
 
-/* Reduce motion for accessibility */
-@media (prefers-reduced-motion: reduce) {
-  .right-section,
-  .left-section .logo-title-section {
-    animation: none;
+/* Mobile Responsive */
+@media (max-width: 767px) and (orientation: portrait) {
+  .login-container .v-row {
+    flex-direction: column !important;
   }
 
-  .login-btn:hover {
-    transform: none;
+  .left-section {
+    min-height: 40vh;
+    padding: 1.5rem 1rem;
+  }
+
+  .right-section {
+    min-height: 60vh;
+    padding: 1rem;
+  }
+
+  .right-section::before {
+    width: calc(100vw - 2rem);
+    min-height: min(60vh, 500px);
+    border-radius: 16px;
+  }
+
+  .login-card {
+    width: calc(100vw - 2rem) !important;
+    min-height: min(60vh, 500px) !important;
+  }
+
+  .login-card .v-card-text {
+    padding: clamp(1.5rem, 4vw, 2rem) !important;
+  }
+
+  .loading-card {
+    min-width: 300px !important;
+    max-width: calc(100vw - 2rem) !important;
+    margin: 0 1rem;
+  }
+
+  .loading-content {
+    padding: 1.5rem;
+  }
+
+  .loading-title {
+    font-size: 1.5rem;
+  }
+
+  .loading-subtitle {
+    font-size: 1rem;
+  }
+
+  .loading-logo {
+    width: 60px;
+    height: 60px;
   }
 }
 
-/* Loading state */
-.login-btn .v-btn__loader {
-  color: white;
-}
+@media (max-width: 480px) {
+  .loading-card {
+    min-width: 280px !important;
+  }
 
-/* Error states */
-.v-text-field.error .v-field {
-  border-color: #e74c3c;
-  box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.2);
+  .loading-content {
+    padding: 1.25rem;
+  }
+
+  .loading-title {
+    font-size: 1.25rem;
+  }
+
+  .loading-subtitle {
+    font-size: 0.95rem;
+  }
+
+  .loading-logo {
+    width: 50px;
+    height: 50px;
+  }
 }
 
 /* Focus states for accessibility */
@@ -416,42 +519,32 @@
   outline-offset: 2px;
 }
 
-.v-text-field .v-field:focus-within {
+.v-text-field .v-field:focus-within,
+.v-select .v-field:focus-within {
   outline: 2px solid #3498db;
   outline-offset: 1px;
 }
 
-/* High contrast mode support */
-@media (prefers-contrast: high) {
-  .right-section::before {
-    background: rgba(255, 255, 255, 1);
-    border: 2px solid #000;
-  }
-
-  .login-btn {
-    border: 2px solid #000 !important;
-  }
-
-  .v-text-field .v-field {
-    border: 2px solid #000;
-  }
+/* Smooth transitions */
+.v-field,
+.v-btn,
+.v-alert {
+  transition: all 0.3s ease;
 }
 
-/* Print styles */
-@media print {
-  .login-container {
-    background: none;
-    color: #000;
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .right-section,
+  .left-section .logo-title-section,
+  .loading-card,
+  .city-logo,
+  .login-btn::before,
+  .pulse-animation,
+  .loading-dots .dot {
+    animation: none;
   }
 
-  .right-section::before {
-    box-shadow: none;
-    border: 1px solid #000;
-  }
-
-  .login-btn {
-    background: #fff !important;
-    color: #000 !important;
-    border: 1px solid #000 !important;
+  .login-btn:hover {
+    transform: none;
   }
 }

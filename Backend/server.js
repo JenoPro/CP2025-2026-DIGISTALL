@@ -5,10 +5,9 @@ import process from 'process'
 import { initializeDatabase } from './config/database.js'
 import { corsConfig } from './config/cors.js'
 import adminRoutes from './Admin/adminRoutes.js'
-import { login, testDb } from './Admin/adminController.js'
-import { errorHandler } from './middleware/errorHandler.js'
 import stallRoutes from './Stall/stallRoutes.js'
-import areaRoutes from './Area/areaRoutes.js'
+import { testDb } from './Admin/adminController.js'
+import { errorHandler } from './middleware/errorHandler.js'
 
 // Configure dotenv FIRST
 dotenv.config()
@@ -21,24 +20,33 @@ app.use(cors(corsConfig))
 app.use(express.json())
 
 // Routes
-app.use('/api/admin', adminRoutes)
-app.use('/api/stalls', stallRoutes)
-app.use('/api/areas', areaRoutes)
+app.use('/api/auth', adminRoutes) // Authentication routes for branch managers
+app.use('/api/stalls', stallRoutes) // Stall management routes (with authentication)
 
-// Backward compatibility route for old frontend
-app.post('/api/Admin', login)
+// Direct routes for easier access
+app.get('/api/areas', (req, res) => {
+  import('./Admin/adminController.js').then(({ getAreas }) => {
+    getAreas(req, res)
+  })
+})
 
-// Test database connection endpoint (backward compatibility)
+app.get('/api/branches/:area', (req, res) => {
+  import('./Admin/adminController.js').then(({ getBranchesByArea }) => {
+    getBranchesByArea(req, res)
+  })
+})
+
+// Test database connection endpoint
 app.get('/api/test-db', testDb)
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
   res.json({
     success: true,
-    message: 'Server is running',
+    message: 'Naga Stall Management Server is running',
     timestamp: new Date().toISOString(),
     env: {
-      nodeEnv: process.env.NODE_ENV,
+      nodeEnv: process.env.NODE_ENV || 'development',
       port: PORT,
       dbHost: process.env.DB_HOST || 'localhost',
       dbName: process.env.DB_NAME || 'naga_stall',
@@ -51,40 +59,62 @@ app.use(errorHandler)
 
 // Start server
 app.listen(PORT, async () => {
-  console.log('🚀 Server starting...')
+  console.log('🚀 Naga Stall Management Server starting...')
   console.log(`🌐 Server running on http://localhost:${PORT}`)
   console.log(`🔧 Environment: ${process.env.NODE_ENV || 'development'}`)
   console.log(`🌐 CORS enabled for frontend URLs`)
   console.log('🔧 Available endpoints:')
-  console.log('   POST /api/Admin - Admin login (backward compatibility)')
-  console.log('   POST /api/admin/login - Admin login (new)')
-  console.log('   GET  /api/admin/cities - Get available cities')
-  console.log('   GET  /api/admin/branches/:city - Get branches by city')
-  console.log('   GET  /api/admin/branches - Get all branches (backward compatibility)')
-  console.log('   GET  /api/admin/verify-token - Verify JWT token')
-  console.log('   POST /api/admin/logout - Admin logout')
-  console.log('   GET  /api/admin/info - Get admin user info')
-  console.log('   POST /api/admin/reset-password - Reset admin password')
-  console.log('   POST /api/admin/create-user - Create new admin user')
-  console.log('   GET  /api/stalls - Get all stalls')
+
+  // Authentication endpoints
+  console.log('   === AUTHENTICATION ENDPOINTS ===')
+  console.log('   POST /api/auth/admin/login - Admin login (super admin)')
+  console.log('   POST /api/auth/branch_manager/login - Branch Manager login')
+  console.log('   GET  /api/auth/verify-token - Verify JWT token')
+  console.log('   POST /api/auth/logout - Logout')
+  console.log('   GET  /api/auth/me - Get current user info')
+  console.log('')
+
+  // Area and Branch endpoints
+  console.log('   === LOCATION ENDPOINTS ===')
+  console.log('   GET  /api/areas - Get available areas (from branch_manager table)')
+  console.log('   GET  /api/branches/:area - Get branches by area (from branch_manager table)')
+  console.log('')
+
+  // Stall management endpoints (protected)
+  console.log('   === STALL MANAGEMENT ENDPOINTS (Protected) ===')
+  console.log('   GET  /api/stalls - Get all stalls for authenticated branch manager')
   console.log('   POST /api/stalls - Add new stall')
   console.log('   GET  /api/stalls/available - Get available stalls')
   console.log('   GET  /api/stalls/filter - Get stalls by filter')
   console.log('   GET  /api/stalls/:id - Get stall by ID')
   console.log('   PUT  /api/stalls/:id - Update stall')
   console.log('   DELETE /api/stalls/:id - Delete stall')
-  console.log('   GET  /api/areas - Get all areas')
-  console.log('   GET  /api/areas/city/:city - Get areas by city')
-  console.log('   GET  /api/areas/:id - Get area by ID')
-  console.log('   POST /api/areas - Create new area')
-  console.log('   PUT  /api/areas/:id - Update area')
-  console.log('   DELETE /api/areas/:id - Delete area')
+  console.log('')
+
+  // Utility endpoints
+  console.log('   === UTILITY ENDPOINTS ===')
   console.log('   GET  /api/health - Health check')
   console.log('   GET  /api/test-db - Test database connection')
+  console.log('')
+
+  console.log('📋 SAMPLE LOGIN CREDENTIALS (from SQL):')
+  console.log('   Branch Manager 1:')
+  console.log('   - Area: Naga City')
+  console.log('   - Location: Peoples Mall')
+  console.log('   - Username: manager_naga_peoples')
+  console.log('   - Password: [encrypted in database]')
+  console.log('')
+  console.log('   Branch Manager 2:')
+  console.log('   - Area: Legazpi')
+  console.log('   - Location: SM')
+  console.log('   - Username: manager_legazpi_sm')
+  console.log('   - Password: [encrypted in database]')
+  console.log('')
 
   try {
     await initializeDatabase()
     console.log('✅ Database initialization completed successfully')
+    console.log('📊 Stalls are filtered by branch_manager_id for each logged-in user')
   } catch (error) {
     console.error('❌ Failed to initialize database:', error)
     process.exit(1)

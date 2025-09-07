@@ -1,28 +1,26 @@
 import axios from 'axios'
-import RegisterModal from '../Register/RegisterModal.vue'
 
 export default {
   name: 'LoginPage',
-  components: {
-    RegisterModal,
-  },
   data() {
     return {
       valid: false,
       loading: false,
-      loadingCities: false,
+      loadingAreas: false,
       loadingBranches: false,
       username: '',
       password: '',
-      selectedCity: '',
+      selectedArea: '',
       selectedBranch: '',
-      availableCities: [],
+      availableAreas: [],
       availableBranches: [],
-      showPassword: false, // Added for password visibility toggle
-      showRegisterModal: false, // For controlling registration modal
-      showSuccessSnackbar: false, // For success notifications
-      successMessage: '', // Success message content
+      showPassword: false,
+      showSuccessSnackbar: false,
+      showSuccessMessage: false,
+      successMessage: '',
       errorMessage: '',
+      loadingText: 'Authenticating',
+      loadingSubtext: 'Verifying your credentials',
       usernameRules: [
         (v) => !!v || 'Username is required',
         (v) => (v && v.length >= 3) || 'Username must be at least 3 characters',
@@ -31,14 +29,106 @@ export default {
         (v) => !!v || 'Password is required',
         (v) => (v && v.length >= 6) || 'Password must be at least 6 characters',
       ],
-      cityRules: [(v) => !!v || 'City selection is required'],
+      areaRules: [(v) => !!v || 'Area selection is required'],
       branchRules: [(v) => !!v || 'Branch selection is required'],
     }
   },
+  computed: {
+    loginEndpoint() {
+      return 'http://localhost:3001/api/auth/branch_manager/login'
+    },
+  },
+  async mounted() {
+    // Clear any existing authentication data
+    this.clearAuthData()
+    await this.fetchAreas()
+  },
   methods: {
+    clearAuthData() {
+      sessionStorage.removeItem('currentUser')
+      sessionStorage.removeItem('authToken')
+      sessionStorage.removeItem('userType')
+      sessionStorage.removeItem('branchManagerId')
+      delete axios.defaults.headers.common['Authorization']
+    },
+
+    async fetchAreas() {
+      this.loadingAreas = true
+      try {
+        const response = await axios.get('http://localhost:3001/api/areas')
+        if (response.data && response.data.success) {
+          const areasData = Array.isArray(response.data.data)
+            ? response.data.data
+            : Object.values(response.data.data || {})
+
+          this.availableAreas = areasData
+            .map((area) => ({
+              title: typeof area === 'string' ? area : area.name || area.title,
+              value: typeof area === 'string' ? area : area.name || area.title || area.value,
+            }))
+            .sort((a, b) => a.title.localeCompare(b.title))
+
+          console.log('📍 Loaded areas:', this.availableAreas.length, 'areas')
+        } else {
+          throw new Error('Invalid response format')
+        }
+      } catch (error) {
+        console.error('Failed to fetch areas:', error)
+        this.showErrorMessage(
+          'Failed to load available areas. Please refresh the page or contact support.',
+        )
+      } finally {
+        this.loadingAreas = false
+      }
+    },
+
+    async onAreaChange() {
+      this.selectedBranch = ''
+      this.availableBranches = []
+
+      if (!this.selectedArea) {
+        return
+      }
+
+      this.loadingBranches = true
+      try {
+        const response = await axios.get(
+          `http://localhost:3001/api/branches/${encodeURIComponent(this.selectedArea)}`,
+        )
+        if (response.data && response.data.success) {
+          const branchesData = Array.isArray(response.data.data)
+            ? response.data.data
+            : Object.values(response.data.data || {})
+
+          this.availableBranches = branchesData
+            .map((branch) => ({
+              title: typeof branch === 'string' ? branch : branch.name || branch.title,
+              value:
+                typeof branch === 'string' ? branch : branch.name || branch.title || branch.value,
+            }))
+            .sort((a, b) => a.title.localeCompare(b.title))
+
+          console.log(
+            '🏢 Loaded branches for',
+            this.selectedArea,
+            ':',
+            this.availableBranches.length,
+            'branches',
+          )
+        } else {
+          throw new Error('Invalid response format')
+        }
+      } catch (error) {
+        console.error('Failed to fetch branches:', error)
+        this.showErrorMessage('Failed to load available branches for the selected area.')
+      } finally {
+        this.loadingBranches = false
+      }
+    },
+
     async handleLogin() {
-      // Clear any previous error messages
       this.clearError()
+      this.clearSuccess()
 
       // Validate form first
       const { valid } = await this.$refs.loginForm.validate()
@@ -49,98 +139,197 @@ export default {
       }
 
       this.loading = true
+      this.loadingText = 'Authenticating'
+      this.loadingSubtext = 'Verifying your credentials'
 
       try {
-        // Call backend API with branch
-        const response = await axios.post('http://localhost:3001/api/admin/login', {
-          username: this.username,
+        this.loadingText = 'Connecting'
+        this.loadingSubtext = 'Establishing secure connection'
+
+        const loginData = {
+          username: this.username.trim(),
           password: this.password,
-          branch: this.selectedBranch,
+          area: this.selectedArea,
+          location: this.selectedBranch, // Only send 'location', not 'branch'
+        }
+
+        console.log('🔐 Attempting login with:', {
+          username: loginData.username,
+          area: loginData.area,
+          location: loginData.location, // Updated log
         })
 
-        if (response.data.success) {
-          // Store the token and user data
-          const { token, user } = response.data.data
+        this.loadingText = 'Validating'
+        this.loadingSubtext = 'Checking permissions'
 
-          // Store in sessionStorage for security
+        const response = await axios.post(this.loginEndpoint, loginData, {
+          timeout: 15000,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          validateStatus: (status) => {
+            return status < 500 // Don't throw for 4xx errors
+          },
+        })
+
+        // FIXED: Always turn off loading, then handle success/error
+        this.loading = false
+
+        if (response.status === 200 && response.data && response.data.success) {
+          const { token, user } = response.data.data || response.data
+
+          console.log('✅ Login successful!', {
+            user: user.username,
+            area: user.area,
+            location: user.location || user.branch,
+          })
+
+          // Turn loading back on for success redirect
+          this.loading = true
+          this.loadingText = 'Welcome!'
+          this.loadingSubtext = 'Setting up your dashboard'
+
+          // Store authentication data
           sessionStorage.setItem('authToken', token)
           sessionStorage.setItem('currentUser', JSON.stringify(user))
-
-          // If you're using Vuex store, commit the user data
-          if (this.$store && this.$store.commit) {
-            this.$store.commit('auth/setUser', user)
-            this.$store.commit('auth/setToken', token)
+          sessionStorage.setItem('userType', user.userType || 'branch-manager')
+          if (user.branchManagerId) {
+            sessionStorage.setItem('branchManagerId', user.branchManagerId.toString())
           }
 
-          // Set axios default authorization header for future requests
           axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
 
-          // Show success message
-          console.log('Login successful!', user)
+          if (this.$store && this.$store.commit) {
+            try {
+              this.$store.commit('auth/setUser', user)
+              this.$store.commit('auth/setToken', token)
+              this.$store.commit('auth/setUserType', user.userType || 'branch-manager')
+            } catch (storeError) {
+              console.warn('Vuex store not available or missing mutations:', storeError)
+            }
+          }
 
-          // Handle successful login
-          this.$router.push('/dashboard')
+          const displayName = user.firstName
+            ? `${user.firstName} ${user.lastName || ''}`.trim()
+            : user.username
+          this.showSuccessNotification(`Welcome ${displayName}! Redirecting to your dashboard...`)
 
-          // Emit success event to parent component
           this.$emit('login-success', {
             user: user,
             token: token,
+            userType: user.userType || 'branch-manager',
+          })
+
+          // Redirect after delay
+          setTimeout(() => {
+            this.loading = false
+            this.$router.push('/dashboard').catch((err) => {
+              console.error('Navigation error:', err)
+              window.location.href = '/dashboard'
+            })
+          }, 2000)
+        } else {
+          // Handle error responses
+          this.handleLoginError({
+            response: {
+              status: response.status,
+              data: response.data,
+            },
           })
         }
       } catch (error) {
-        // Handle different types of errors
-        if (error.response) {
-          // Server responded with error status
-          const { status, data } = error.response
-
-          if (status === 401) {
-            this.showErrorMessage(data.message || 'Invalid username or password.')
-          } else if (status === 400) {
-            this.showErrorMessage(data.message || 'Please check your input.')
-          } else if (status >= 500) {
-            this.showErrorMessage('Server error. Please try again later.')
-          } else {
-            this.showErrorMessage(data.message || 'Login failed. Please try again.')
-          }
-        } else if (error.request) {
-          // Network error
-          this.showErrorMessage(
-            'Unable to connect to server. Please check your internet connection.',
-          )
-        } else {
-          // Other error
-          this.showErrorMessage('An unexpected error occurred. Please try again.')
-        }
-
-        console.error('Login failed:', error)
-      } finally {
+        // FIXED: Always turn off loading for errors
         this.loading = false
+        this.handleLoginError(error)
       }
     },
 
-    async handleForgotPassword() {
-      // Clear error message when navigating away
-      this.clearError()
+    handleLoginError(error) {
+      // FIXED: Ensure loading is always turned off
+      this.loading = false
 
-      // Handle forgot password logic
+      let errorMessage = 'An unexpected error occurred. Please try again.'
+
+      if (error.response) {
+        const { status, data } = error.response
+        console.error('❌ Server Error:', status, data)
+
+        switch (status) {
+          case 400:
+            errorMessage = data.message || 'Invalid request. Please check your input and try again.'
+            break
+          case 401:
+            if (data.message && data.message.toLowerCase().includes('credentials')) {
+              errorMessage =
+                'Invalid username or password. Please check your credentials and try again.'
+            } else if (data.message && data.message.toLowerCase().includes('area')) {
+              errorMessage = 'Invalid area selection. Please select a valid area.'
+            } else if (data.message && data.message.toLowerCase().includes('branch')) {
+              errorMessage =
+                'Invalid branch selection. Please select a valid branch for the chosen area.'
+            } else {
+              errorMessage =
+                data.message ||
+                'Authentication failed. Please verify your credentials, area, and branch selection.'
+            }
+            break
+          case 403:
+            errorMessage =
+              'Access denied. Your account may be inactive or you may not have permission to access this area/branch.'
+            break
+          case 404:
+            errorMessage =
+              'Branch manager account not found. Please verify your area and branch selection, or contact your administrator.'
+            break
+          case 429:
+            errorMessage = 'Too many login attempts. Please wait a few minutes before trying again.'
+            break
+          case 500:
+          case 502:
+          case 503:
+          case 504:
+            errorMessage = 'Server is temporarily unavailable. Please try again in a few moments.'
+            break
+          default:
+            errorMessage =
+              data.message || `Server error (${status}). Please contact support if this continues.`
+        }
+      } else if (error.request) {
+        console.error('❌ Network Error:', error.request)
+        errorMessage =
+          'Unable to connect to the server. Please check your internet connection and try again.'
+      } else if (error.code === 'ECONNABORTED') {
+        errorMessage = 'Login request timed out. Please check your connection and try again.'
+      } else {
+        console.error('❌ Unexpected Error:', error.message)
+        errorMessage = error.message || 'An unexpected error occurred. Please try again.'
+      }
+
+      this.showErrorMessage(errorMessage)
+    },
+
+    async handleForgotPassword() {
+      this.clearError()
+      this.clearSuccess()
       console.log('Forgot password clicked')
 
-      // You can redirect to forgot password page or show modal
-      this.$router.push('/forgot-password')
-
-      // Or emit event to parent
-      this.$emit('forgot-password')
+      try {
+        this.$router.push('/forgot-password')
+        this.$emit('forgot-password')
+      } catch (error) {
+        console.error('Navigation error:', error)
+        this.showErrorMessage('Unable to navigate to forgot password page.')
+      }
     },
 
     showErrorMessage(message) {
       this.errorMessage = message
+      this.showSuccessMessage = false
 
-      // Auto-clear error message after 5 seconds
       setTimeout(() => {
         this.clearError()
-      }, 5000)
+      }, 10000) // Longer timeout for better UX
 
-      // You can also emit event to parent if needed
       this.$emit('show-error', message)
     },
 
@@ -151,150 +340,71 @@ export default {
     clearSuccess() {
       this.successMessage = ''
       this.showSuccessSnackbar = false
+      this.showSuccessMessage = false
     },
 
     resetForm() {
       this.username = ''
       this.password = ''
-      this.selectedCity = ''
+      this.selectedArea = ''
       this.selectedBranch = ''
       this.showPassword = false
+      this.availableBranches = []
       this.clearError()
       this.clearSuccess()
-      this.$refs.loginForm.resetValidation()
+      if (this.$refs.loginForm) {
+        this.$refs.loginForm.resetValidation()
+      }
     },
 
     togglePasswordVisibility() {
       this.showPassword = !this.showPassword
     },
 
-    async fetchAreas() {
-      this.loadingCities = true
-      try {
-        // Use the new cities endpoint
-        const response = await axios.get('http://localhost:3001/api/admin/cities')
-        if (response.data.success) {
-          this.availableCities = response.data.data.sort()
-          console.log('Cities loaded:', this.availableCities)
-        }
-      } catch (error) {
-        console.error('Failed to fetch cities:', error)
-        this.showErrorMessage('Failed to load available cities. Please refresh the page.')
-      } finally {
-        this.loadingCities = false
-      }
-    },
-
-    async onCityChange() {
-      // Clear branch selection when city changes
-      this.selectedBranch = ''
-      this.availableBranches = []
-
-      if (!this.selectedCity) {
-        return
-      }
-
-      this.loadingBranches = true
-      try {
-        // Use the new branches by city endpoint
-        const response = await axios.get(
-          `http://localhost:3001/api/admin/branches/${encodeURIComponent(this.selectedCity)}`,
-        )
-        if (response.data.success) {
-          this.availableBranches = response.data.data.sort()
-          console.log('Branches loaded for', this.selectedCity, ':', this.availableBranches)
-        }
-      } catch (error) {
-        console.error('Failed to fetch branches:', error)
-        this.showErrorMessage('Failed to load available branches for the selected city.')
-      } finally {
-        this.loadingBranches = false
-      }
-    },
-
-    async fetchBranches() {
-      // Deprecated: Now handled by onCityChange() method
-      console.warn(
-        'fetchBranches method is deprecated. Branches are now fetched when city changes.',
-      )
-    },
-
-    onAdminRegistered(newAdmin) {
-      console.log('New admin registered:', newAdmin)
-
-      // Show success notification (we'll create a proper notification system)
-      this.showSuccessNotification(`Admin "${newAdmin.username}" has been successfully registered!`)
-
-      // Refresh cities and branches list to include any new areas/branches
-      this.fetchAreas()
-
-      // Close the modal
-      this.showRegisterModal = false
-    },
-
     showSuccessNotification(message) {
-      // Use Vuetify snackbar for better UX
       this.successMessage = message
       this.showSuccessSnackbar = true
-
-      // Clear any existing error messages
+      this.showSuccessMessage = true
       this.clearError()
+    },
+
+    onAdminRegistered(adminData) {
+      this.showSuccessNotification(`Admin ${adminData.username} registered successfully!`)
+    },
+
+    // FIXED: Add retry mechanism for failed requests
+    async retryLogin() {
+      if (this.loading) return
+
+      console.log('🔄 Retrying login...')
+      await this.handleLogin()
     },
   },
 
   watch: {
-    // Clear error message when user starts typing
+    // Clear error messages when user starts typing or changing selections
     username() {
-      if (this.errorMessage) {
-        this.clearError()
-      }
-      if (this.showSuccessSnackbar) {
-        this.clearSuccess()
-      }
+      if (this.errorMessage) this.clearError()
+      if (this.showSuccessMessage) this.clearSuccess()
     },
     password() {
-      if (this.errorMessage) {
-        this.clearError()
-      }
-      if (this.showSuccessSnackbar) {
-        this.clearSuccess()
-      }
+      if (this.errorMessage) this.clearError()
+      if (this.showSuccessMessage) this.clearSuccess()
     },
-    selectedCity() {
-      if (this.errorMessage) {
-        this.clearError()
-      }
-      if (this.showSuccessSnackbar) {
-        this.clearSuccess()
-      }
+    selectedArea() {
+      if (this.errorMessage) this.clearError()
+      if (this.showSuccessMessage) this.clearSuccess()
     },
     selectedBranch() {
-      if (this.errorMessage) {
-        this.clearError()
-      }
-      if (this.showSuccessSnackbar) {
-        this.clearSuccess()
-      }
+      if (this.errorMessage) this.clearError()
+      if (this.showSuccessMessage) this.clearSuccess()
     },
-  },
-
-  mounted() {
-    // Clear any existing user data when login page is mounted
-    sessionStorage.removeItem('currentUser')
-    sessionStorage.removeItem('authToken')
-
-    // Remove axios default authorization header
-    delete axios.defaults.headers.common['Authorization']
-
-    // Fetch available areas and cities on component mount
-    this.fetchAreas()
-
-    // Any initialization logic when component is mounted
-    console.log('Login page mounted')
   },
 
   beforeUnmount() {
-    // Cleanup if needed (but don't reset form here as we want to keep the username)
-    // this.resetForm()
+    // Clear any pending timeouts
+    if (this.redirectTimeout) {
+      clearTimeout(this.redirectTimeout)
+    }
   },
 }

@@ -1,33 +1,31 @@
 import express from 'express'
 import {
-  login,
+  branchManagerLogin,
   verifyToken,
   logout,
-  getAdminInfo,
-  resetAdminPassword,
+  getAreas,
+  getBranchesByArea,
+  getCurrentUser,
   testDb,
-  getBranches,
-  createAdminUser,
-  getCities,
-  getBranchesByCity,
+  createPasswordHash,
 } from './adminController.js'
 
 const router = express.Router()
 
-// Admin authentication routes
-router.post('/login', login)
-router.get('/cities', getCities)
-router.get('/branches/:city', getBranchesByCity)
-router.get('/branches', getBranches) // Keep for backward compatibility
+// Branch Manager Authentication Routes
+router.post('/branch_manager/login', branchManagerLogin)
+
+// Location Routes for Login Form
+router.get('/areas', getAreas)
+router.get('/branches/:area', getBranchesByArea)
+
+// Authentication Utility Routes
 router.get('/verify-token', verifyToken)
 router.post('/logout', logout)
+router.get('/me', getCurrentUser)
 
-// Admin management routes
-router.get('/info', getAdminInfo)
-router.post('/reset-password', resetAdminPassword)
-router.post('/create-user', createAdminUser)
-
-// Utility routes
+// Testing/Debug Routes (remove in production)
+router.post('/create-password-hash', createPasswordHash)
 router.get('/test-db', testDb)
 
 export default router
