@@ -18,7 +18,6 @@ export default {
       selectedBranch: '',
       availableCities: [],
       availableBranches: [],
-      allAreas: [], // Store all areas to filter by city
       showPassword: false, // Added for password visibility toggle
       showRegisterModal: false, // For controlling registration modal
       showSuccessSnackbar: false, // For success notifications
@@ -172,47 +171,52 @@ export default {
     async fetchAreas() {
       this.loadingCities = true
       try {
-        const response = await axios.get('http://localhost:3001/api/areas')
+        // Use the new cities endpoint
+        const response = await axios.get('http://localhost:3001/api/admin/cities')
         if (response.data.success) {
-          this.allAreas = response.data.data
-
-          // Extract unique cities for the city dropdown
-          const uniqueCities = [...new Set(this.allAreas.map((area) => area.city))]
-          this.availableCities = uniqueCities.sort()
-
-          console.log('Areas loaded:', this.allAreas)
+          this.availableCities = response.data.data.sort()
           console.log('Cities loaded:', this.availableCities)
         }
       } catch (error) {
-        console.error('Failed to fetch areas:', error)
-        this.showErrorMessage(
-          'Failed to load available cities and branches. Please refresh the page.',
-        )
+        console.error('Failed to fetch cities:', error)
+        this.showErrorMessage('Failed to load available cities. Please refresh the page.')
       } finally {
         this.loadingCities = false
       }
     },
 
-    onCityChange() {
+    async onCityChange() {
       // Clear branch selection when city changes
       this.selectedBranch = ''
+      this.availableBranches = []
 
-      // Filter branches based on selected city
-      if (this.selectedCity) {
-        const cityAreas = this.allAreas.filter((area) => area.city === this.selectedCity)
-        this.availableBranches = cityAreas.map((area) => area.branch).sort()
-      } else {
-        this.availableBranches = []
+      if (!this.selectedCity) {
+        return
       }
 
-      console.log('City changed to:', this.selectedCity)
-      console.log('Available branches:', this.availableBranches)
+      this.loadingBranches = true
+      try {
+        // Use the new branches by city endpoint
+        const response = await axios.get(
+          `http://localhost:3001/api/admin/branches/${encodeURIComponent(this.selectedCity)}`,
+        )
+        if (response.data.success) {
+          this.availableBranches = response.data.data.sort()
+          console.log('Branches loaded for', this.selectedCity, ':', this.availableBranches)
+        }
+      } catch (error) {
+        console.error('Failed to fetch branches:', error)
+        this.showErrorMessage('Failed to load available branches for the selected city.')
+      } finally {
+        this.loadingBranches = false
+      }
     },
 
     async fetchBranches() {
-      // This method is now handled by fetchAreas and onCityChange
-      // Keeping for backward compatibility but will be deprecated
-      console.log('fetchBranches called - now handled by fetchAreas')
+      // Deprecated: Now handled by onCityChange() method
+      console.warn(
+        'fetchBranches method is deprecated. Branches are now fetched when city changes.',
+      )
     },
 
     onAdminRegistered(newAdmin) {
@@ -221,7 +225,7 @@ export default {
       // Show success notification (we'll create a proper notification system)
       this.showSuccessNotification(`Admin "${newAdmin.username}" has been successfully registered!`)
 
-      // Refresh areas list to include any new areas/branches
+      // Refresh cities and branches list to include any new areas/branches
       this.fetchAreas()
 
       // Close the modal

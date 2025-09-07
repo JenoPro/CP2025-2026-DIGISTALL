@@ -34,13 +34,13 @@ export async function login(req, res) {
 
     connection = await createConnection()
 
-    // Find admin user by username and branch, including area information
+    // Find admin user by username and branch through area relationship
     const [admins] = await connection.execute(
       `
-      SELECT a.*, ar.city, ar.branch as area_branch 
+      SELECT a.*, ar.city, ar.branch 
       FROM Admin a 
-      LEFT JOIN Area ar ON a.area_id = ar.ID 
-      WHERE a.username = ? AND a.branch = ? AND a.is_active = TRUE
+      INNER JOIN Area ar ON a.area_id = ar.ID 
+      WHERE a.username = ? AND ar.branch = ? AND a.is_active = TRUE
     `,
       [username, branch],
     )
@@ -179,7 +179,11 @@ export async function getAdminInfo(req, res) {
   try {
     connection = await createConnection()
     const [admins] = await connection.execute(
-      'SELECT ID, username, email, first_name, last_name, role, created_at, is_active FROM Admin WHERE username = ?',
+      `SELECT a.ID, a.username, a.email, a.first_name, a.last_name, a.role, a.created_at, a.is_active, 
+              ar.city, ar.branch 
+       FROM Admin a 
+       LEFT JOIN Area ar ON a.area_id = ar.ID 
+       WHERE a.username = ?`,
       ['admin'],
     )
 
@@ -252,16 +256,16 @@ export async function testDb(req, res) {
   }
 }
 
-// Get available branches for dropdown
+// Get available branches for dropdown (backward compatibility)
 export async function getBranches(req, res) {
   let connection
 
   try {
     connection = await createConnection()
 
-    // Get all unique branches from the Admin table
+    // Get all unique branches from the Area table instead of Admin table
     const [branches] = await connection.execute(
-      'SELECT DISTINCT branch FROM Admin WHERE is_active = TRUE ORDER BY branch ASC',
+      'SELECT DISTINCT branch FROM Area WHERE is_active = TRUE ORDER BY branch ASC',
     )
 
     console.log('🏢 Found branches:', branches.length)
@@ -270,6 +274,66 @@ export async function getBranches(req, res) {
       success: true,
       message: 'Branches retrieved successfully',
       data: branches.map((b) => b.branch),
+    })
+  } catch (error) {
+    console.error('❌ Get branches error:', error)
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+      error: error.message,
+    })
+  } finally {
+    if (connection) await connection.end()
+  }
+}
+
+// Get available cities
+export async function getCities(req, res) {
+  let connection
+  try {
+    connection = await createConnection()
+    const [cities] = await connection.execute(
+      'SELECT DISTINCT city FROM Area WHERE is_active = TRUE ORDER BY city',
+    )
+
+    res.json({
+      success: true,
+      data: cities.map((row) => row.city),
+    })
+  } catch (error) {
+    console.error('❌ Get cities error:', error)
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+      error: error.message,
+    })
+  } finally {
+    if (connection) await connection.end()
+  }
+}
+
+// Get branches by city
+export async function getBranchesByCity(req, res) {
+  let connection
+  try {
+    const { city } = req.params
+
+    if (!city) {
+      return res.status(400).json({
+        success: false,
+        message: 'City parameter is required',
+      })
+    }
+
+    connection = await createConnection()
+    const [branches] = await connection.execute(
+      'SELECT branch FROM Area WHERE city = ? AND is_active = TRUE ORDER BY branch',
+      [city],
+    )
+
+    res.json({
+      success: true,
+      data: branches.map((row) => row.branch),
     })
   } catch (error) {
     console.error('❌ Get branches error:', error)
@@ -348,10 +412,10 @@ export async function createAdminUser(req, res) {
     // Hash password
     const hashedPassword = await hash(password, 12)
 
-    // Insert new admin user with area_id
+    // Insert new admin user with area_id only (no branch column)
     const [result] = await connection.execute(
-      'INSERT INTO Admin (username, password, email, first_name, last_name, branch, area_id, role) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-      [username, hashedPassword, email, firstName, lastName, branch, finalAreaId, role],
+      'INSERT INTO Admin (username, password, email, first_name, last_name, area_id, role) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [username, hashedPassword, email, firstName, lastName, finalAreaId, role],
     )
 
     console.log('✅ New admin user created:', username, 'for branch:', branch, 'in city:', city)
