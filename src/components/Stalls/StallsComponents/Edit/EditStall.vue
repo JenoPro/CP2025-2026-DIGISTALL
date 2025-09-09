@@ -163,7 +163,7 @@
     </v-dialog>
 
     <!-- Success Popup Modal -->
-    <v-dialog v-model="showSuccessPopup" max-width="400px" persistent>
+    <v-dialog v-model="showSuccessPopup" max-width="400px" persistent @click:outside="closeSuccessPopup">
       <v-card class="success-popup-card">
         <div class="popup-content">
           <!-- Close Button -->
@@ -178,7 +178,7 @@
               <div class="spinner-ring"></div>
               <div class="spinner-ring"></div>
             </div>
-            <p class="popup-text">Processing...</p>
+            <p class="popup-text">Updating stall...</p>
           </div>
 
           <!-- Success State -->

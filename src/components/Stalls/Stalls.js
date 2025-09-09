@@ -23,13 +23,15 @@ export default {
       showAuctionModal: false,
       showGeneralAuctionRecords: false,
       selectedStall: {},
-      stallsData: [], // Now empty - will be populated from API
+      stallsData: [],
       displayStalls: [],
       loading: false,
       error: null,
       // API configuration
       // eslint-disable-next-line no-undef
       apiBaseUrl: process.env.VUE_APP_API_URL || 'http://localhost:3001',
+      // Current user info
+      currentUser: null,
       // Snackbar for notifications
       snackbar: {
         show: false,
@@ -40,11 +42,34 @@ export default {
   },
 
   async mounted() {
-    await this.fetchStalls()
+    await this.initializeComponent()
   },
 
   methods: {
-    // Fetch stalls from backend API
+    // Initialize component with user auth check
+    async initializeComponent() {
+      try {
+        // Check authentication first
+        const token = sessionStorage.getItem('authToken')
+        const user = sessionStorage.getItem('currentUser')
+
+        if (!token || !user) {
+          this.showMessage('Please login to access stalls', 'error')
+          this.$router.push('/login')
+          return
+        }
+
+        this.currentUser = JSON.parse(user)
+        console.log('Current user:', this.currentUser)
+
+        await this.fetchStalls()
+      } catch (error) {
+        console.error('Error initializing component:', error)
+        this.showMessage('Error initializing stalls page', 'error')
+      }
+    },
+
+    // Fetch stalls from backend API with proper authentication
     async fetchStalls() {
       this.loading = true
       this.error = null
@@ -52,18 +77,31 @@ export default {
       try {
         console.log('Fetching stalls from:', `${this.apiBaseUrl}/api/stalls`)
 
+        // Get token from sessionStorage (where login stores it)
+        const token = sessionStorage.getItem('authToken')
+
+        if (!token) {
+          throw new Error('Authentication token not found. Please login again.')
+        }
+
         const response = await fetch(`${this.apiBaseUrl}/api/stalls`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            // Add auth header if token exists
-            ...(localStorage.getItem('authToken') && {
-              Authorization: `Bearer ${localStorage.getItem('authToken')}`,
-            }),
+            Authorization: `Bearer ${token}`,
           },
         })
 
         if (!response.ok) {
+          if (response.status === 401) {
+            // Token expired or invalid - redirect to login
+            this.clearAuthAndRedirect()
+            throw new Error('Session expired. Please login again.')
+          } else if (response.status === 403) {
+            throw new Error('Access denied. Branch manager access required.')
+          } else if (response.status === 400) {
+            throw new Error('Invalid request. Please check your authentication.')
+          }
           throw new Error(`HTTP error! status: ${response.status}`)
         }
 
@@ -75,7 +113,12 @@ export default {
           this.stallsData = result.data.map((stall) => this.transformStallData(stall))
           this.displayStalls = [...this.stallsData]
 
-          console.log(`Successfully loaded ${this.stallsData.length} stalls`)
+          console.log(`Successfully loaded ${this.stallsData.length} stalls for branch manager`)
+          console.log('Transformed stalls data:', this.stallsData)
+
+          if (this.stallsData.length === 0) {
+            this.showMessage('No stalls found for your branch. Add your first stall!', 'info')
+          }
         } else {
           throw new Error(result.message || 'Failed to fetch stalls')
         }
@@ -85,64 +128,91 @@ export default {
 
         // Show error message
         this.showMessage(`Failed to load stalls: ${error.message}`, 'error')
+
+        // If it's an auth error, clear session and redirect
+        if (error.message.includes('login') || error.message.includes('Session expired')) {
+          this.clearAuthAndRedirect()
+        }
       } finally {
         this.loading = false
       }
     },
 
-    // Transform backend stall data to frontend format
+    // Transform backend stall data to frontend format (UPDATED with all new fields)
     transformStallData(stall) {
+      console.log('Transforming stall data:', stall)
+
       return {
-        id: stall.ID,
-        stallNumber: stall.stall_number,
-        // Format price based on price_type
-        price: this.formatPrice(stall.price, stall.price_type),
+        // Basic stall info
+        id: stall.stall_id,
+        stallNumber: stall.stall_no,
+        price: this.formatPrice(stall.rental_price),
+        location: stall.stall_location,
+        size: stall.size,
+        description: stall.description,
+        status: stall.status,
+        stamp: stall.stamp,
+        createdAt: stall.created_at,
+
+        // NEW FIELDS - Added missing fields from database
         floor: stall.floor,
         section: stall.section,
         dimensions: stall.dimensions,
-        location: stall.location,
-        description: stall.description,
-        // Handle image data - use image_data if available, fallback to image_url
-        image: stall.image_data || stall.image_url || this.getDefaultImage(stall.section),
-        isAvailable: stall.is_available,
         priceType: stall.price_type,
-        status: stall.status,
-        createdAt: stall.created_at,
-        updatedAt: stall.updated_at,
-        createdByName: stall.created_by_name,
-        updatedByName: stall.updated_by_name,
+
+        // Image - now based on section
+        image: stall.stall_image || this.getDefaultImage(stall.section),
+
+        // Branch manager info
+        managerName: stall.manager_first_name
+          ? `${stall.manager_first_name} ${stall.manager_last_name}`
+          : 'Unknown',
+        area: stall.area,
+        branchLocation: stall.branch_location,
+
+        // Status flags
+        isAvailable: stall.status === 'Active',
+
+        // Keep original values for editing
+        rentalPrice: stall.rental_price,
+        originalData: stall, // Keep full backend data for reference
       }
     },
 
-    // Format price display based on type
-    formatPrice(price, priceType) {
-      const formattedPrice = `₱${parseFloat(price).toLocaleString()}`
-
-      switch (priceType) {
-        case 'Raffle':
-          return `${formattedPrice} / Raffle`
-        case 'Auction':
-          return `${formattedPrice} Min. / Auction`
-        case 'Fixed Price':
-        default:
-          return `${formattedPrice} / Fixed Price`
-      }
+    // Format price display
+    formatPrice(price) {
+      return `₱${parseFloat(price).toLocaleString()}`
     },
 
-    // Get default image based on section
+    // UPDATED: Get default image based on section from database
     getDefaultImage(section) {
       const defaultImages = {
+        // Match the sections from your database/form
         'Grocery Section': 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400',
         'Meat Section': 'https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?w=400',
         'Fresh Produce': 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=400',
         'Clothing Section': 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400',
         'Electronics Section': 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400',
         'Food Court': 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400',
+
+        // Default fallback
+        default: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400',
       }
-      return (
-        defaultImages[section] ||
-        'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400'
-      )
+
+      console.log(`Getting image for section: "${section}"`)
+      return defaultImages[section] || defaultImages['default']
+    },
+
+    // Clear authentication and redirect to login
+    clearAuthAndRedirect() {
+      sessionStorage.removeItem('authToken')
+      sessionStorage.removeItem('currentUser')
+      sessionStorage.removeItem('userType')
+      sessionStorage.removeItem('branchManagerId')
+
+      setTimeout(() => {
+        this.$router.push('/login')
+      }, 2000)
     },
 
     // Refresh stalls data
@@ -150,14 +220,17 @@ export default {
       await this.fetchStalls()
     },
 
-    // Edit functions
+    // Edit stall functions
     handleStallEdit(stall) {
       this.selectedStall = { ...stall }
       this.showEditModal = true
     },
 
-    async handleStallUpdated(updatedStall) {
+    async handleStallUpdated(updatedStallData) {
       try {
+        // Transform the updated data
+        const updatedStall = this.transformStallData(updatedStallData)
+
         // Update local data
         const index = this.stallsData.findIndex((s) => s.id === updatedStall.id)
         if (index > -1) {
@@ -166,9 +239,7 @@ export default {
         }
 
         this.closeEditModal()
-
-        // Optionally refresh from server to ensure consistency
-        // await this.fetchStalls()
+        this.showMessage('Stall updated successfully!', 'success')
       } catch (error) {
         console.error('Error handling stall update:', error)
         this.showMessage('Error updating stall display', 'error')
@@ -182,7 +253,7 @@ export default {
 
     async handleStallDeleted(stallId) {
       try {
-        console.log('🗑️ Processing stall deletion for ID:', stallId)
+        console.log('Processing stall deletion for ID:', stallId)
 
         // Remove from local data
         const index = this.stallsData.findIndex((s) => s.id === stallId)
@@ -191,21 +262,18 @@ export default {
           this.stallsData.splice(index, 1)
           this.displayStalls = [...this.stallsData]
 
-          console.log(`✅ Stall "${deletedStall.stallNumber}" removed from local data`)
-          console.log(`📊 Remaining stalls: ${this.stallsData.length}`)
+          console.log(`Stall "${deletedStall.stallNumber}" removed from local data`)
+          this.showMessage(`Stall ${deletedStall.stallNumber} deleted successfully!`, 'success')
         } else {
-          console.warn('⚠️ Stall not found in local data for deletion')
+          console.warn('Stall not found in local data for deletion')
         }
-
-        // Optionally refresh from server to ensure consistency
-        // await this.fetchStalls()
       } catch (error) {
-        console.error('❌ Error handling stall deletion:', error)
+        console.error('Error handling stall deletion:', error)
         this.showMessage('Error removing stall from display', 'error')
       }
     },
 
-    // Search and filter
+    // Search and filter functions
     handleFilteredStalls(filtered) {
       this.displayStalls = filtered
     },
@@ -219,33 +287,50 @@ export default {
       this.showModal = false
     },
 
-    async handleStallAdded(newStall) {
+    // UPDATED: Handle stall added with proper event name
+    async handleStallAdded(newStallData) {
       try {
+        console.log('Handling new stall data:', newStallData)
+
         // Transform the new stall data and add to local array
-        const transformedStall = this.transformStallData(newStall)
+        const transformedStall = this.transformStallData(newStallData)
+        console.log('Transformed new stall:', transformedStall)
+
         this.stallsData.unshift(transformedStall) // Add to beginning
         this.displayStalls = [...this.stallsData]
 
         this.showMessage('Stall added successfully!', 'success')
-
-        // Optionally refresh entire list to ensure consistency
-        // await this.fetchStalls()
+        this.closeAddStallModal()
       } catch (error) {
         console.error('Error handling new stall:', error)
+        this.showMessage('Error adding stall to display', 'error')
         // Refresh the entire list if there's an issue
         await this.fetchStalls()
       }
     },
 
-    // Message handling
+    // Alternative handler method name (in case the emit uses different name)
+    async onStallAdded(newStallData) {
+      await this.handleStallAdded(newStallData)
+    },
+
+    // Handle refresh request from child components
+    async onRefreshStalls() {
+      await this.fetchStalls()
+    },
+
+    // Message handling with enhanced display options
     showMessage(text, color = 'success') {
       this.snackbar = {
         show: true,
         text,
         color,
       }
+
+      console.log(`Message (${color}): ${text}`)
     },
 
+    // Modal event handlers
     handleEditModalClose() {
       this.closeEditModal()
     },
@@ -254,7 +339,12 @@ export default {
       this.showMessage(errorMessage, 'error')
     },
 
-    // Auction handlers
+    // Handle show-message events from child components
+    handleShowMessage({ type, text }) {
+      this.showMessage(text, type)
+    },
+
+    // Auction handlers (if using auction functionality)
     handleStallAuction(stall) {
       this.selectedStall = { ...stall }
       this.showAuctionModal = true
@@ -266,7 +356,6 @@ export default {
     },
 
     handleAuctionStatus({ participant, status }) {
-      // The custom popup in AuctionTable will handle the user feedback
       console.log(`Auction status updated: ${participant.fullName} marked as ${status}`)
     },
 
@@ -274,12 +363,11 @@ export default {
       this.showMessage(`Live mode activated for ${stall.stallNumber}`, 'info')
     },
 
-    // Utility methods
+    // Error handling utilities
     async retryFetch() {
       await this.fetchStalls()
     },
 
-    // Handle network errors gracefully
     handleNetworkError(error) {
       if (error.message.includes('fetch')) {
         return 'Network connection failed. Please check your internet connection.'
@@ -289,6 +377,58 @@ export default {
         return 'API endpoint not found. Please check server configuration.'
       }
       return error.message || 'An unexpected error occurred'
+    },
+
+    // API call helper function for other components
+    async makeAuthenticatedRequest(url, options = {}) {
+      const token = sessionStorage.getItem('authToken')
+
+      if (!token) {
+        this.clearAuthAndRedirect()
+        throw new Error('Authentication required')
+      }
+
+      const defaultHeaders = {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      }
+
+      const response = await fetch(`${this.apiBaseUrl}${url}`, {
+        ...options,
+        headers: {
+          ...defaultHeaders,
+          ...options.headers,
+        },
+      })
+
+      if (response.status === 401) {
+        this.clearAuthAndRedirect()
+        throw new Error('Session expired. Please login again.')
+      }
+
+      return response
+    },
+
+    // Get current branch info
+    getCurrentBranchInfo() {
+      if (this.currentUser) {
+        return {
+          area: this.currentUser.area,
+          location: this.currentUser.location,
+          managerName: `${this.currentUser.firstName} ${this.currentUser.lastName}`,
+        }
+      }
+      return null
+    },
+
+    // Debug helper - log current stall data
+    debugStallData() {
+      console.log('=== STALL DATA DEBUG ===')
+      console.log('Total stalls:', this.stallsData.length)
+      console.log('Display stalls:', this.displayStalls.length)
+      console.log('Sample stall:', this.stallsData[0])
+      console.log('Current user:', this.currentUser)
+      console.log('========================')
     },
   },
 
@@ -305,9 +445,54 @@ export default {
     totalStallsCount() {
       return this.stallsData.length
     },
+
+    inactiveStallsCount() {
+      return this.stallsData.filter((stall) => !stall.isAvailable).length
+    },
+
+    branchInfo() {
+      return this.getCurrentBranchInfo()
+    },
+
+    // NEW: Computed properties for enhanced functionality
+    stallsBySection() {
+      const grouped = {}
+      this.stallsData.forEach((stall) => {
+        const section = stall.section || 'General Section'
+        if (!grouped[section]) {
+          grouped[section] = []
+        }
+        grouped[section].push(stall)
+      })
+      return grouped
+    },
+
+    stallsByFloor() {
+      const grouped = {}
+      this.stallsData.forEach((stall) => {
+        const floor = stall.floor || '1st Floor'
+        if (!grouped[floor]) {
+          grouped[floor] = []
+        }
+        grouped[floor].push(stall)
+      })
+      return grouped
+    },
+
+    stallsByPriceType() {
+      const grouped = {}
+      this.stallsData.forEach((stall) => {
+        const priceType = stall.priceType || 'Fixed Price'
+        if (!grouped[priceType]) {
+          grouped[priceType] = []
+        }
+        grouped[priceType].push(stall)
+      })
+      return grouped
+    },
   },
 
-  // Watch for data changes
+  // Watchers
   watch: {
     stallsData: {
       handler(newStalls) {
@@ -315,9 +500,24 @@ export default {
         if (this.displayStalls.length === 0 || this.displayStalls.length === newStalls.length) {
           this.displayStalls = [...newStalls]
         }
+
+        // Debug log when stalls data changes
+        console.log(`Stalls data updated: ${newStalls.length} stalls`)
       },
       deep: true,
     },
+
+    displayStalls: {
+      handler(newDisplayStalls) {
+        console.log(`Display stalls updated: ${newDisplayStalls.length} stalls shown`)
+      },
+    },
+  },
+
+  // Lifecycle hooks
+  beforeUnmount() {
+    // Clear any timeouts or intervals if needed
+    console.log('Stalls component unmounting')
   },
 
   // Error handling for component

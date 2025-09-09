@@ -1,26 +1,48 @@
 import { createConnection } from '../config/database.js'
 
-// Get all stalls
+// Get all stalls for the authenticated branch manager
 export const getAllStalls = async (req, res) => {
   let connection
   try {
     connection = await createConnection()
 
-    const [stalls] = await connection.execute(`
+    // Get the branch manager ID from the authenticated user
+    const branchManagerId = req.user?.branchManagerId || req.user?.userId
+
+    if (!branchManagerId) {
+      return res.status(400).json({
+        success: false,
+        message: 'Branch manager ID not found in authentication token',
+      })
+    }
+
+    console.log('Fetching stalls for branch manager ID:', branchManagerId)
+
+    // Updated query to include new fields
+    const [stalls] = await connection.execute(
+      `
       SELECT 
         s.*,
-        CONCAT(a1.first_name, ' ', a1.last_name) as created_by_name,
-        CONCAT(a2.first_name, ' ', a2.last_name) as updated_by_name
-      FROM Stall s
-      LEFT JOIN Admin a1 ON s.created_by = a1.ID
-      LEFT JOIN Admin a2 ON s.updated_by = a2.ID
+        bm.first_name as manager_first_name,
+        bm.last_name as manager_last_name,
+        bm.area,
+        bm.location as branch_location
+      FROM stall s
+      LEFT JOIN branch_manager bm ON s.branch_manager_id = bm.branch_manager_id
+      WHERE s.branch_manager_id = ?
       ORDER BY s.created_at DESC
-    `)
+    `,
+      [branchManagerId],
+    )
+
+    console.log(`Found ${stalls.length} stalls for branch manager ID: ${branchManagerId}`)
 
     res.json({
       success: true,
       message: 'Stalls retrieved successfully',
       data: stalls,
+      branchManagerId: branchManagerId,
+      count: stalls.length,
     })
   } catch (error) {
     console.error('❌ Get stalls error:', error)
@@ -34,31 +56,41 @@ export const getAllStalls = async (req, res) => {
   }
 }
 
-// Get stall by ID
+// Get stall by ID (only if it belongs to the authenticated branch manager)
 export const getStallById = async (req, res) => {
   let connection
   try {
     const { id } = req.params
+    const branchManagerId = req.user?.branchManagerId || req.user?.userId
+
+    if (!branchManagerId) {
+      return res.status(400).json({
+        success: false,
+        message: 'Branch manager ID not found in authentication token',
+      })
+    }
+
     connection = await createConnection()
 
     const [stalls] = await connection.execute(
       `
       SELECT 
         s.*,
-        CONCAT(a1.first_name, ' ', a1.last_name) as created_by_name,
-        CONCAT(a2.first_name, ' ', a2.last_name) as updated_by_name
-      FROM Stall s
-      LEFT JOIN Admin a1 ON s.created_by = a1.ID
-      LEFT JOIN Admin a2 ON s.updated_by = a2.ID
-      WHERE s.ID = ?
+        bm.first_name as manager_first_name,
+        bm.last_name as manager_last_name,
+        bm.area,
+        bm.location as branch_location
+      FROM stall s
+      LEFT JOIN branch_manager bm ON s.branch_manager_id = bm.branch_manager_id
+      WHERE s.stall_id = ? AND s.branch_manager_id = ?
     `,
-      [id],
+      [id, branchManagerId],
     )
 
     if (stalls.length === 0) {
       return res.status(404).json({
         success: false,
-        message: 'Stall not found',
+        message: 'Stall not found or you do not have permission to access it',
       })
     }
 
@@ -79,79 +111,126 @@ export const getStallById = async (req, res) => {
   }
 }
 
-// Add new stall
+// Add new stall (assigned to the authenticated branch manager)
 export const addStall = async (req, res) => {
   let connection
   try {
+    // Map frontend field names to backend field names
     const {
-      stallNumber,
-      price,
-      floor,
-      section,
-      dimensions,
-      location,
-      description,
-      image,
-      isAvailable = true,
-      priceType = 'Fixed Price',
+      stallNumber, // Frontend field
+      price, // Frontend field -> rental_price
+      floor, // Frontend field
+      section, // Frontend field
+      dimensions, // Frontend field
+      location, // Frontend field -> stall_location
+      description, // Same field name
+      image, // Frontend field -> stall_image
+      isAvailable, // Frontend field -> status
+      priceType, // Frontend field -> price_type
     } = req.body
 
-    // Validation
-    if (!stallNumber || !price || !floor || !section || !location) {
+    // Get the branch manager ID from the authenticated user
+    const branchManagerId = req.user?.branchManagerId || req.user?.userId
+
+    if (!branchManagerId) {
       return res.status(400).json({
         success: false,
-        message: 'Required fields: stallNumber, price, floor, section, location',
+        message: 'Branch manager ID not found in authentication token',
+      })
+    }
+
+    console.log('Adding stall for branch manager ID:', branchManagerId)
+    console.log('Frontend data received:', req.body)
+
+    // FIXED VALIDATION - Use the correct frontend field names
+    if (!stallNumber || !price || !location || !dimensions) {
+      return res.status(400).json({
+        success: false,
+        message: 'Required fields: stallNumber, price, location, dimensions',
+        received: {
+          stallNumber: !!stallNumber,
+          price: !!price,
+          location: !!location,
+          dimensions: !!dimensions,
+        },
       })
     }
 
     connection = await createConnection()
 
-    // Check if stall number already exists
+    // Check if stall number already exists for this branch manager
     const [existingStall] = await connection.execute(
-      'SELECT ID FROM Stall WHERE stall_number = ?',
-      [stallNumber],
+      'SELECT stall_id FROM stall WHERE stall_no = ? AND branch_manager_id = ?',
+      [stallNumber, branchManagerId],
     )
 
     if (existingStall.length > 0) {
       return res.status(400).json({
         success: false,
-        message: 'Stall number already exists',
+        message: 'Stall number already exists in your branch',
       })
     }
 
-    // Get user ID from token (if authenticated)
-    const createdBy = req.user ? req.user.userId : null
+    // Map frontend fields to database columns
+    const stallData = {
+      stall_no: stallNumber,
+      stall_location: location,
+      size: dimensions, // Map dimensions to size for the database
+      floor: floor || null,
+      section: section || null,
+      dimensions: dimensions || null,
+      rental_price: parseFloat(price),
+      price_type: priceType || 'Fixed Price',
+      status: isAvailable ? 'Active' : 'Inactive',
+      stamp: 'APPROVED',
+      description: description || null,
+      stall_image: image || null,
+    }
 
-    // Insert new stall
+    console.log('Mapped database data:', stallData)
+
+    // Insert new stall with branch manager ID
     const [result] = await connection.execute(
       `
-      INSERT INTO Stall (
-        stall_number, price, floor, section, dimensions, 
-        location, description, image_data, is_available, 
-        price_type, created_by
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO stall (
+        branch_manager_id, stall_no, stall_location, size, floor, section,
+        dimensions, rental_price, price_type, status, stamp, description, stall_image
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `,
       [
-        stallNumber,
-        parseFloat(price),
-        floor,
-        section,
-        dimensions || null,
-        location,
-        description || null,
-        image || null,
-        isAvailable,
-        priceType,
-        createdBy,
+        branchManagerId,
+        stallData.stall_no,
+        stallData.stall_location,
+        stallData.size,
+        stallData.floor,
+        stallData.section,
+        stallData.dimensions,
+        stallData.rental_price,
+        stallData.price_type,
+        stallData.status,
+        stallData.stamp,
+        stallData.description,
+        stallData.stall_image,
       ],
     )
 
-    // Get the created stall
-    const [newStall] = await connection.execute('SELECT * FROM Stall WHERE ID = ?', [
-      result.insertId,
-    ])
+    // Get the created stall with branch manager info
+    const [newStall] = await connection.execute(
+      `
+      SELECT 
+        s.*,
+        bm.first_name as manager_first_name,
+        bm.last_name as manager_last_name,
+        bm.area,
+        bm.location as branch_location
+      FROM stall s
+      LEFT JOIN branch_manager bm ON s.branch_manager_id = bm.branch_manager_id
+      WHERE s.stall_id = ?
+    `,
+      [result.insertId],
+    )
 
-    console.log('✅ Stall added successfully:', newStall[0])
+    console.log('✅ Stall added successfully for branch manager:', branchManagerId)
 
     res.status(201).json({
       success: true,
@@ -170,69 +249,84 @@ export const addStall = async (req, res) => {
   }
 }
 
-// Update stall
+// Update stall (only if it belongs to the authenticated branch manager)
 export const updateStall = async (req, res) => {
   let connection
   try {
     const { id } = req.params
     const updateData = req.body
+    const branchManagerId = req.user?.branchManagerId || req.user?.userId
+
+    if (!branchManagerId) {
+      return res.status(400).json({
+        success: false,
+        message: 'Branch manager ID not found in authentication token',
+      })
+    }
 
     connection = await createConnection()
 
-    // Check if stall exists
-    const [existingStall] = await connection.execute('SELECT ID FROM Stall WHERE ID = ?', [id])
+    // Check if stall exists and belongs to this branch manager
+    const [existingStall] = await connection.execute(
+      'SELECT stall_id FROM stall WHERE stall_id = ? AND branch_manager_id = ?',
+      [id, branchManagerId],
+    )
 
     if (existingStall.length === 0) {
       return res.status(404).json({
         success: false,
-        message: 'Stall not found',
+        message: 'Stall not found or you do not have permission to update it',
       })
     }
 
-    // If updating stall_number, check if it already exists (excluding current stall)
-    if (updateData.stall_number) {
+    // Map frontend field names to database column names for update
+    const fieldMapping = {
+      stallNumber: 'stall_no',
+      price: 'rental_price',
+      location: 'stall_location',
+      image: 'stall_image',
+      isAvailable: 'status', // Special handling needed
+      priceType: 'price_type',
+      floor: 'floor',
+      section: 'section',
+      dimensions: 'dimensions',
+      description: 'description',
+      size: 'size',
+      stamp: 'stamp',
+    }
+
+    // If updating stallNumber (stall_no), check if it already exists for this branch manager
+    if (updateData.stallNumber) {
       const [duplicateCheck] = await connection.execute(
-        'SELECT ID FROM Stall WHERE stall_number = ? AND ID != ?',
-        [updateData.stall_number, id],
+        'SELECT stall_id FROM stall WHERE stall_no = ? AND branch_manager_id = ? AND stall_id != ?',
+        [updateData.stallNumber, branchManagerId, id],
       )
 
       if (duplicateCheck.length > 0) {
         return res.status(400).json({
           success: false,
-          message: 'Stall number already exists',
+          message: 'Stall number already exists in your branch',
         })
       }
     }
 
-    // Get user ID from token (if authenticated)
-    const updatedBy = req.user ? req.user.userId : null
-
-    // Define allowed fields for update
-    const allowedFields = [
-      'stall_number',
-      'price',
-      'floor',
-      'section',
-      'dimensions',
-      'location',
-      'description',
-      'image_data',
-      'is_available',
-      'price_type',
-    ]
-
-    // Build dynamic update query
+    // Build dynamic update query with field mapping
     const updateFields = []
     const updateValues = []
 
-    allowedFields.forEach((field) => {
-      if (updateData[field] !== undefined) {
-        updateFields.push(`${field} = ?`)
-        // Handle price conversion
-        if (field === 'price') {
-          updateValues.push(parseFloat(updateData[field]))
+    Object.keys(updateData).forEach((frontendField) => {
+      const dbField = fieldMapping[frontendField]
+
+      if (dbField && updateData[frontendField] !== undefined) {
+        updateFields.push(`${dbField} = ?`)
+
+        // Handle special field conversions
+        if (frontendField === 'price' || frontendField === 'rental_price') {
+          updateValues.push(parseFloat(updateData[frontendField]))
+        } else if (frontendField === 'isAvailable') {
+          updateValues.push(updateData[frontendField] ? 'Active' : 'Inactive')
         } else {
-          updateValues.push(updateData[field])
+          updateValues.push(updateData[frontendField])
         }
       }
     })
@@ -244,26 +338,28 @@ export const updateStall = async (req, res) => {
       })
     }
 
-    // Add updated_by and updated_at
-    updateFields.push('updated_by = ?', 'updated_at = CURRENT_TIMESTAMP')
-    updateValues.push(updatedBy)
-    updateValues.push(id) // Add ID for WHERE clause
+    // Add WHERE clause parameters
+    updateValues.push(id, branchManagerId)
 
-    const updateQuery = `UPDATE Stall SET ${updateFields.join(', ')} WHERE ID = ?`
+    const updateQuery = `UPDATE stall SET ${updateFields.join(', ')} WHERE stall_id = ? AND branch_manager_id = ?`
+
+    console.log('Update query:', updateQuery)
+    console.log('Update values:', updateValues)
 
     await connection.execute(updateQuery, updateValues)
 
-    // Get updated stall with admin names
+    // Get updated stall with branch manager info
     const [updatedStall] = await connection.execute(
       `
       SELECT 
         s.*,
-        CONCAT(a1.first_name, ' ', a1.last_name) as created_by_name,
-        CONCAT(a2.first_name, ' ', a2.last_name) as updated_by_name
-      FROM Stall s
-      LEFT JOIN Admin a1 ON s.created_by = a1.ID
-      LEFT JOIN Admin a2 ON s.updated_by = a2.ID
-      WHERE s.ID = ?
+        bm.first_name as manager_first_name,
+        bm.last_name as manager_last_name,
+        bm.area,
+        bm.location as branch_location
+      FROM stall s
+      LEFT JOIN branch_manager bm ON s.branch_manager_id = bm.branch_manager_id
+      WHERE s.stall_id = ?
     `,
       [id],
     )
@@ -282,7 +378,7 @@ export const updateStall = async (req, res) => {
     if (error.code === 'ER_DUP_ENTRY') {
       return res.status(400).json({
         success: false,
-        message: 'Stall number already exists',
+        message: 'Stall number already exists in your branch',
       })
     }
 
@@ -296,36 +392,47 @@ export const updateStall = async (req, res) => {
   }
 }
 
-// Delete stall
+// Delete stall (only if it belongs to the authenticated branch manager)
 export const deleteStall = async (req, res) => {
   let connection
   try {
     const { id } = req.params
+    const branchManagerId = req.user?.branchManagerId || req.user?.userId
+
+    if (!branchManagerId) {
+      return res.status(400).json({
+        success: false,
+        message: 'Branch manager ID not found in authentication token',
+      })
+    }
 
     connection = await createConnection()
 
-    // Check if stall exists
+    // Check if stall exists and belongs to this branch manager
     const [existingStall] = await connection.execute(
-      'SELECT ID, stall_number FROM Stall WHERE ID = ?',
-      [id],
+      'SELECT stall_id, stall_no FROM stall WHERE stall_id = ? AND branch_manager_id = ?',
+      [id, branchManagerId],
     )
 
     if (existingStall.length === 0) {
       return res.status(404).json({
         success: false,
-        message: 'Stall not found',
+        message: 'Stall not found or you do not have permission to delete it',
       })
     }
 
     // Delete the stall
-    await connection.execute('DELETE FROM Stall WHERE ID = ?', [id])
+    await connection.execute('DELETE FROM stall WHERE stall_id = ? AND branch_manager_id = ?', [
+      id,
+      branchManagerId,
+    ])
 
-    console.log('✅ Stall deleted successfully:', existingStall[0].stall_number)
+    console.log('✅ Stall deleted successfully:', existingStall[0].stall_no)
 
     res.json({
       success: true,
       message: 'Stall deleted successfully',
-      data: { id: id, stallNumber: existingStall[0].stall_number },
+      data: { id: id, stallNumber: existingStall[0].stall_no },
     })
   } catch (error) {
     console.error('❌ Delete stall error:', error)
@@ -339,22 +446,37 @@ export const deleteStall = async (req, res) => {
   }
 }
 
-// Get available stalls only
+// Get available stalls only (for the authenticated branch manager)
 export const getAvailableStalls = async (req, res) => {
   let connection
   try {
+    const branchManagerId = req.user?.branchManagerId || req.user?.userId
+
+    if (!branchManagerId) {
+      return res.status(400).json({
+        success: false,
+        message: 'Branch manager ID not found in authentication token',
+      })
+    }
+
     connection = await createConnection()
 
-    const [stalls] = await connection.execute(`
-      SELECT * FROM Stall 
-      WHERE is_available = TRUE AND status = 'Active'
-      ORDER BY floor, section, stall_number
-    `)
+    const [stalls] = await connection.execute(
+      `
+      SELECT s.*, bm.area, bm.location as branch_location
+      FROM stall s
+      LEFT JOIN branch_manager bm ON s.branch_manager_id = bm.branch_manager_id
+      WHERE s.branch_manager_id = ? AND s.status = 'Active'
+      ORDER BY s.stall_location, s.stall_no
+    `,
+      [branchManagerId],
+    )
 
     res.json({
       success: true,
       message: 'Available stalls retrieved successfully',
       data: stalls,
+      count: stalls.length,
     })
   } catch (error) {
     console.error('❌ Get available stalls error:', error)
@@ -368,77 +490,68 @@ export const getAvailableStalls = async (req, res) => {
   }
 }
 
-// Get stalls by filter
+// Get stalls by filter (for the authenticated branch manager)
 export const getStallsByFilter = async (req, res) => {
   let connection
   try {
-    const { floor, section, location, isAvailable, priceType, search, minPrice, maxPrice } =
-      req.query
+    const { location, status, search, minPrice, maxPrice } = req.query
+    const branchManagerId = req.user?.branchManagerId || req.user?.userId
+
+    if (!branchManagerId) {
+      return res.status(400).json({
+        success: false,
+        message: 'Branch manager ID not found in authentication token',
+      })
+    }
 
     connection = await createConnection()
 
     let query = `
       SELECT 
         s.*,
-        CONCAT(a1.first_name, ' ', a1.last_name) as created_by_name,
-        CONCAT(a2.first_name, ' ', a2.last_name) as updated_by_name
-      FROM Stall s
-      LEFT JOIN Admin a1 ON s.created_by = a1.ID
-      LEFT JOIN Admin a2 ON s.updated_by = a2.ID
-      WHERE 1=1
+        bm.first_name as manager_first_name,
+        bm.last_name as manager_last_name,
+        bm.area,
+        bm.location as branch_location
+      FROM stall s
+      LEFT JOIN branch_manager bm ON s.branch_manager_id = bm.branch_manager_id
+      WHERE s.branch_manager_id = ?
     `
-    const queryParams = []
-
-    // Floor filter
-    if (floor) {
-      query += ' AND s.floor = ?'
-      queryParams.push(floor)
-    }
-
-    // Section filter
-    if (section) {
-      query += ' AND s.section = ?'
-      queryParams.push(section)
-    }
+    const queryParams = [branchManagerId]
 
     // Location filter
     if (location) {
-      query += ' AND s.location = ?'
+      query += ' AND s.stall_location = ?'
       queryParams.push(location)
     }
 
-    // Availability filter
-    if (isAvailable !== undefined) {
-      query += ' AND s.is_available = ?'
-      queryParams.push(isAvailable === 'true')
+    // Status filter
+    if (status) {
+      query += ' AND s.status = ?'
+      queryParams.push(status)
     }
 
-    // Price type filter
-    if (priceType) {
-      query += ' AND s.price_type = ?'
-      queryParams.push(priceType)
-    }
-
-    // Search filter (search in stall number, location, description, section)
+    // Search filter (search in stall number, location, description, section, floor)
     if (search) {
       query += ` AND (
-        s.stall_number LIKE ? OR 
-        s.location LIKE ? OR 
-        s.description LIKE ? OR 
-        s.section LIKE ?
+        s.stall_no LIKE ? OR 
+        s.stall_location LIKE ? OR 
+        s.description LIKE ? OR
+        s.section LIKE ? OR
+        s.floor LIKE ?
       )`
       const searchPattern = `%${search}%`
-      queryParams.push(searchPattern, searchPattern, searchPattern, searchPattern)
+      queryParams.push(searchPattern, searchPattern, searchPattern, searchPattern, searchPattern)
     }
 
     // Price range filter
     if (minPrice !== undefined && !isNaN(minPrice)) {
-      query += ' AND s.price >= ?'
+      query += ' AND s.rental_price >= ?'
       queryParams.push(parseFloat(minPrice))
     }
 
     if (maxPrice !== undefined && !isNaN(maxPrice)) {
-      query += ' AND s.price <= ?'
+      query += ' AND s.rental_price <= ?'
       queryParams.push(parseFloat(maxPrice))
     }
 
@@ -452,11 +565,8 @@ export const getStallsByFilter = async (req, res) => {
       data: stalls,
       count: stalls.length,
       filters: {
-        floor,
-        section,
         location,
-        isAvailable,
-        priceType,
+        status,
         search,
         minPrice,
         maxPrice,

@@ -65,6 +65,9 @@ export default {
           ['image/jpeg', 'image/png', 'image/gif', 'image/webp'].includes(v.type) ||
           'Only JPEG, PNG, GIF, and WebP images are allowed!',
       ],
+      // API base URL
+      // eslint-disable-next-line no-undef
+      apiBaseUrl: process.env.VUE_APP_API_URL || 'http://localhost:3001',
     }
   },
   watch: {
@@ -107,6 +110,14 @@ export default {
 
       // Close the main modal after success popup closes
       this.handleClose()
+
+      // Auto-refresh the page after modal closes
+      this.$nextTick(() => {
+        console.log('🔄 Auto-refreshing page after successful update...')
+        setTimeout(() => {
+          window.location.reload()
+        }, 500) // Small delay to ensure modal closes smoothly
+      })
     },
 
     closeModal() {
@@ -133,45 +144,35 @@ export default {
     populateForm(data) {
       console.log('Populating form with data:', data)
 
-      // Map the data fields properly
       this.editForm = {
-        id: data.id || data.ID,
-        stallNumber: data.stallNumber || data.stall_number || '',
-        price: this.extractNumericPrice(data.price) || '',
+        id: data.stall_id || data.ID || data.id,
+        stallNumber: data.stall_no || data.stallNumber || '',
+        price: this.extractNumericPrice(data.rental_price || data.price) || '',
         floor: data.floor || '',
         section: data.section || '',
-        dimensions: data.dimensions || '',
-        location: data.location || '',
+        dimensions: data.dimensions || data.size || '',
+        location: data.stall_location || data.location || '',
         description: data.description || '',
-        image: data.image || data.image_data || null,
-        isAvailable:
-          data.isAvailable !== undefined
-            ? data.isAvailable
-            : data.is_available !== undefined
-              ? data.is_available
-              : true,
-        priceType: data.priceType || data.price_type || 'Fixed Price',
+        image: data.stall_image || data.image || null,
+        isAvailable: data.status === 'Active' || data.isAvailable === true,
+        priceType: data.price_type || data.priceType || 'Fixed Price',
       }
 
-      // Set image preview if there's existing image data
       if (this.editForm.image) {
         this.imagePreview = this.editForm.image
       }
 
       this.selectedImageFile = null
-
       console.log('Form populated:', this.editForm)
     },
 
-    // Extract numeric price from formatted price string
     extractNumericPrice(priceString) {
       if (!priceString) return ''
 
-      // Remove currency symbols, commas, and extract just the number
       const numericPart = String(priceString)
         .replace(/[₱,\s]/g, '')
         .replace(/php/gi, '')
-        .replace(/\/.*$/i, '') // Remove everything after "/" (like "/ Fixed Price")
+        .replace(/\/.*$/i, '')
         .trim()
 
       return numericPart
@@ -183,7 +184,7 @@ export default {
       try {
         console.log('Saving stall with form data:', this.editForm)
 
-        // Basic field validation - check for required fields
+        // Basic field validation
         const requiredFields = {
           stallNumber: 'Stall number',
           price: 'Price',
@@ -201,31 +202,27 @@ export default {
         }
 
         if (missingFields.length > 0) {
-          this.$emit(
-            'error',
-            `Please fill in the following required fields: ${missingFields.join(', ')}`,
-          )
+          console.error(`Missing fields: ${missingFields.join(', ')}`)
           return
         }
 
         // Validate dimensions format
         if (this.editForm.dimensions && !/^\d+x\d+/i.test(this.editForm.dimensions)) {
-          this.$emit('error', 'Dimensions format should be like "3x3" or "3x3 meters"')
+          console.error('Invalid dimensions format')
           return
         }
 
         // Handle image upload if new image is selected
         let imageData = this.editForm.image
         if (this.selectedImageFile) {
-          // Validate image file
           if (this.selectedImageFile.size > 5000000) {
-            this.$emit('error', 'Image size should be less than 5 MB!')
+            console.error('Image size too large')
             return
           }
 
           const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
           if (!allowedTypes.includes(this.selectedImageFile.type)) {
-            this.$emit('error', 'Only JPEG, PNG, GIF, and WebP images are allowed!')
+            console.error('Invalid image type')
             return
           }
 
@@ -241,42 +238,43 @@ export default {
         const numericPrice = parseFloat(cleanPrice)
 
         if (isNaN(numericPrice) || numericPrice <= 0) {
-          this.$emit('error', 'Please enter a valid price (numbers only)')
+          console.error('Invalid price')
           return
         }
 
-        // Prepare update data with correct field names for backend
         const updateData = {
-          stall_number: this.editForm.stallNumber.trim(),
+          stallNumber: this.editForm.stallNumber.trim(),
           price: numericPrice,
           floor: this.editForm.floor,
           section: this.editForm.section,
           dimensions: this.editForm.dimensions ? this.editForm.dimensions.trim() : null,
           location: this.editForm.location,
           description: this.editForm.description.trim(),
-          image_data: imageData,
-          is_available: this.editForm.isAvailable,
-          price_type: this.editForm.priceType,
+          image: imageData,
+          isAvailable: this.editForm.isAvailable,
+          priceType: this.editForm.priceType,
         }
 
         console.log('Sending update data to API:', updateData)
 
-        // Make API call to update stall
-        const backendUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001'
-        const response = await fetch(`${backendUrl}/api/stalls/${this.editForm.id}`, {
+        const token = sessionStorage.getItem('authToken')
+
+        if (!token) {
+          console.error('No auth token found')
+          this.$router.push('/login')
+          return
+        }
+
+        const response = await fetch(`${this.apiBaseUrl}/api/stalls/${this.editForm.id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
-            // Add authorization header if you have authentication
-            ...(localStorage.getItem('authToken') && {
-              Authorization: `Bearer ${localStorage.getItem('authToken')}`,
-            }),
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(updateData),
         })
 
         const result = await response.json().catch(() => {
-          // If JSON parsing fails, return a generic error object
           return {
             success: false,
             message: response.statusText || 'Server error',
@@ -285,55 +283,64 @@ export default {
         console.log('API Response:', result)
 
         if (!response.ok) {
+          if (response.status === 401) {
+            console.error('Session expired')
+            this.$router.push('/login')
+            return
+          } else if (response.status === 403) {
+            throw new Error('Access denied - you do not have permission to update this stall')
+          } else if (response.status === 404) {
+            throw new Error('Stall not found or you do not have permission to update it')
+          }
           throw new Error(result.message || `Server error: ${response.status}`)
         }
 
         if (result.success && result.data) {
-          console.log('Stall update successful')
-
-          // Transform the response data back to frontend format
-          const transformedData = this.transformBackendData(result.data)
-
           // Show success animation with backend message or fallback
-          const successMessage = result.message || 'Stall updated successfully'
+          const successMessage = result.message || 'Stall updated successfully!'
           this.showSuccessAnimation(successMessage)
 
-          // Emit the updated data to parent (no need to close modal here - let popup handle it)
-          this.$emit('stall-updated', transformedData)
+          const transformedData = this.transformBackendData(result.data)
+
+          // Emit stall-updated event (fixed the bug)
+          this.$emit(transformedData)
         } else {
           throw new Error(result.message || 'Failed to update stall')
         }
       } catch (error) {
         console.error('Update stall error:', error)
-        this.$emit('error', error.message || 'Failed to update stall. Please try again.')
+        // Only log errors, no user-facing messages
       } finally {
         this.loading = false
       }
     },
 
-    // Transform backend response data to frontend format
     transformBackendData(stallData) {
       return {
-        id: stallData.ID || stallData.id,
-        stallNumber: stallData.stall_number,
-        price: this.formatPrice(stallData.price, stallData.price_type),
+        id: stallData.stall_id || stallData.ID || stallData.id,
+        stallNumber: stallData.stall_no || stallData.stallNumber,
+        price: this.formatPrice(
+          stallData.rental_price || stallData.price,
+          stallData.price_type || stallData.priceType,
+        ),
         floor: stallData.floor,
         section: stallData.section,
-        dimensions: stallData.dimensions,
-        location: stallData.location,
+        dimensions: stallData.dimensions || stallData.size,
+        location: stallData.stall_location || stallData.location,
         description: stallData.description,
-        image: stallData.image_data || stallData.image,
-        isAvailable: stallData.is_available,
-        priceType: stallData.price_type,
+        image: stallData.stall_image || stallData.image,
+        isAvailable: stallData.status === 'Active',
+        priceType: stallData.price_type || stallData.priceType,
         status: stallData.status,
         createdAt: stallData.created_at,
         updatedAt: stallData.updated_at,
-        createdByName: stallData.created_by_name,
-        updatedByName: stallData.updated_by_name,
+        manager_first_name: stallData.manager_first_name,
+        manager_last_name: stallData.manager_last_name,
+        area: stallData.area,
+        branch_location: stallData.branch_location,
       }
     },
 
-    // Format price display based on type
     formatPrice(price, priceType) {
       const formattedPrice = `₱${parseFloat(price).toLocaleString()}`
 
@@ -350,21 +357,13 @@ export default {
 
     handleStallDeleted(event) {
       console.log('✅ Stall deleted successfully:', event)
-
-      // Emit the delete event to parent component
       this.$emit('stall-deleted', event.stallId)
-
-      // Close the edit modal
       this.handleClose()
     },
 
     handleDeleteError(error) {
       console.error('❌ Delete error:', error)
-
-      // Emit error to parent component
-      this.$emit('error', error.message || 'Failed to delete stall')
-
-      // Close delete dialog
+      this.$emit('stall-deleted-error', error)
       this.showDeleteConfirm = false
     },
 
@@ -388,12 +387,12 @@ export default {
       console.log('Processing image file:', file.name, file.size, file.type)
 
       if (file.size > 5000000) {
-        this.$emit('error', 'Image size should be less than 5 MB!')
+        console.error('Image size too large')
         return
       }
 
       if (!['image/jpeg', 'image/png', 'image/gif', 'image/webp'].includes(file.type)) {
-        this.$emit('error', 'Only JPEG, PNG, GIF, and WebP images are allowed!')
+        console.error('Invalid image type')
         return
       }
 
@@ -403,7 +402,7 @@ export default {
         console.log('Image preview set')
       }
       reader.onerror = () => {
-        this.$emit('error', 'Failed to read image file')
+        console.error('Failed to read image file')
       }
       reader.readAsDataURL(file)
       this.selectedImageFile = file
@@ -450,7 +449,7 @@ export default {
     },
 
     getFloorOptions() {
-      return ['Ground Floor', '1st Floor', '2nd Floor', '3rd Floor']
+      return ['1st Floor', '2nd Floor', '3rd Floor']
     },
 
     getSectionOptions() {
@@ -458,10 +457,10 @@ export default {
         'Grocery Section',
         'Meat Section',
         'Fresh Produce',
-        'Dry Goods',
         'Clothing Section',
         'Electronics Section',
         'Food Court',
+        'General Section',
       ]
     },
 
@@ -473,13 +472,10 @@ export default {
       return ['Fixed Price', 'Auction', 'Raffle']
     },
 
-    // Helper method to format price input (optional - for better UX)
     formatPriceInput(event) {
       let value = event.target.value
-      // Remove non-numeric characters except decimal point
       value = value.replace(/[^0-9.]/g, '')
 
-      // Ensure only one decimal point
       const parts = value.split('.')
       if (parts.length > 2) {
         value = parts[0] + '.' + parts.slice(1).join('')
@@ -490,7 +486,6 @@ export default {
   },
 
   beforeDestroy() {
-    // Clean up timeout when component is destroyed
     if (this.popupTimeout) {
       clearTimeout(this.popupTimeout)
     }
