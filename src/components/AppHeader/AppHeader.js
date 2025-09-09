@@ -1,179 +1,230 @@
 import axios from 'axios'
 
 export default {
-  name: "AppHeader",
+  name: 'AppHeader',
   props: {
     title: {
       type: String,
-      default: "Title",
+      default: 'Title',
     },
     username: {
       type: String,
-      default: "",
+      default: '',
     },
   },
   data() {
     return {
       showProfilePopup: false,
       popupPosition: {},
-      adminData: null,
+      branchManagerData: null,
       loading: false,
       error: null,
-    };
+    }
   },
   computed: {
     displayUsername() {
       // Show the actual username from database
-      return this.adminData?.username || "admin";
+      return this.branchManagerData?.username || 'manager'
     },
     displayDesignation() {
-      // Combine first_name and last_name as designation
-      if (this.adminData?.first_name && this.adminData?.last_name) {
-        return `${this.adminData.first_name} ${this.adminData.last_name}`;
+      // Show the full name and area/location designation
+      if (this.branchManagerData) {
+        const fullName = this.branchManagerData.fullName || 'Branch Manager'
+        const designation = this.branchManagerData.designation || ''
+        return designation ? `${fullName} - ${designation}` : fullName
       }
-      return "System Administrator";
+      return 'Branch Manager'
+    },
+    displayLocation() {
+      // Show area and location
+      if (this.branchManagerData?.area && this.branchManagerData?.location) {
+        return `${this.branchManagerData.area} - ${this.branchManagerData.location}`
+      }
+      return ''
     },
   },
   methods: {
-    // Simple method to fetch admin data
-    async fetchAdminData() {
+    // Method to fetch branch manager data
+    async fetchBranchManagerData() {
       try {
-        this.loading = true;
-        this.error = null;
-        
-        console.log('🔍 Fetching admin data...');
-        
-        // Simple GET request to fetch admin info
-        const response = await axios.get('http://localhost:3001/api/admin-info');
-        
-        if (response.data.success && response.data.admin) {
-          this.adminData = response.data.admin;
-          console.log('✅ Admin data loaded:', this.adminData);
-          
-          // Store in sessionStorage for quick access
-          sessionStorage.setItem('adminData', JSON.stringify(this.adminData));
-        } else {
-          console.warn('⚠️ No admin data found');
-          this.error = 'Admin data not found';
+        this.loading = true
+        this.error = null
+
+        console.log('🔍 Fetching branch manager data...')
+
+        // Get the token from storage
+        const token = sessionStorage.getItem('authToken') || localStorage.getItem('authToken')
+
+        if (!token) {
+          console.warn('⚠️ No authentication token found')
+          this.error = 'No authentication token found'
+          return
         }
-        
+
+        // Set up axios headers
+        const config = {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+
+        // Make request to the new branch manager info endpoint
+        const response = await axios.get(
+          'http://localhost:3001/api/auth/branch-manager-info',
+          config,
+        )
+
+        if (response.data.success && response.data.branchManager) {
+          this.branchManagerData = response.data.branchManager
+          console.log('✅ Branch manager data loaded:', this.branchManagerData)
+
+          // Store in sessionStorage for quick access
+          sessionStorage.setItem('branchManagerData', JSON.stringify(this.branchManagerData))
+        } else {
+          console.warn('⚠️ No branch manager data found')
+          this.error = 'Branch manager data not found'
+        }
       } catch (error) {
-        console.error('❌ Failed to fetch admin data:', error);
-        this.error = 'Failed to load admin information';
-        
+        console.error('❌ Failed to fetch branch manager data:', error)
+
+        if (error.response?.status === 401) {
+          this.error = 'Authentication expired. Please login again.'
+          // Clear invalid token
+          sessionStorage.removeItem('authToken')
+          localStorage.removeItem('authToken')
+          // Redirect to login
+          this.$router.push('/')
+        } else if (error.response?.status === 403) {
+          this.error = 'Access denied. Branch manager role required.'
+        } else {
+          this.error = 'Failed to load branch manager information'
+        }
+
         // Try to use stored data as fallback
-        const storedData = sessionStorage.getItem('adminData');
+        const storedData = sessionStorage.getItem('branchManagerData')
         if (storedData) {
           try {
-            this.adminData = JSON.parse(storedData);
-            console.log('📦 Using stored admin data as fallback');
-            this.error = null;
+            this.branchManagerData = JSON.parse(storedData)
+            console.log('📦 Using stored branch manager data as fallback')
+            this.error = null
           } catch (parseError) {
-            console.error('Error parsing stored admin data:', parseError);
+            console.error('Error parsing stored branch manager data:', parseError)
           }
         }
       } finally {
-        this.loading = false;
+        this.loading = false
       }
     },
 
     handleNotificationClick() {
-      console.log("Notification clicked");
-      this.$emit("notification-click");
+      console.log('Notification clicked')
+      this.$emit('notification-click')
     },
-    
+
     handleProfileClick() {
-      console.log("Profile clicked");
-      this.closeProfilePopup();
-      this.$emit("profile-click");
+      console.log('Profile clicked')
+      this.closeProfilePopup()
+      this.$emit('profile-click')
     },
-    
+
     handleSettingsClick() {
-      console.log("Settings clicked");
-      this.closeProfilePopup();
-      this.$emit("settings-click");
+      console.log('Settings clicked')
+      this.closeProfilePopup()
+      this.$emit('settings-click')
     },
-    
+
     async handleLogoutClick() {
-      console.log("Logout clicked");
-      this.closeProfilePopup();
+      console.log('Logout clicked')
+      this.closeProfilePopup()
 
       // Clear any stored user data
-      sessionStorage.removeItem("currentUser");
-      sessionStorage.removeItem("authToken");
-      sessionStorage.removeItem("adminData");
-      localStorage.removeItem("currentUser");
-      localStorage.removeItem("authToken");
-      
+      sessionStorage.removeItem('currentUser')
+      sessionStorage.removeItem('authToken')
+      sessionStorage.removeItem('branchManagerData')
+      localStorage.removeItem('currentUser')
+      localStorage.removeItem('authToken')
+
       // Clear axios header
-      delete axios.defaults.headers.common['Authorization'];
+      delete axios.defaults.headers.common['Authorization']
 
       // Clear component data
-      this.adminData = null;
+      this.branchManagerData = null
 
       // Clear Vuex store if you're using it
       if (this.$store && this.$store.dispatch) {
-        this.$store.dispatch("auth/logout");
+        this.$store.dispatch('auth/logout')
       }
 
       // Navigate to login page
-      this.$router.push("/");
+      this.$router.push('/')
 
       // Emit logout event
-      this.$emit("logout-click");
+      this.$emit('logout-click')
     },
-    
+
     toggleProfilePopup() {
       if (this.showProfilePopup) {
-        this.closeProfilePopup();
+        this.closeProfilePopup()
       } else {
-        this.openProfilePopup();
+        this.openProfilePopup()
       }
     },
-    
+
     openProfilePopup() {
-      this.showProfilePopup = true;
+      this.showProfilePopup = true
       this.$nextTick(() => {
-        this.calculatePopupPosition();
-      });
+        this.calculatePopupPosition()
+      })
     },
-    
+
     closeProfilePopup() {
-      this.showProfilePopup = false;
+      this.showProfilePopup = false
     },
-    
+
     calculatePopupPosition() {
-      const button = this.$refs.profileButton.$el;
-      const buttonRect = button.getBoundingClientRect();
+      const button = this.$refs.profileButton.$el
+      const buttonRect = button.getBoundingClientRect()
 
       this.popupPosition = {
-        position: "fixed",
+        position: 'fixed',
         top: `${buttonRect.bottom + 8}px`,
         right: `${window.innerWidth - buttonRect.right}px`,
-        zIndex: "9999",
-      };
-    },
-    
-    handleClickOutside(event) {
-      if (this.showProfilePopup && !this.$refs.profileContainer.contains(event.target)) {
-        this.closeProfilePopup();
+        zIndex: '9999',
       }
     },
-    
-    // Refresh admin data
-    async refreshAdminData() {
-      await this.fetchAdminData();
-    }
+
+    handleClickOutside(event) {
+      if (this.showProfilePopup && !this.$refs.profileContainer.contains(event.target)) {
+        this.closeProfilePopup()
+      }
+    },
+
+    // Refresh branch manager data
+    async refreshBranchManagerData() {
+      await this.fetchBranchManagerData()
+    },
+
+    // Setup authentication for all axios requests
+    setupAuthInterceptor() {
+      const token = sessionStorage.getItem('authToken') || localStorage.getItem('authToken')
+      if (token) {
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
+      }
+    },
   },
-  
+
   async mounted() {
-    document.addEventListener("click", this.handleClickOutside);
-    
-    // Fetch admin data when component mounts
-    await this.fetchAdminData();
+    document.addEventListener('click', this.handleClickOutside)
+
+    // Setup authentication
+    this.setupAuthInterceptor()
+
+    // Fetch branch manager data when component mounts
+    await this.fetchBranchManagerData()
   },
-  
+
   beforeUnmount() {
-    document.removeEventListener("click", this.handleClickOutside);
+    document.removeEventListener('click', this.handleClickOutside)
   },
-};
+}

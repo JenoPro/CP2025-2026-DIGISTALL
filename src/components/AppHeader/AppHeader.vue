@@ -40,17 +40,49 @@
             <!-- Error state -->
             <div v-else-if="error" class="profile-error">
               <v-icon color="error" class="mr-2">mdi-alert</v-icon>
-              <span>{{ error }}</span>
+              <div class="error-content">
+                <div class="error-message">{{ error }}</div>
+                <v-btn
+                  small
+                  color="primary"
+                  @click="refreshBranchManagerData"
+                  class="mt-2"
+                >
+                  Retry
+                </v-btn>
+              </div>
             </div>
 
-            <!-- Profile info -->
+            <!-- Branch Manager profile info -->
             <div v-else class="profile-info" @click="handleProfileClick">
-              <v-icon class="profile-icon">mdi-account</v-icon>
+              <div class="profile-avatar-container">
+                <v-avatar class="profile-avatar" color="primary" size="44">
+                  <v-icon color="white" size="22">mdi-account</v-icon>
+                </v-avatar>
+              </div>
+
               <div class="profile-details">
                 <!-- Username from database -->
                 <div class="profile-name">{{ displayUsername }}</div>
-                <!-- First name + Last name as designation -->
-                <div class="profile-role">{{ displayDesignation }}</div>
+
+                <!-- Full name with optional badge -->
+                <div v-if="branchManagerData?.fullName" class="profile-full-name">
+                  {{ branchManagerData.fullName }}
+                  <!-- Optional: Role badge -->
+                  <div v-if="branchManagerData?.role" class="profile-badge">
+                    {{ branchManagerData.role }}
+                  </div>
+                </div>
+
+                <!-- Area and Location -->
+                <div class="profile-location" v-if="displayLocation">
+                  {{ displayLocation }}
+                </div>
+
+                <!-- Email if available -->
+                <div class="profile-email" v-if="branchManagerData?.email">
+                  {{ branchManagerData.email }}
+                </div>
               </div>
             </div>
 
