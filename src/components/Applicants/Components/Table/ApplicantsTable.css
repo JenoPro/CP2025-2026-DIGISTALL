@@ -17,10 +17,10 @@
 .header-row,
 .table-row {
   display: grid;
-  grid-template-columns: 80px 200px 220px 140px 2fr 180px;
-  min-height: 56px;
+  grid-template-columns: 150px 220px 210px 150px 440px 160px 300px;
+  min-height: 58px;
   align-items: center;
-  gap: 8px; /* Add gap between columns */
+  gap: 12px;
 }
 
 .table-row {
@@ -38,10 +38,10 @@
 
 .header-cell,
 .table-cell {
-  padding: 16px 12px;
+  padding: 18px 14px;
   display: flex;
   align-items: center;
-  justify-content: flex-start; /* Align content to start */
+  justify-content: flex-start;
 }
 
 .header-cell {
@@ -61,39 +61,67 @@
 
 .id-col {
   font-weight: 600;
-  justify-content: center; /* Center the ID */
+  justify-content: center;
 }
 
 .name-col,
 .email-col {
-  min-width: 0; /* Allow text to wrap properly */
+  justify-content: flex-start;
+  justify-content: center;
 }
 
 .phone-col {
-  font-family: monospace; /* Better display for phone numbers */
+  text-transform: uppercase;
+  justify-content: flex-start;
+  justify-content: center;
 }
 
 .address-col {
-  min-width: 0; /* Allow proper wrapping */
+  min-width: 0;
+  justify-content: flex-start;
+  justify-content: center;
 }
 
 .address-text {
-  line-height: 1.4;
+  line-height: 1.3;
   overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   word-break: break-word;
+  text-align: left;
+}
+
+.info-col {
+  justify-content: center;
+  padding: 18px 14px;
+}
+
+.info-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #1976d2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  margin: 0 auto;
+}
+
+.info-btn:hover {
+  color: #0d47a1;
 }
 
 .action-col {
-  justify-content: flex-start; /* Align buttons to start instead of end */
-  padding-left: 8px;
+  justify-content: flex-start;
+  justify-content: center;
 }
 
 .action-buttons {
   display: flex;
-  gap: 8px;
+  gap: 10px;
   align-items: center;
   flex-wrap: nowrap;
 }
@@ -103,9 +131,9 @@
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.5px;
-  min-width: 70px;
-  height: 32px;
-  flex-shrink: 0; /* Prevent button shrinking */
+  min-width: 75px;
+  height: 34px;
+  flex-shrink: 0;
 }
 
 .accept-btn {
@@ -122,24 +150,81 @@
   color: #757575;
 }
 
+/* Dialog Styles */
+.info-section {
+  padding: 16px 0;
+}
+
+.section-title {
+  color: #1976d2;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #e3f2fd;
+}
+
+.info-item {
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.info-label {
+  font-weight: 600;
+  color: #424242;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.info-value {
+  color: #2c3e50;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.document-file {
+  display: flex;
+  align-items: center;
+  color: #1976d2;
+}
+
+.border-b {
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.border-t {
+  border-top: 1px solid #e0e0e0;
+}
+
 /* Responsive Design */
 @media (max-width: 1200px) {
   .header-row,
   .table-row {
-    grid-template-columns: 70px 180px 200px 130px 2fr 160px;
+    grid-template-columns: 65px 1fr 1.1fr 120px 1.6fr 100px 150px;
+    gap: 10px;
+    min-height: 56px;
   }
 }
 
 @media (max-width: 900px) {
   .header-row,
   .table-row {
-    grid-template-columns: 60px 150px 180px 120px 1fr 140px;
+    grid-template-columns: 60px 0.9fr 1fr 110px 1.4fr 80px 140px;
+    gap: 8px;
+    min-height: 54px;
   }
 
   .header-cell,
   .table-cell {
-    padding: 12px 8px;
+    padding: 14px 8px;
     font-size: 13px;
+  }
+
+  .header-cell {
+    font-size: 12px;
   }
 
   .action-buttons {
@@ -164,10 +249,11 @@
   .header-row,
   .table-row {
     min-width: 900px;
-    grid-template-columns: 70px 180px 200px 130px 250px 160px;
+    grid-template-columns: 60px 180px 200px 120px 250px 80px 140px;
+    gap: 8px;
   }
 
   .table-cell {
-    padding: 12px 6px;
+    padding: 10px 4px;
   }
 }
