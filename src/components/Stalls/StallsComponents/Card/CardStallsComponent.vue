@@ -32,7 +32,7 @@
                     </div>
                     <div class="info-row">
                         <v-icon size="small" color="grey-darken-1">mdi-ruler</v-icon>
-                        <span>{{ stall.dimensions }}</span>
+                        <span>{{ stall.size }}</span>
                     </div>
                     <div class="info-row">
                         <v-icon size="small" color="grey-darken-1">mdi-map-marker</v-icon>
@@ -51,13 +51,14 @@
                     MODIFY STALL
                 </v-btn>
 
-                <!-- Conditional Buttons (for auction and for raffle) added by 28/08/25 -->
-                <v-btn v-if="stall.location === 'Satellite Market'" color="secondary" variant="elevated" size="small"
+                <!-- Only show auction features for Satellite_Manager -->
+                <v-btn v-if="showAuctionFeatures" color="secondary" variant="elevated" size="small"
                     @click="handleAuction(stall)" class="action-btn">
                     <v-icon left size="small" class="me-2">mdi-gavel</v-icon>
                     AUCTION
                 </v-btn>
 
+                <!-- Live button for other managers/locations -->
                 <v-btn v-else-if="stall.location === `Naga City People's Mall`" color="success" variant="elevated"
                     size="small" @click="handleLive(stall)" class="action-btn">
                     <v-icon left size="small" class="me-2">mdi-broadcast</v-icon>

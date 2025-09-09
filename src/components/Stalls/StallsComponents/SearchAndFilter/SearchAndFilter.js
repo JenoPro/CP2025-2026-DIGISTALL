@@ -6,6 +6,10 @@ export default {
       required: true,
       default: () => [],
     },
+    showAuctionButton: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {

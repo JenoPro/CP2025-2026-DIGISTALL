@@ -14,8 +14,8 @@ export default {
         price: '',
         floor: '',
         section: '',
-        dimensions: '',
-        location: '', // Now a free text field
+        size: '',
+        location: '',
         description: '',
         image: null,
         isAvailable: true,
@@ -66,7 +66,7 @@ export default {
         price: '',
         floor: '',
         section: '',
-        dimensions: '',
+        size: '',
         location: '',
         description: '',
         image: null,
@@ -171,7 +171,7 @@ export default {
           stallNumber: this.newStall.stallNumber, // Backend expects 'stallNumber'
           price: parseFloat(this.newStall.price), // Backend expects 'price'
           location: this.newStall.location, // Backend expects 'location'
-          dimensions: this.newStall.dimensions, // Backend expects 'dimensions'
+          size: this.newStall.size, // Send size directly, no dimensions
           floor: this.newStall.floor,
           section: this.newStall.section,
           description: this.newStall.description,
@@ -251,10 +251,7 @@ export default {
           console.log('Stall added successfully, preparing to refresh...')
 
           // Emit success event with stall data for parent components
-          this.$emit('stall-added-success', {
-            stallData: result.data || stallData,
-            message: result.message,
-          })
+          this.$emit('stall-added', result.data || stallData)
         } else {
           throw new Error(result.message || 'Failed to add stall')
         }
@@ -327,12 +324,12 @@ export default {
       return true
     },
 
-    // Validate dimensions format
-    validateDimensions(value) {
-      if (!value) return 'Dimensions are required'
+    // Validate size format
+    validateSize(value) {
+      if (!value) return 'Size is required'
       // Allow formats like "3x2m", "3x2", "3 x 2m", etc.
-      const dimensionPattern = /^\d+\s*[x×]\s*\d+\s*m?$/i
-      if (!dimensionPattern.test(value)) {
+      const sizePattern = /^\d+\s*[x×]\s*\d+\s*m?$/i
+      if (!sizePattern.test(value)) {
         return 'Invalid format. Use format like "3x2m" or "3x2"'
       }
       return true
@@ -399,7 +396,7 @@ export default {
         this.newStall.stallNumber &&
         this.newStall.price &&
         this.newStall.location &&
-        this.newStall.dimensions &&
+        this.newStall.size &&
         this.newStall.floor &&
         this.newStall.section
       )

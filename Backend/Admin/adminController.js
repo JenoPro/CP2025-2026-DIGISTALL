@@ -132,14 +132,16 @@ export async function branchManagerLogin(req, res) {
     if (branchManagers.length === 0) {
       console.log('❌ No branch manager found with these credentials')
       console.log('🔍 Let me check what branch managers exist in the database...')
-      
+
       // Debug: Show all branch managers
       const [allManagers] = await connection.execute(
-        'SELECT branch_username, area, location, status FROM branch_manager'
+        'SELECT branch_username, area, location, status FROM branch_manager',
       )
       console.log('📋 All branch managers in database:')
       allManagers.forEach((manager, index) => {
-        console.log(`   ${index + 1}. ${manager.branch_username} - ${manager.area} - ${manager.location} (${manager.status})`)
+        console.log(
+          `   ${index + 1}. ${manager.branch_username} - ${manager.area} - ${manager.location} (${manager.status})`,
+        )
       })
 
       return res.status(401).json({
@@ -149,7 +151,7 @@ export async function branchManagerLogin(req, res) {
     }
 
     const branchManager = branchManagers[0]
-    
+
     console.log('👤 Branch Manager found:')
     console.log('- ID:', branchManager.branch_manager_id)
     console.log('- Username:', branchManager.branch_username)
@@ -172,7 +174,7 @@ export async function branchManagerLogin(req, res) {
     if (!isPasswordValid) {
       console.log('🧪 Password failed. Testing common passwords for debugging:')
       const testPasswords = ['password123', 'admin123', 'manager123', '123456', 'password']
-      
+
       for (const testPwd of testPasswords) {
         const testResult = await compare(testPwd, branchManager.branch_password_hash)
         console.log(`   Testing "${testPwd}": ${testResult ? '✅ MATCH!' : '❌ No match'}`)
@@ -190,7 +192,8 @@ export async function branchManagerLogin(req, res) {
     }
 
     // Generate JWT token
-    const jwtSecret = process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-this-in-production'
+    const jwtSecret =
+      process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-this-in-production'
 
     const token = sign(
       {
@@ -287,7 +290,8 @@ export async function adminLogin(req, res) {
     }
 
     // Generate JWT token
-    const jwtSecret = process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-this-in-production'
+    const jwtSecret =
+      process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-this-in-production'
 
     const token = sign(
       {
@@ -333,7 +337,7 @@ export async function getBranchManagerInfo(req, res) {
   try {
     // Get the token from authorization header
     const token = req.headers.authorization?.replace('Bearer ', '')
-    
+
     if (!token) {
       return res.status(401).json({
         success: false,
@@ -342,7 +346,8 @@ export async function getBranchManagerInfo(req, res) {
     }
 
     // Verify token
-    const jwtSecret = process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-this-in-production'
+    const jwtSecret =
+      process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-this-in-production'
     const decoded = verify(token, jwtSecret)
 
     if (decoded.userType !== 'branch_manager') {
@@ -368,7 +373,7 @@ export async function getBranchManagerInfo(req, res) {
         created_at
       FROM branch_manager 
       WHERE branch_manager_id = ? AND status = ?`,
-      [decoded.branchManagerId, 'Active']
+      [decoded.branchManagerId, 'Active'],
     )
 
     if (branchManagers.length === 0) {
@@ -396,12 +401,12 @@ export async function getBranchManagerInfo(req, res) {
         status: branchManager.status,
         createdAt: branchManager.created_at,
         fullName: `${branchManager.first_name} ${branchManager.last_name}`,
-        designation: `${branchManager.area} - ${branchManager.location} Manager`
+        designation: `${branchManager.area} - ${branchManager.location} Manager`,
       },
     })
   } catch (error) {
     console.error('Get branch manager info error:', error)
-    
+
     if (error.name === 'JsonWebTokenError') {
       return res.status(401).json({
         success: false,
@@ -512,8 +517,8 @@ export async function createPasswordHash(req, res) {
       data: {
         originalPassword: password,
         hashedPassword: hashedPassword,
-        instructions: 'Use this hash to update your database password field'
-      }
+        instructions: 'Use this hash to update your database password field',
+      },
     })
   } catch (error) {
     console.error('❌ Create password hash error:', error)
@@ -537,7 +542,8 @@ export async function verifyToken(req, res) {
       })
     }
 
-    const jwtSecret = process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-this-in-production'
+    const jwtSecret =
+      process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-this-in-production'
     const decoded = verify(token, jwtSecret)
 
     res.json({
