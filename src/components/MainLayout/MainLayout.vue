@@ -2,21 +2,19 @@
   <v-app>
     <AppSidebar :items="menuItems" @menu-item-click="handleMenuItemClick" />
 
-    <div class="main-wrapper">
-      <AppHeader
-        :title="pageTitle"
-        @notification-click="handleNotificationClick"
-        @profile-click="handleProfileClick"
-        @settings-click="handleSettingsClick"
-        @logout-click="handleLogoutClick"
-      />
+    <AppHeader
+      :title="pageTitle"
+      @notification-click="handleNotificationClick"
+      @profile-click="handleProfileClick"
+      @settings-click="handleSettingsClick"
+      @logout-click="handleLogoutClick"
+    />
 
-      <v-main>
-        <v-container fluid class="main-content">
-          <router-view />
-        </v-container>
-      </v-main>
-    </div>
+    <v-main class="main-content-wrapper">
+      <v-container fluid class="main-content">
+        <router-view />
+      </v-container>
+    </v-main>
   </v-app>
 </template>
 
@@ -99,43 +97,73 @@ export default {
 </script>
 
 <style scoped>
-.v-main {
-  padding-left: 0 !important;
+/* Main Layout - Clean and Simple */
+.v-application {
+  background-color: #fafafa !important;
 }
-.main-wrapper {
-  margin-left: 80px;
-  transition: none;
-  min-height: 100vh;
-}
-.main-content {
+
+.main-content-wrapper {
+  margin-left: 80px; /* Space for sidebar */
+  margin-top: 80px; /* Space for header */
+  transition: margin-left 0.3s ease;
   background-color: #fafafa;
-  min-height: calc(100vh - 64px);
-  padding: 24px;
+  min-height: calc(100vh - 80px);
 }
+
+.main-content {
+  padding: 24px;
+  background-color: transparent;
+  min-height: calc(100vh - 80px);
+}
+
+/* Custom scrollbar for content */
 .main-content::-webkit-scrollbar {
   width: 6px;
 }
+
 .main-content::-webkit-scrollbar-track {
   background: #f1f1f1;
 }
+
 .main-content::-webkit-scrollbar-thumb {
   background: #c1c1c1;
   border-radius: 3px;
 }
+
 .main-content::-webkit-scrollbar-thumb:hover {
   background: #a8a8a8;
 }
+
+/* Responsive adjustments */
 @media (max-width: 960px) {
-  .main-wrapper {
+  .main-content-wrapper {
     margin-left: 60px;
   }
   .main-content {
     padding: 16px;
   }
 }
+
 @media (max-width: 600px) {
-  .main-wrapper {
+  .main-content-wrapper {
     margin-left: 50px;
   }
+  .main-content {
+    padding: 12px;
+  }
+}
+
+/* Remove any v-main padding conflicts */
+.v-main {
+  padding: 0 !important;
+}
+
+.v-main__wrap {
+  padding: 0 !important;
+}
+
+/* Ensure proper layering */
+.v-app-bar {
+  z-index: 1300 !important;
 }
 </style>

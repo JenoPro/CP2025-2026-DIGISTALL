@@ -1,6 +1,16 @@
-/* Top Navigation Bar Styles */
+/* Top Navigation Bar Styles - FIXED POSITION */
 .v-app-bar {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  z-index: 1060 !important; /* Above sidebar and content */
   border-bottom: 1px solid #e0e0e0;
+  background-color: white !important;
+  /* Ensure it stays fixed during scroll */
+  transform: translateZ(0);
+  will-change: transform;
 }
 
 .title-text {
@@ -9,6 +19,8 @@
   font-weight: 600;
   color: #333;
   font-family: 'Poppins', sans-serif;
+  margin-left: 0 !important; /* Remove default margin */
+  padding-left: 100px; /* Add padding for proper spacing */
 }
 
 .profile-container {
