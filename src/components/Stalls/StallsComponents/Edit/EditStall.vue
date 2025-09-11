@@ -44,9 +44,9 @@
                 <v-select v-model="editForm.section" label="Section" :items="getSectionOptions()" :rules="rules.section"
                   required variant="outlined" prepend-inner-icon="mdi-store"></v-select>
 
-                <!-- Dimensions -->
-                <v-text-field v-model="editForm.dimensions" label="Dimensions" :rules="rules.dimensions" required
-                  variant="outlined" prepend-inner-icon="mdi-ruler" placeholder="3x3 meters"></v-text-field>
+                <!-- Size -->
+                <v-text-field v-model="editForm.size" label="Size" :rules="rules.size" required variant="outlined"
+                  prepend-inner-icon="mdi-ruler" placeholder="3x3 meters"></v-text-field>
               </v-col>
 
               <!-- Right Column -->

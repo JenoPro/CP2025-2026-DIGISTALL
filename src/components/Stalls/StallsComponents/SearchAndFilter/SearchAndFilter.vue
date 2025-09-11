@@ -102,7 +102,7 @@
           <v-icon icon="mdi-close" size="small" class="ml-1 cursor-pointer" @click="clearSort"></v-icon>
         </v-chip>
       </div>
-      <v-btn color="info" variant="outlined" size="small" prepend-icon="mdi-history"
+      <v-btn v-if="showAuctionButton" color="info" variant="outlined" size="small" prepend-icon="mdi-history"
         @click="$emit('show-auction-records')">
         View All Auction Records
       </v-btn>

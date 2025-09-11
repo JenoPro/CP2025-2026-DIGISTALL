@@ -24,12 +24,13 @@
           <v-col cols="12">
             <!-- Search Filter Component -->
             <SearchFilter :stallsData="stallsData" @filtered-stalls="handleFilteredStalls"
-              @show-auction-records="showGeneralAuctionRecords = true" />
+              @show-auction-records="showAuctionFeatures ? (showGeneralAuctionRecords = true) : null"
+              :showAuctionButton="showAuctionFeatures" />
 
             <!-- Card Stalls Component -->
             <CardStallsComponent v-if="hasStalls" :stalls="displayStalls" @stall-edit="handleStallEdit"
-              @stall-auction="handleStallAuction" @stall-live="handleStallLive" />
-
+              @stall-auction="handleStallAuction" @stall-live="handleStallLive"
+              :showAuctionFeatures="showAuctionFeatures" />
             <!-- Empty State when no stalls are found -->
             <div v-if="!hasStalls && !loading" class="empty-state">
               <v-card class="pa-8 text-center" elevation="2">
@@ -74,8 +75,8 @@
       <EditStall :showModal="showEditModal" :stallData="selectedStall" @close="handleEditModalClose"
         @stall-updated="handleStallUpdated" @stall-deleted="handleStallDeleted" @error="handleEditError" />
 
-      <!-- Auction Modal -->
-      <v-dialog v-model="showAuctionModal" class="auction-dialog" persistent scrollable>
+      <!-- Auction Modal - Only visible for Satellite_Manager -->
+      <v-dialog v-if="showAuctionFeatures" v-model="showAuctionModal" class="auction-dialog" persistent scrollable>
         <v-card>
           <v-card-title class="d-flex justify-end align-center">
             <v-btn icon variant="text" @click="handleCloseAuction">
@@ -89,7 +90,9 @@
         </v-card>
       </v-dialog>
 
-      <AuctionRecords v-model="showGeneralAuctionRecords" @close="showGeneralAuctionRecords = false" />
+      <!-- Auction Records - Only visible for Satellite_Manager -->
+      <AuctionRecords v-if="showAuctionFeatures" v-model="showGeneralAuctionRecords"
+        @close="showGeneralAuctionRecords = false" />
     </v-main>
 
     <!-- Success/Error Snackbar -->

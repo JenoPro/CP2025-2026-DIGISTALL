@@ -115,10 +115,6 @@ export default {
 
           console.log(`Successfully loaded ${this.stallsData.length} stalls for branch manager`)
           console.log('Transformed stalls data:', this.stallsData)
-
-          if (this.stallsData.length === 0) {
-            this.showMessage('No stalls found for your branch. Add your first stall!', 'info')
-          }
         } else {
           throw new Error(result.message || 'Failed to fetch stalls')
         }
@@ -157,7 +153,6 @@ export default {
         // NEW FIELDS - Added missing fields from database
         floor: stall.floor,
         section: stall.section,
-        dimensions: stall.dimensions,
         priceType: stall.price_type,
 
         // Image - now based on section
@@ -233,13 +228,13 @@ export default {
 
         // Update local data
         const index = this.stallsData.findIndex((s) => s.id === updatedStall.id)
+
         if (index > -1) {
           this.stallsData[index] = { ...updatedStall }
           this.displayStalls = [...this.stallsData]
         }
 
         this.closeEditModal()
-        this.showMessage('Stall updated successfully!', 'success')
       } catch (error) {
         console.error('Error handling stall update:', error)
         this.showMessage('Error updating stall display', 'error')
@@ -263,7 +258,6 @@ export default {
           this.displayStalls = [...this.stallsData]
 
           console.log(`Stall "${deletedStall.stallNumber}" removed from local data`)
-          this.showMessage(`Stall ${deletedStall.stallNumber} deleted successfully!`, 'success')
         } else {
           console.warn('Stall not found in local data for deletion')
         }
@@ -298,8 +292,6 @@ export default {
 
         this.stallsData.unshift(transformedStall) // Add to beginning
         this.displayStalls = [...this.stallsData]
-
-        this.showMessage('Stall added successfully!', 'success')
         this.closeAddStallModal()
       } catch (error) {
         console.error('Error handling new stall:', error)
@@ -321,13 +313,16 @@ export default {
 
     // Message handling with enhanced display options
     showMessage(text, color = 'success') {
+      // Handle case where an object is passed instead of string
+      const messageText = typeof text === 'string' ? text : JSON.stringify(text)
+
       this.snackbar = {
         show: true,
-        text,
+        text: messageText,
         color,
       }
 
-      console.log(`Message (${color}): ${text}`)
+      console.log(`Message (${color}): ${messageText}`)
     },
 
     // Modal event handlers
@@ -452,6 +447,10 @@ export default {
 
     branchInfo() {
       return this.getCurrentBranchInfo()
+    },
+
+    showAuctionFeatures() {
+      return this.currentUser && this.currentUser.username === 'Satellite_Manager'
     },
 
     // NEW: Computed properties for enhanced functionality

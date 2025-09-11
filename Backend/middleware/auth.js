@@ -20,7 +20,7 @@ const authenticateToken = (req, res, next) => {
     (err, decoded) => {
       if (err) {
         console.error('Token verification error:', err)
-        
+
         if (err.name === 'TokenExpiredError') {
           return res.status(401).json({
             success: false,
@@ -48,7 +48,7 @@ const authenticateToken = (req, res, next) => {
         location: decoded.location,
         branchManagerId: decoded.branchManagerId || decoded.userId,
         // Keep legacy role field for backward compatibility
-        role: decoded.userType === 'admin' ? 'admin' : 'branch_manager'
+        role: decoded.userType === 'admin' ? 'admin' : 'branch_manager',
       }
 
       console.log('Authenticated user:', req.user.username, 'Type:', req.user.userType)
@@ -69,7 +69,7 @@ const authorizeRole = (...roles) => {
 
     // Check both userType and legacy role for compatibility
     const userRole = req.user.userType || req.user.role
-    
+
     if (!roles.includes(userRole)) {
       return res.status(403).json({
         success: false,

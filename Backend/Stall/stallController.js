@@ -121,7 +121,7 @@ export const addStall = async (req, res) => {
       price, // Frontend field -> rental_price
       floor, // Frontend field
       section, // Frontend field
-      dimensions, // Frontend field
+      size, // Frontend field -> size
       location, // Frontend field -> stall_location
       description, // Same field name
       image, // Frontend field -> stall_image
@@ -143,15 +143,15 @@ export const addStall = async (req, res) => {
     console.log('Frontend data received:', req.body)
 
     // FIXED VALIDATION - Use the correct frontend field names
-    if (!stallNumber || !price || !location || !dimensions) {
+    if (!stallNumber || !price || !location || !size) {
       return res.status(400).json({
         success: false,
-        message: 'Required fields: stallNumber, price, location, dimensions',
+        message: 'Required fields: stallNumber, price, location, size',
         received: {
           stallNumber: !!stallNumber,
           price: !!price,
           location: !!location,
-          dimensions: !!dimensions,
+          size: !!size,
         },
       })
     }
@@ -175,10 +175,9 @@ export const addStall = async (req, res) => {
     const stallData = {
       stall_no: stallNumber,
       stall_location: location,
-      size: dimensions, // Map dimensions to size for the database
+      size: size, // Use size field directly
       floor: floor || null,
       section: section || null,
-      dimensions: dimensions || null,
       rental_price: parseFloat(price),
       price_type: priceType || 'Fixed Price',
       status: isAvailable ? 'Active' : 'Inactive',
@@ -194,8 +193,8 @@ export const addStall = async (req, res) => {
       `
       INSERT INTO stall (
         branch_manager_id, stall_no, stall_location, size, floor, section,
-        dimensions, rental_price, price_type, status, stamp, description, stall_image
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        rental_price, price_type, status, stamp, description, stall_image
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `,
       [
         branchManagerId,
@@ -204,7 +203,6 @@ export const addStall = async (req, res) => {
         stallData.size,
         stallData.floor,
         stallData.section,
-        stallData.dimensions,
         stallData.rental_price,
         stallData.price_type,
         stallData.status,
@@ -289,9 +287,8 @@ export const updateStall = async (req, res) => {
       priceType: 'price_type',
       floor: 'floor',
       section: 'section',
-      dimensions: 'dimensions',
+      size: 'size', // Frontend size maps to database size column
       description: 'description',
-      size: 'size',
       stamp: 'stamp',
     }
 

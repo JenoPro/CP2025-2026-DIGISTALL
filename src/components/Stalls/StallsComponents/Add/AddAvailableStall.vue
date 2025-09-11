@@ -15,144 +15,69 @@
             <v-row dense>
               <!-- Stall Number -->
               <v-col cols="12" sm="6">
-                <v-text-field
-                  v-model="newStall.stallNumber"
-                  :rules="[rules.required]"
-                  label="Stall Number"
-                  placeholder="e.g., NPM-001, LSM-005"
-                  prepend-icon="mdi-numeric"
-                  outlined
-                  dense
-                  persistent-hint
-                  hint="Enter unique stall identifier"
-                />
+                <v-text-field v-model="newStall.stallNumber" :rules="[rules.required]" label="Stall Number"
+                  placeholder="e.g., NPM-001, LSM-005" prepend-icon="mdi-numeric" outlined dense persistent-hint
+                  hint="Enter unique stall identifier" />
               </v-col>
 
               <!-- Price -->
               <v-col cols="12" sm="6">
-                <v-text-field
-                  v-model="newStall.price"
-                  :rules="[rules.required, rules.positiveNumber]"
-                  label="Price"
-                  placeholder="e.g., 2500"
-                  prepend-icon="mdi-currency-php"
-                  outlined
-                  dense
-                  persistent-hint
-                  hint="Enter monthly rental price"
-                />
+                <v-text-field v-model="newStall.price" :rules="[rules.required, rules.positiveNumber]" label="Price"
+                  placeholder="e.g., 2500" prepend-icon="mdi-currency-php" outlined dense persistent-hint
+                  hint="Enter monthly rental price" />
               </v-col>
 
               <!-- Floor -->
               <v-col cols="12" sm="6">
-                <v-select
-                  v-model="newStall.floor"
-                  :items="floorOptions"
-                  :rules="[rules.required]"
-                  label="Floor"
-                  prepend-icon="mdi-stairs"
-                  outlined
-                  dense
-                />
+                <v-select v-model="newStall.floor" :items="floorOptions" :rules="[rules.required]" label="Floor"
+                  prepend-icon="mdi-stairs" outlined dense />
               </v-col>
 
               <!-- Section -->
               <v-col cols="12" sm="6">
-                <v-select
-                  v-model="newStall.section"
-                  :items="sectionOptions"
-                  :rules="[rules.required]"
-                  label="Section"
-                  prepend-icon="mdi-view-grid"
-                  outlined
-                  dense
-                />
+                <v-select v-model="newStall.section" :items="sectionOptions" :rules="[rules.required]" label="Section"
+                  prepend-icon="mdi-view-grid" outlined dense />
               </v-col>
 
-              <!-- Dimensions -->
+              <!-- Size -->
               <v-col cols="12" sm="6">
-                <v-text-field
-                  v-model="newStall.dimensions"
-                  :rules="[rules.required, validateDimensions]"
-                  label="Dimensions"
-                  placeholder="e.g., 3x2m, 4x3m"
-                  prepend-icon="mdi-ruler"
-                  outlined
-                  dense
-                  persistent-hint
-                  hint="Use format: 3x2m or 3x2"
-                />
+                <v-text-field v-model="newStall.size" :rules="[rules.required, validateSize]" label="Size"
+                  placeholder="e.g., 3x2m, 4x3m" prepend-icon="mdi-ruler" outlined dense persistent-hint
+                  hint="Use format: 3x2m or 3x2" />
               </v-col>
 
               <!-- Location - CHANGED TO TEXT FIELD -->
               <v-col cols="12" sm="6">
-                <v-text-field
-                  v-model="newStall.location"
-                  :rules="[rules.required, validateLocation]"
-                  label="Location"
-                  placeholder="e.g., Main Entrance Area, Food Court Central"
-                  prepend-icon="mdi-map-marker"
-                  outlined
-                  dense
-                  persistent-hint
-                  hint="Describe the specific location within the building"
-                />
+                <v-text-field v-model="newStall.location" :rules="[rules.required, validateLocation]" label="Location"
+                  placeholder="e.g., Main Entrance Area, Food Court Central" prepend-icon="mdi-map-marker" outlined
+                  dense persistent-hint hint="Describe the specific location within the building" />
               </v-col>
 
               <!-- Price Type (Auto-determined) -->
               <v-col cols="12" sm="6">
-                <v-text-field
-                  :value="newStall.priceType"
-                  label="Price Type"
-                  prepend-icon="mdi-tag"
-                  outlined
-                  dense
-                  readonly
-                  persistent-hint
-                  hint="Fixed Price for most locations"
-                />
+                <v-text-field :value="newStall.priceType" label="Price Type" prepend-icon="mdi-tag" outlined dense
+                  readonly persistent-hint hint="Fixed Price for most locations" />
               </v-col>
 
               <!-- Image Upload -->
               <v-col cols="12" sm="6">
-                <v-file-input
-                  v-model="newStall.image"
-                  accept="image/*"
-                  label="Upload Stall Image"
-                  prepend-icon="mdi-image"
-                  outlined
-                  dense
-                  show-size
-                  truncate-length="25"
-                  hint="Optional: Upload an image of the stall"
-                  persistent-hint
-                />
+                <v-file-input v-model="newStall.image" accept="image/*" label="Upload Stall Image"
+                  prepend-icon="mdi-image" outlined dense show-size truncate-length="25"
+                  hint="Optional: Upload an image of the stall" persistent-hint />
               </v-col>
 
               <!-- Description -->
               <v-col cols="12">
-                <v-textarea
-                  v-model="newStall.description"
-                  label="Description"
+                <v-textarea v-model="newStall.description" label="Description"
                   placeholder="Describe the stall features, location benefits, accessibility, etc."
-                  prepend-icon="mdi-text"
-                  outlined
-                  rows="3"
-                  persistent-hint
-                  hint="Optional: Provide detailed description of the stall and its advantages"
-                />
+                  prepend-icon="mdi-text" outlined rows="3" persistent-hint
+                  hint="Optional: Provide detailed description of the stall and its advantages" />
               </v-col>
 
               <!-- Availability Status -->
               <v-col cols="12">
-                <v-switch
-                  v-model="newStall.isAvailable"
-                  label="Available for Rent"
-                  color="success"
-                  inset
-                  persistent-hint
-                  hint="Toggle stall availability status"
-                />
+                <v-switch v-model="newStall.isAvailable" label="Available for Rent" color="success" inset
+                  persistent-hint hint="Toggle stall availability status" />
               </v-col>
 
               <!-- Form Preview (Optional) -->
@@ -161,49 +86,19 @@
                   <v-card-subtitle>Preview</v-card-subtitle>
                   <v-card-text>
                     <div class="d-flex flex-wrap">
-                      <v-chip
-                        v-if="stallNumberPreview"
-                        small
-                        class="ma-1"
-                        color="primary"
-                        text-color="white"
-                      >
+                      <v-chip v-if="stallNumberPreview" small class="ma-1" color="primary" text-color="white">
                         {{ stallNumberPreview }}
                       </v-chip>
-                      <v-chip
-                        v-if="formattedPrice"
-                        small
-                        class="ma-1"
-                        color="success"
-                        text-color="white"
-                      >
+                      <v-chip v-if="formattedPrice" small class="ma-1" color="success" text-color="white">
                         {{ formattedPrice }}
                       </v-chip>
-                      <v-chip
-                        v-if="newStall.floor"
-                        small
-                        class="ma-1"
-                        color="info"
-                        text-color="white"
-                      >
+                      <v-chip v-if="newStall.floor" small class="ma-1" color="info" text-color="white">
                         {{ newStall.floor }}
                       </v-chip>
-                      <v-chip
-                        v-if="newStall.section"
-                        small
-                        class="ma-1"
-                        color="warning"
-                        text-color="white"
-                      >
+                      <v-chip v-if="newStall.section" small class="ma-1" color="warning" text-color="white">
                         {{ newStall.section }}
                       </v-chip>
-                      <v-chip
-                        v-if="newStall.location"
-                        small
-                        class="ma-1"
-                        color="secondary"
-                        text-color="white"
-                      >
+                      <v-chip v-if="newStall.location" small class="ma-1" color="secondary" text-color="white">
                         {{ newStall.location }}
                       </v-chip>
                     </div>
@@ -219,12 +114,7 @@
           <v-btn text class="cancel-btn" @click="closeModal" :disabled="loading">
             Cancel
           </v-btn>
-          <v-btn
-            class="add-btn"
-            @click="submitForm"
-            :loading="loading"
-            :disabled="!valid || !isFormValid"
-          >
+          <v-btn class="add-btn" @click="submitForm" :loading="loading" :disabled="!valid || !isFormValid">
             <v-icon left>mdi-content-save</v-icon>
             Add Stall
           </v-btn>
@@ -233,12 +123,7 @@
     </v-dialog>
 
     <!-- Success Popup Modal -->
-    <v-dialog
-      v-model="showSuccessPopup"
-      max-width="400px"
-      persistent
-      @click:outside="closeSuccessPopup"
-    >
+    <v-dialog v-model="showSuccessPopup" max-width="400px" persistent @click:outside="closeSuccessPopup">
       <v-card class="success-popup-card">
         <div class="popup-content">
           <!-- Close Button -->
@@ -283,15 +168,8 @@
       <!-- Floating Action Button with Tooltip -->
       <v-tooltip left>
         <template v-slot:activator="{ on, attrs }">
-          <v-btn
-            fab
-            color="primary"
-            class="add-stall-btn"
-            :class="{ 'glow-effect': !showModal }"
-            @click="openAddStallModal"
-            v-bind="attrs"
-            v-on="on"
-          >
+          <v-btn fab color="primary" class="add-stall-btn" :class="{ 'glow-effect': !showModal }"
+            @click="openAddStallModal" v-bind="attrs" v-on="on">
             <div class="ripple-overlay"></div>
             <v-icon>mdi-plus</v-icon>
           </v-btn>

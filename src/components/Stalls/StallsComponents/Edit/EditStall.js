@@ -48,9 +48,9 @@ export default {
         ],
         floor: [(v) => !!v || 'Floor is required'],
         section: [(v) => !!v || 'Section is required'],
-        dimensions: [
-          (v) => !!v || 'Dimensions are required',
-          (v) => /^\d+x\d+/i.test(v) || 'Dimensions format should be like "3x3" or "3x3 meters"',
+        size: [
+          (v) => !!v || 'Size is required',
+          (v) => /^\d+x\d+/i.test(v) || 'Size format should be like "3x3" or "3x3 meters"',
         ],
         location: [(v) => !!v || 'Location is required'],
         description: [
@@ -132,7 +132,7 @@ export default {
         price: '',
         floor: '',
         section: '',
-        dimensions: '',
+        size: '',
         location: '',
         description: '',
         image: null,
@@ -150,7 +150,7 @@ export default {
         price: this.extractNumericPrice(data.rental_price || data.price) || '',
         floor: data.floor || '',
         section: data.section || '',
-        dimensions: data.dimensions || data.size || '',
+        size: data.size || data.dimensions || '',
         location: data.stall_location || data.location || '',
         description: data.description || '',
         image: data.stall_image || data.image || null,
@@ -206,9 +206,9 @@ export default {
           return
         }
 
-        // Validate dimensions format
-        if (this.editForm.dimensions && !/^\d+x\d+/i.test(this.editForm.dimensions)) {
-          console.error('Invalid dimensions format')
+        // Validate size format
+        if (this.editForm.size && !/^\d+x\d+/i.test(this.editForm.size)) {
+          console.error('Invalid size format')
           return
         }
 
@@ -247,7 +247,7 @@ export default {
           price: numericPrice,
           floor: this.editForm.floor,
           section: this.editForm.section,
-          dimensions: this.editForm.dimensions ? this.editForm.dimensions.trim() : null,
+          size: this.editForm.size ? this.editForm.size.trim() : null, // Use size instead of dimensions
           location: this.editForm.location,
           description: this.editForm.description.trim(),
           image: imageData,
@@ -302,8 +302,8 @@ export default {
 
           const transformedData = this.transformBackendData(result.data)
 
-          // Emit stall-updated event (fixed the bug)
-          this.$emit(transformedData)
+          // Emit stall-updated event with correct parameters
+          this.$emit('stall-updated', transformedData)
         } else {
           throw new Error(result.message || 'Failed to update stall')
         }
@@ -314,9 +314,8 @@ export default {
         this.loading = false
       }
     },
-
     transformBackendData(stallData) {
-      return {
+      const transformed = {
         id: stallData.stall_id || stallData.ID || stallData.id,
         stallNumber: stallData.stall_no || stallData.stallNumber,
         price: this.formatPrice(
@@ -325,7 +324,7 @@ export default {
         ),
         floor: stallData.floor,
         section: stallData.section,
-        dimensions: stallData.dimensions || stallData.size,
+        size: stallData.size, // Only use size, no dimensions
         location: stallData.stall_location || stallData.location,
         description: stallData.description,
         image: stallData.stall_image || stallData.image,
@@ -339,6 +338,8 @@ export default {
         area: stallData.area,
         branch_location: stallData.branch_location,
       }
+
+      return transformed
     },
 
     formatPrice(price, priceType) {
