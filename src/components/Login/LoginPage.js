@@ -184,9 +184,11 @@ export default {
             location: user.location || user.branch,
           })
 
+          const displayName = user.lastName
+
           // Turn loading back on for success redirect
           this.loading = true
-          this.loadingText = 'Welcome!'
+          this.loadingText = `Welcome ${displayName}!`
           this.loadingSubtext = 'Setting up your dashboard'
 
           // Store authentication data
@@ -208,11 +210,6 @@ export default {
               console.warn('Vuex store not available or missing mutations:', storeError)
             }
           }
-
-          const displayName = user.firstName
-            ? `${user.firstName} ${user.lastName || ''}`.trim()
-            : user.username
-          this.showSuccessNotification(`Welcome ${displayName}! Redirecting to your dashboard...`)
 
           this.$emit('login-success', {
             user: user,

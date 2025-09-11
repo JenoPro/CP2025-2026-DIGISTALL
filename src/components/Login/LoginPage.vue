@@ -120,7 +120,7 @@
                 color="primary"
               >
                 <v-icon left class="mr-2">mdi-login</v-icon>
-                {{ loading ? 'Authenticating...' : 'Login to Dashboard' }}
+                {{ loading ? "Authenticating..." : "Login to Dashboard" }}
               </v-btn>
 
               <!-- Error Message Display -->
@@ -175,12 +175,7 @@
     </v-row>
 
     <!-- Professional Loading Overlay -->
-    <v-overlay 
-      v-model="loading" 
-      class="loading-overlay"
-      persistent
-      :opacity="0.95"
-    >
+    <v-overlay v-model="loading" class="loading-overlay" persistent :opacity="0.95">
       <div class="loading-container">
         <v-card class="loading-card pa-8 text-center" elevation="12">
           <div class="loading-content">
@@ -192,7 +187,7 @@
                 class="loading-logo pulse-animation"
               />
             </div>
-            
+
             <!-- Loading Spinner -->
             <v-progress-circular
               indeterminate
@@ -201,11 +196,11 @@
               color="primary"
               class="mb-4"
             />
-            
+
             <!-- Loading Text -->
             <h3 class="loading-title mb-2">{{ loadingText }}</h3>
             <p class="loading-subtitle mb-4">{{ loadingSubtext }}</p>
-            
+
             <!-- Loading Progress Dots -->
             <div class="loading-dots">
               <span class="dot"></span>
