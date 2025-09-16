@@ -465,10 +465,6 @@ export default {
       ]
     },
 
-    getLocationOptions() {
-      return ["Naga City People's Mall", 'Satellite Market']
-    },
-
     getPriceTypeOptions() {
       return ['Fixed Price', 'Auction', 'Raffle']
     },

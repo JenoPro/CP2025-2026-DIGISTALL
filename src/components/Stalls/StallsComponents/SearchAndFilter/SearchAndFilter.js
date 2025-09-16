@@ -24,27 +24,43 @@ export default {
       sortField: 'default',
       searchTimeout: null,
       loading: false,
+      // ADDED: Dynamic options from API
+      availableFloors: [],
+      availableSections: [],
       // API configuration
       // eslint-disable-next-line no-undef
       apiBaseUrl: process.env.VUE_APP_API_URL || 'http://localhost:3001',
     }
   },
+
   computed: {
     sortOptions() {
       return [
         { title: 'Default', value: 'default' },
         { title: 'Stall ID', value: 'stallNumber' },
         { title: 'Price', value: 'price' },
+        { title: 'Floor', value: 'floor' },
+        { title: 'Section', value: 'section' },
       ]
     },
+
+    // UPDATED: Use dynamic floors from API
     floorOptions() {
-      const floors = [...new Set(this.stallsData.map((stall) => stall.floor))].filter(Boolean)
-      return floors.sort()
+      return this.availableFloors.map((floor) => ({
+        title: floor.title || floor.floor_name,
+        value: floor.floor_id || floor.value,
+      }))
     },
+
+    // UPDATED: Use dynamic sections from API
     sectionOptions() {
-      const sections = [...new Set(this.stallsData.map((stall) => stall.section))].filter(Boolean)
-      return sections.sort()
+      return this.availableSections.map((section) => ({
+        title: section.title || section.section_name,
+        value: section.section_id || section.value,
+      }))
     },
+
+    // UPDATED: Generate location options from current stall data
     locationOptions() {
       const locations = [...new Set(this.stallsData.map((stall) => stall.location))].filter(Boolean)
       return locations.sort()
@@ -152,6 +168,8 @@ export default {
       handler() {
         // Update price range when data changes
         this.priceRange = this.actualPriceRange
+        // Also update options from stalls data
+        this.updateOptionsFromStallsData()
       },
       immediate: true,
     },
@@ -168,7 +186,7 @@ export default {
       immediate: false,
     },
   },
-  mounted() {
+  async mounted() {
     // Close dropdown when clicking outside
     document.addEventListener('click', this.handleOutsideClick)
     document.addEventListener('keydown', this.handleKeyDown)
@@ -177,6 +195,9 @@ export default {
     if (this.stallsData.length > 0) {
       this.priceRange = this.actualPriceRange
     }
+
+    // ADDED: Load dynamic filter options from API
+    await this.loadFilterOptions()
   },
   beforeUnmount() {
     document.removeEventListener('click', this.handleOutsideClick)
@@ -188,6 +209,110 @@ export default {
     }
   },
   methods: {
+    // NEW METHOD: Load floor and section options from API
+    async loadFilterOptions() {
+      try {
+        const token = sessionStorage.getItem('authToken')
+        if (!token) {
+          console.warn('No auth token found, using fallback options')
+          this.setFallbackOptions()
+          return
+        }
+
+        // Load floors
+        const floorsResponse = await fetch(`${this.apiBaseUrl}/api/floors`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        })
+
+        if (floorsResponse.ok) {
+          const floorsResult = await floorsResponse.json()
+          if (floorsResult.success) {
+            this.availableFloors = floorsResult.data.map((floor) => ({
+              title: floor.floor_name, // Just show "1st Floor", "2nd Floor", etc.
+              value: floor.floor_id,
+              floor_id: floor.floor_id,
+              floor_name: floor.floor_name,
+              floor_number: floor.floor_number,
+            }))
+          }
+        }
+
+        // Load sections
+        const sectionsResponse = await fetch(`${this.apiBaseUrl}/api/sections`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        })
+
+        if (sectionsResponse.ok) {
+          const sectionsResult = await sectionsResponse.json()
+          if (sectionsResult.success) {
+            this.availableSections = sectionsResult.data.map((section) => ({
+              title: `${section.section_name} (${section.section_code})`,
+              value: section.section_id,
+              section_id: section.section_id,
+              section_name: section.section_name,
+              section_code: section.section_code,
+            }))
+          }
+        }
+      } catch (error) {
+        console.error('Error loading filter options:', error)
+        this.setFallbackOptions()
+      }
+    },
+
+    // NEW METHOD: Set fallback options if API fails
+    setFallbackOptions() {
+      this.availableFloors = [
+        { title: '1st Floor', value: 'floor_1', floor_name: '1st Floor' },
+        { title: '2nd Floor', value: 'floor_2', floor_name: '2nd Floor' },
+        { title: '3rd Floor', value: 'floor_3', floor_name: '3rd Floor' },
+      ]
+      this.availableSections = [
+        { title: 'Electronics Section', value: 'electronics', section_name: 'Electronics Section' },
+        { title: 'Clothing Section', value: 'clothing', section_name: 'Clothing Section' },
+        { title: 'Food Court', value: 'food_court', section_name: 'Food Court' },
+        { title: 'Fresh Produce', value: 'produce', section_name: 'Fresh Produce' },
+        { title: 'Meat Section', value: 'meat', section_name: 'Meat Section' },
+        { title: 'General Section', value: 'general', section_name: 'General Section' },
+      ]
+    },
+
+    // NEW METHOD: Update options from current stalls data
+    updateOptionsFromStallsData() {
+      // This can be used as a backup or supplement to API data
+      if (this.stallsData.length === 0) return
+
+      // Extract unique floors from stall data if API data is not available
+      if (this.availableFloors.length === 0) {
+        const floors = [
+          ...new Set(this.stallsData.map((stall) => stall.floorName || stall.floor)),
+        ].filter(Boolean)
+        this.availableFloors = floors.map((floor) => ({
+          title: floor,
+          value: floor,
+          floor_name: floor,
+        }))
+      }
+
+      // Extract unique sections from stall data if API data is not available
+      if (this.availableSections.length === 0) {
+        const sections = [
+          ...new Set(this.stallsData.map((stall) => stall.sectionName || stall.section)),
+        ].filter(Boolean)
+        this.availableSections = sections.map((section) => ({
+          title: section,
+          value: section,
+          section_name: section,
+        }))
+      }
+    },
+
     onSearchInput() {
       // Clear previous timeout to debounce search
       if (this.searchTimeout) {

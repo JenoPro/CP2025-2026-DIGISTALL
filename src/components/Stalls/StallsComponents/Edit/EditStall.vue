@@ -52,8 +52,9 @@
               <!-- Right Column -->
               <v-col cols="12" md="6">
                 <!-- Location -->
-                <v-select v-model="editForm.location" label="Location" :items="getLocationOptions()"
-                  :rules="rules.location" required variant="outlined" prepend-inner-icon="mdi-map-marker"></v-select>
+                <v-text-field v-model="editForm.location" label="Location" :rules="rules.location" 
+                  required variant="outlined" prepend-inner-icon="mdi-map-marker"
+                  placeholder="Naga City People's Mall"></v-text-field>
 
                 <!-- Description -->
                 <v-textarea v-model="editForm.description" label="Description" :rules="rules.description" required

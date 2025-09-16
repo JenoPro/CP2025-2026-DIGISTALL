@@ -12,8 +12,8 @@ export default {
       newStall: {
         stallNumber: '',
         price: '',
-        floor: '',
-        section: '',
+        floorId: '',
+        sectionId: '',
         size: '',
         location: '',
         description: '',
@@ -26,18 +26,10 @@ export default {
         number: (value) => !isNaN(parseFloat(value)) || 'Must be a valid number',
         positiveNumber: (value) => parseFloat(value) > 0 || 'Must be greater than 0',
       },
-      // Updated to match your exact section options
-      floorOptions: ['1st Floor', '2nd Floor', '3rd Floor'],
-      sectionOptions: [
-        'Grocery Section',
-        'Meat Section',
-        'Fresh Produce',
-        'Clothing Section',
-        'Electronics Section',
-        'Food Court',
-        'General Section',
-      ],
-      // Removed locationOptions since it's now a text field
+      // UPDATED: Dynamic options loaded from API
+      floorOptions: [],
+      sectionOptions: [],
+      allSections: [], // Store all sections for filtering by floor
       loading: false,
       // Success popup states
       showSuccessPopup: false,
@@ -50,7 +42,133 @@ export default {
       apiBaseUrl: process.env.VUE_APP_API_URL || 'http://localhost:3001',
     }
   },
+
   methods: {
+    // NEW METHOD: Load floors and sections from API
+    async loadFloorsAndSections() {
+      try {
+        const token = sessionStorage.getItem('authToken')
+        if (!token) {
+          throw new Error('Authentication token not found')
+        }
+
+        // Load floors for current branch manager
+        const floorsResponse = await fetch(`${this.apiBaseUrl}/api/floors`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        })
+
+        if (!floorsResponse.ok) {
+          throw new Error(`Failed to load floors: ${floorsResponse.status}`)
+        }
+
+        const floorsResult = await floorsResponse.json()
+        if (floorsResult.success) {
+          this.floorOptions = floorsResult.data.map((floor) => ({
+            title: floor.floor_name, // Just show "1st Floor", "2nd Floor", etc.
+            value: floor.floor_id,
+            floorData: floor,
+          }))
+        }
+
+        // Load all sections for the current branch manager
+        // TEMPORARY: Using debug endpoint to see what's returned
+        const sectionsResponse = await fetch(`${this.apiBaseUrl}/api/sections`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        })
+
+        if (!sectionsResponse.ok) {
+          throw new Error(`Failed to load sections: ${sectionsResponse.status}`)
+        }
+
+        const sectionsResult = await sectionsResponse.json()
+        console.log('🔍 Backend sections response:', sectionsResult)
+
+        if (sectionsResult.success) {
+          this.allSections = sectionsResult.data
+          console.log('🔍 All sections loaded:', this.allSections)
+          console.log('🔍 First section sample:', this.allSections[0])
+
+          // Initially show all sections (will be filtered when floor is selected)
+          this.sectionOptions = this.allSections.map((section) => ({
+            title: `${section.section_name} (${section.section_code})`,
+            value: section.section_id,
+            sectionData: section,
+          }))
+        }
+      } catch (error) {
+        console.error('Error loading floors and sections:', error)
+        this.$emit('show-message', `Failed to load floors and sections: ${error.message}`, 'error')
+
+        // Fallback to static options if API fails
+        this.floorOptions = [
+          { title: '1st Floor', value: 'floor_1' },
+          { title: '2nd Floor', value: 'floor_2' },
+          { title: '3rd Floor', value: 'floor_3' },
+        ]
+        this.sectionOptions = [
+          { title: 'Electronics Section', value: 'electronics' },
+          { title: 'Clothing Section', value: 'clothing' },
+          { title: 'Food Court', value: 'food_court' },
+          { title: 'Fresh Produce', value: 'produce' },
+          { title: 'Meat Section', value: 'meat' },
+          { title: 'General Section', value: 'general' },
+        ]
+      }
+    },
+
+    // NEW METHOD: Filter sections by selected floor
+    filterSectionsByFloor(floorId) {
+      console.log(
+        'Filtering sections by floor:',
+        floorId,
+        'Type of floorId:',
+        typeof floorId,
+        'Available sections:',
+        this.allSections.length,
+      )
+
+      if (!floorId || !this.allSections.length) {
+        // Show all sections if no floor selected or no sections available
+        this.sectionOptions = this.allSections.map((section) => ({
+          title: `${section.section_name} (${section.section_code})`,
+          value: section.section_id,
+          sectionData: section,
+        }))
+        console.log('Showing all sections:', this.sectionOptions.length)
+        return
+      }
+
+      // Convert both to numbers for proper comparison
+      const numericFloorId = parseInt(floorId)
+      console.log('Converted floorId to:', numericFloorId)
+
+      const filteredSections = this.allSections.filter((section) => {
+        // Try different possible field names for floor_id
+        const sectionFloorId = parseInt(section.floor_id || section.floorId || section.floor_number)
+        const matches = sectionFloorId === numericFloorId
+        console.log(
+          `Section ${section.section_name} (floor_id: ${section.floor_id}, floorId: ${section.floorId}, floor_number: ${section.floor_number}) => parsed: ${sectionFloorId}, matches: ${matches}`,
+        )
+        return matches
+      })
+
+      console.log('Filtered sections:', filteredSections.length, 'for floor:', numericFloorId)
+
+      this.sectionOptions = filteredSections.map((section) => ({
+        title: `${section.section_name} (${section.section_code})`,
+        value: section.section_id,
+        sectionData: section,
+      }))
+
+      console.log('Final section options:', this.sectionOptions)
+    },
+
     openAddStallModal() {
       this.$emit('open-modal')
     },
@@ -64,8 +182,8 @@ export default {
       this.newStall = {
         stallNumber: '',
         price: '',
-        floor: '',
-        section: '',
+        floorId: '',
+        sectionId: '',
         size: '',
         location: '',
         description: '',
@@ -397,8 +515,8 @@ export default {
         this.newStall.price &&
         this.newStall.location &&
         this.newStall.size &&
-        this.newStall.floor &&
-        this.newStall.section
+        this.newStall.floorId &&
+        this.newStall.sectionId
       )
     },
 
@@ -413,9 +531,32 @@ export default {
       const user = sessionStorage.getItem('currentUser')
       return !!(token && user)
     },
+
+    // ADDED: Get selected floor name for display
+    selectedFloorName() {
+      if (!this.newStall.floorId) return ''
+      const selectedFloor = this.floorOptions.find((floor) => floor.value === this.newStall.floorId)
+      return selectedFloor ? selectedFloor.title : ''
+    },
+
+    // ADDED: Get selected section name for display
+    selectedSectionName() {
+      if (!this.newStall.sectionId) return ''
+      const selectedSection = this.sectionOptions.find(
+        (section) => section.value === this.newStall.sectionId,
+      )
+      return selectedSection ? selectedSection.title : ''
+    },
   },
 
   watch: {
+    // ADDED: Watch for floor selection to filter sections
+    'newStall.floorId'(newFloorId) {
+      this.filterSectionsByFloor(newFloorId)
+      // Reset section when floor changes
+      this.newStall.sectionId = ''
+    },
+
     // Location is now a free text field, so no need for automatic price type setting
     // You can remove this watcher or modify it based on your needs
     'newStall.location'(newLocation) {
@@ -448,10 +589,10 @@ export default {
       deep: true,
     },
 
-    // Watch modal visibility
+    // Watch modal visibility - UPDATED with new logic
     showModal(newVal) {
       if (newVal) {
-        // Modal opened - check auth state
+        // Modal opened - check auth state and load data
         if (!this.isAuthenticated) {
           console.warn('Modal opened but user not authenticated')
           this.$emit('show-message', {
@@ -459,6 +600,9 @@ export default {
             text: 'Please login to add stalls.',
           })
           this.$emit('close-modal')
+        } else {
+          // Load floors and sections when modal opens
+          this.loadFloorsAndSections()
         }
       }
     },
@@ -474,6 +618,11 @@ export default {
       console.log('Component mounted - Current user:', userInfo)
     } else {
       console.warn('Component mounted - No user authentication found')
+    }
+
+    // Load floors and sections if modal is already open
+    if (this.showModal) {
+      this.loadFloorsAndSections()
     }
   },
 

@@ -29,13 +29,13 @@
 
               <!-- Floor -->
               <v-col cols="12" sm="6">
-                <v-select v-model="newStall.floor" :items="floorOptions" :rules="[rules.required]" label="Floor"
+                <v-select v-model="newStall.floorId" :items="floorOptions" :rules="[rules.required]" label="Floor"
                   prepend-icon="mdi-stairs" outlined dense />
               </v-col>
 
               <!-- Section -->
               <v-col cols="12" sm="6">
-                <v-select v-model="newStall.section" :items="sectionOptions" :rules="[rules.required]" label="Section"
+                <v-select v-model="newStall.sectionId" :items="sectionOptions" :rules="[rules.required]" label="Section"
                   prepend-icon="mdi-view-grid" outlined dense />
               </v-col>
 
@@ -92,11 +92,11 @@
                       <v-chip v-if="formattedPrice" small class="ma-1" color="success" text-color="white">
                         {{ formattedPrice }}
                       </v-chip>
-                      <v-chip v-if="newStall.floor" small class="ma-1" color="info" text-color="white">
-                        {{ newStall.floor }}
+                      <v-chip v-if="selectedFloorName" small class="ma-1" color="info" text-color="white">
+                        {{ selectedFloorName }}
                       </v-chip>
-                      <v-chip v-if="newStall.section" small class="ma-1" color="warning" text-color="white">
-                        {{ newStall.section }}
+                      <v-chip v-if="selectedSectionName" small class="ma-1" color="warning" text-color="white">
+                        {{ selectedSectionName }}
                       </v-chip>
                       <v-chip v-if="newStall.location" small class="ma-1" color="secondary" text-color="white">
                         {{ newStall.location }}
