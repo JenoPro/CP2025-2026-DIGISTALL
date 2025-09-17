@@ -17,33 +17,97 @@ export default {
       showProfilePopup: false,
       popupPosition: {},
       branchManagerData: null,
+      adminData: null,
       loading: false,
       error: null,
     }
   },
   computed: {
+    userType() {
+      return sessionStorage.getItem('userType') || 'branch-manager'
+    },
+    isAdmin() {
+      return this.userType === 'admin'
+    },
+    currentUserData() {
+      return this.isAdmin ? this.adminData : this.branchManagerData
+    },
     displayUsername() {
       // Show the actual username from database
-      return this.branchManagerData?.username || 'manager'
+      return this.currentUserData?.username || (this.isAdmin ? 'admin' : 'manager')
     },
     displayDesignation() {
       // Show the full name and area/location designation
-      if (this.branchManagerData) {
-        const fullName = this.branchManagerData.fullName || 'Branch Manager'
-        const designation = this.branchManagerData.designation || ''
+      if (this.currentUserData) {
+        const fullName =
+          this.currentUserData.fullName || (this.isAdmin ? 'Administrator' : 'Branch Manager')
+        const designation = this.currentUserData.designation || ''
         return designation ? `${fullName} - ${designation}` : fullName
       }
-      return 'Branch Manager'
+      return this.isAdmin ? 'System Administrator' : 'Branch Manager'
     },
     displayLocation() {
       // Show area and location
-      if (this.branchManagerData?.area && this.branchManagerData?.location) {
-        return `${this.branchManagerData.area} - ${this.branchManagerData.location}`
+      if (this.isAdmin) {
+        return 'System Administration'
+      }
+      if (this.currentUserData?.area && this.currentUserData?.location) {
+        return `${this.currentUserData.area} - ${this.currentUserData.location}`
       }
       return ''
     },
   },
   methods: {
+    // Method to fetch user data based on user type
+    async fetchUserData() {
+      if (this.isAdmin) {
+        await this.fetchAdminData()
+      } else {
+        await this.fetchBranchManagerData()
+      }
+    },
+
+    // Method to fetch admin data
+    async fetchAdminData() {
+      try {
+        this.loading = true
+        this.error = null
+
+        console.log('🔍 Loading admin data...')
+
+        // First try to get from session storage
+        const storedAdminData = sessionStorage.getItem('adminData')
+        if (storedAdminData) {
+          try {
+            this.adminData = JSON.parse(storedAdminData)
+            console.log('✅ Admin data loaded from storage:', this.adminData)
+            this.loading = false
+            return
+          } catch (parseError) {
+            console.warn('Error parsing stored admin data:', parseError)
+          }
+        }
+
+        // If no stored data, fetch from API (if API endpoint exists)
+        const token = sessionStorage.getItem('authToken')
+        if (!token) {
+          console.warn('⚠️ No authentication token found')
+          this.error = 'No authentication token found'
+          return
+        }
+
+        // For now, use the stored admin data from login
+        // In the future, you can add an API endpoint to fetch fresh admin data
+        console.log('⚠️ No stored admin data found')
+        this.error = 'Admin data not available'
+      } catch (error) {
+        console.error('❌ Failed to fetch admin data:', error)
+        this.error = 'Failed to load admin information'
+      } finally {
+        this.loading = false
+      }
+    },
+
     // Method to fetch branch manager data
     async fetchBranchManagerData() {
       try {
@@ -141,7 +205,11 @@ export default {
       // Clear any stored user data
       sessionStorage.removeItem('currentUser')
       sessionStorage.removeItem('authToken')
+      sessionStorage.removeItem('userType')
       sessionStorage.removeItem('branchManagerData')
+      sessionStorage.removeItem('adminData')
+      sessionStorage.removeItem('branchManagerId')
+      sessionStorage.removeItem('adminId')
       localStorage.removeItem('currentUser')
       localStorage.removeItem('authToken')
 
@@ -150,6 +218,7 @@ export default {
 
       // Clear component data
       this.branchManagerData = null
+      this.adminData = null
 
       // Clear Vuex store if you're using it
       if (this.$store && this.$store.dispatch) {
@@ -200,7 +269,12 @@ export default {
       }
     },
 
-    // Refresh branch manager data
+    // Refresh user data based on user type
+    async refreshUserData() {
+      await this.fetchUserData()
+    },
+
+    // Refresh branch manager data (kept for backward compatibility)
     async refreshBranchManagerData() {
       await this.fetchBranchManagerData()
     },
@@ -220,8 +294,8 @@ export default {
     // Setup authentication
     this.setupAuthInterceptor()
 
-    // Fetch branch manager data when component mounts
-    await this.fetchBranchManagerData()
+    // Fetch user data based on user type when component mounts
+    await this.fetchUserData()
   },
 
   beforeUnmount() {

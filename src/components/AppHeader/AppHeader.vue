@@ -45,7 +45,7 @@
                 <v-btn
                   small
                   color="primary"
-                  @click="refreshBranchManagerData"
+                  @click="refreshUserData"
                   class="mt-2"
                 >
                   Retry
@@ -53,11 +53,11 @@
               </div>
             </div>
 
-            <!-- Branch Manager profile info -->
+            <!-- User profile info (Admin or Branch Manager) -->
             <div v-else class="profile-info" @click="handleProfileClick">
               <div class="profile-avatar-container">
-                <v-avatar class="profile-avatar" color="primary" size="44">
-                  <v-icon color="white" size="22">mdi-account</v-icon>
+                <v-avatar class="profile-avatar" :color="isAdmin ? 'red darken-1' : 'primary'" size="44">
+                  <v-icon color="white" size="22">{{ isAdmin ? 'mdi-shield-account' : 'mdi-account' }}</v-icon>
                 </v-avatar>
               </div>
 
@@ -66,11 +66,11 @@
                 <div class="profile-name">{{ displayUsername }}</div>
 
                 <!-- Full name with optional badge -->
-                <div v-if="branchManagerData?.fullName" class="profile-full-name">
-                  {{ branchManagerData.fullName }}
-                  <!-- Optional: Role badge -->
-                  <div v-if="branchManagerData?.role" class="profile-badge">
-                    {{ branchManagerData.role }}
+                <div v-if="currentUserData?.fullName" class="profile-full-name">
+                  {{ currentUserData.fullName }}
+                  <!-- Role badge -->
+                  <div v-if="currentUserData?.role" class="profile-badge">
+                    {{ currentUserData.role }}
                   </div>
                 </div>
 
@@ -80,8 +80,13 @@
                 </div>
 
                 <!-- Email if available -->
-                <div class="profile-email" v-if="branchManagerData?.email">
-                  {{ branchManagerData.email }}
+                <div class="profile-email" v-if="currentUserData?.email">
+                  {{ currentUserData.email }}
+                </div>
+
+                <!-- Contact number for admin -->
+                <div class="profile-contact" v-if="isAdmin && currentUserData?.contactNumber">
+                  {{ currentUserData.contactNumber }}
                 </div>
               </div>
             </div>

@@ -28,8 +28,15 @@ export default {
   data() {
     return {
       pageTitle: "Dashboard",
-      // give each item a route so clicks can navigate
-      menuItems: [
+      // Base menu items - will be updated based on user type
+      menuItems: [],
+      // Define menu items for different user types
+      adminMenuItems: [
+        { id: 1, icon: "mdi-view-dashboard", name: "Dashboard", route: "/dashboard" },
+        { id: 2, icon: "mdi-credit-card", name: "Payment", route: "/payment" },
+        { id: 3, icon: "mdi-domain", name: "Branch", route: "/branch" },
+      ],
+      branchManagerMenuItems: [
         { id: 1, icon: "mdi-view-dashboard", name: "Dashboard", route: "/dashboard" },
         { id: 2, icon: "mdi-credit-card", name: "Payment", route: "/payment" },
         { id: 3, icon: "mdi-account-group", name: "Applicants", route: "/applicants" },
@@ -40,7 +47,7 @@ export default {
       allMenuRoutes: {
         1: "/dashboard",
         2: "/payment",
-        3: "/applicants",
+        3: "/applicants", // For branch manager, will be /branch for admin
         4: "/complaints",
         5: "/compliances",
         6: "/vendors",
@@ -50,16 +57,37 @@ export default {
       },
     };
   },
+  mounted() {
+    this.setMenuItemsBasedOnUserType();
+  },
   watch: {
     // update header title on route change
     $route: {
       immediate: true,
       handler(to) {
         this.pageTitle = to.meta?.title || to.name || "Dashboard";
+        // Also check if user type has changed and update menu items
+        this.setMenuItemsBasedOnUserType();
       },
     },
   },
   methods: {
+    setMenuItemsBasedOnUserType() {
+      const userType = sessionStorage.getItem("userType");
+      const currentUser = JSON.parse(sessionStorage.getItem("currentUser") || "{}");
+
+      console.log("🔧 Setting menu items for user type:", userType);
+
+      if (userType === "admin" || currentUser.userType === "admin") {
+        this.menuItems = [...this.adminMenuItems];
+        // Update routes for admin
+        this.allMenuRoutes[3] = "/branch";
+      } else {
+        // Default to branch manager menu
+        this.menuItems = [...this.branchManagerMenuItems];
+        this.allMenuRoutes[3] = "/applicants";
+      }
+    },
     handleMenuItemClick(payload) {
       // Handle both main menu items (1-5) and more items (6-10)
       const itemId = typeof payload === "object" ? payload.id : payload;
@@ -91,6 +119,17 @@ export default {
     },
     handleLogoutClick() {
       console.log("Logout clicked");
+      // Clear authentication data
+      sessionStorage.removeItem("currentUser");
+      sessionStorage.removeItem("authToken");
+      sessionStorage.removeItem("userType");
+      sessionStorage.removeItem("branchManagerId");
+      sessionStorage.removeItem("adminId");
+
+      // Redirect to login page
+      this.$router.push("/").catch(() => {
+        window.location.href = "/";
+      });
     },
   },
 };

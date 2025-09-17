@@ -6,14 +6,8 @@ export default {
     return {
       valid: false,
       loading: false,
-      loadingAreas: false,
-      loadingBranches: false,
       username: '',
       password: '',
-      selectedArea: '',
-      selectedBranch: '',
-      availableAreas: [],
-      availableBranches: [],
       showPassword: false,
       showSuccessSnackbar: false,
       showSuccessMessage: false,
@@ -29,19 +23,20 @@ export default {
         (v) => !!v || 'Password is required',
         (v) => (v && v.length >= 6) || 'Password must be at least 6 characters',
       ],
-      areaRules: [(v) => !!v || 'Area selection is required'],
-      branchRules: [(v) => !!v || 'Branch selection is required'],
     }
   },
   computed: {
     loginEndpoint() {
-      return 'http://localhost:3001/api/auth/branch_manager/login'
+      // Check if username indicates admin login
+      const isAdmin = this.username.toLowerCase() === 'admin' || this.username.includes('admin')
+      return isAdmin
+        ? 'http://localhost:3001/api/auth/admin/login'
+        : 'http://localhost:3001/api/auth/branch_manager/login'
     },
   },
   async mounted() {
     // Clear any existing authentication data
     this.clearAuthData()
-    await this.fetchAreas()
   },
   methods: {
     clearAuthData() {
@@ -49,81 +44,9 @@ export default {
       sessionStorage.removeItem('authToken')
       sessionStorage.removeItem('userType')
       sessionStorage.removeItem('branchManagerId')
+      sessionStorage.removeItem('adminId')
+      sessionStorage.removeItem('adminData')
       delete axios.defaults.headers.common['Authorization']
-    },
-
-    async fetchAreas() {
-      this.loadingAreas = true
-      try {
-        const response = await axios.get('http://localhost:3001/api/areas')
-        if (response.data && response.data.success) {
-          const areasData = Array.isArray(response.data.data)
-            ? response.data.data
-            : Object.values(response.data.data || {})
-
-          this.availableAreas = areasData
-            .map((area) => ({
-              title: typeof area === 'string' ? area : area.name || area.title,
-              value: typeof area === 'string' ? area : area.name || area.title || area.value,
-            }))
-            .sort((a, b) => a.title.localeCompare(b.title))
-
-          console.log('📍 Loaded areas:', this.availableAreas.length, 'areas')
-        } else {
-          throw new Error('Invalid response format')
-        }
-      } catch (error) {
-        console.error('Failed to fetch areas:', error)
-        this.showErrorMessage(
-          'Failed to load available areas. Please refresh the page or contact support.',
-        )
-      } finally {
-        this.loadingAreas = false
-      }
-    },
-
-    async onAreaChange() {
-      this.selectedBranch = ''
-      this.availableBranches = []
-
-      if (!this.selectedArea) {
-        return
-      }
-
-      this.loadingBranches = true
-      try {
-        const response = await axios.get(
-          `http://localhost:3001/api/branches/${encodeURIComponent(this.selectedArea)}`,
-        )
-        if (response.data && response.data.success) {
-          const branchesData = Array.isArray(response.data.data)
-            ? response.data.data
-            : Object.values(response.data.data || {})
-
-          this.availableBranches = branchesData
-            .map((branch) => ({
-              title: typeof branch === 'string' ? branch : branch.name || branch.title,
-              value:
-                typeof branch === 'string' ? branch : branch.name || branch.title || branch.value,
-            }))
-            .sort((a, b) => a.title.localeCompare(b.title))
-
-          console.log(
-            '🏢 Loaded branches for',
-            this.selectedArea,
-            ':',
-            this.availableBranches.length,
-            'branches',
-          )
-        } else {
-          throw new Error('Invalid response format')
-        }
-      } catch (error) {
-        console.error('Failed to fetch branches:', error)
-        this.showErrorMessage('Failed to load available branches for the selected area.')
-      } finally {
-        this.loadingBranches = false
-      }
     },
 
     async handleLogin() {
@@ -149,14 +72,10 @@ export default {
         const loginData = {
           username: this.username.trim(),
           password: this.password,
-          area: this.selectedArea,
-          location: this.selectedBranch, // Only send 'location', not 'branch'
         }
 
         console.log('🔐 Attempting login with:', {
           username: loginData.username,
-          area: loginData.area,
-          location: loginData.location, // Updated log
         })
 
         this.loadingText = 'Validating'
@@ -180,22 +99,45 @@ export default {
 
           console.log('✅ Login successful!', {
             user: user.username,
+            userType: user.userType,
+            firstName: user.firstName,
+            lastName: user.lastName,
             area: user.area,
             location: user.location || user.branch,
           })
 
-          const displayName = user.lastName
+          // Create display name based on user type
+          const displayName = user.lastName || user.username
 
           // Turn loading back on for success redirect
           this.loading = true
+          const userTypeTitle = user.userType === 'admin' ? 'Administrator' : 'Manager'
           this.loadingText = `Welcome ${displayName}!`
-          this.loadingSubtext = 'Setting up your dashboard'
+          this.loadingSubtext = `Setting up your ${userTypeTitle} dashboard`
 
           // Store authentication data
           sessionStorage.setItem('authToken', token)
           sessionStorage.setItem('currentUser', JSON.stringify(user))
           sessionStorage.setItem('userType', user.userType || 'branch-manager')
-          if (user.branchManagerId) {
+
+          // For admin users, store admin ID and info
+          if (user.userType === 'admin' && user.adminId) {
+            sessionStorage.setItem('adminId', user.adminId.toString())
+            // Store admin-specific info for header display
+            sessionStorage.setItem(
+              'adminData',
+              JSON.stringify({
+                adminId: user.adminId,
+                username: user.username,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                contactNumber: user.contactNumber,
+                email: user.email,
+                fullName: `${user.firstName} ${user.lastName}`.trim(),
+                role: 'System Administrator',
+              }),
+            )
+          } else if (user.branchManagerId) {
             sessionStorage.setItem('branchManagerId', user.branchManagerId.toString())
           }
 
@@ -259,24 +201,18 @@ export default {
             if (data.message && data.message.toLowerCase().includes('credentials')) {
               errorMessage =
                 'Invalid username or password. Please check your credentials and try again.'
-            } else if (data.message && data.message.toLowerCase().includes('area')) {
-              errorMessage = 'Invalid area selection. Please select a valid area.'
-            } else if (data.message && data.message.toLowerCase().includes('branch')) {
-              errorMessage =
-                'Invalid branch selection. Please select a valid branch for the chosen area.'
             } else {
               errorMessage =
-                data.message ||
-                'Authentication failed. Please verify your credentials, area, and branch selection.'
+                data.message || 'Authentication failed. Please verify your username and password.'
             }
             break
           case 403:
             errorMessage =
-              'Access denied. Your account may be inactive or you may not have permission to access this area/branch.'
+              'Access denied. Your account may be inactive or you may not have the required permissions.'
             break
           case 404:
             errorMessage =
-              'Branch manager account not found. Please verify your area and branch selection, or contact your administrator.'
+              'User account not found. Please verify your username or contact your administrator.'
             break
           case 429:
             errorMessage = 'Too many login attempts. Please wait a few minutes before trying again.'
@@ -343,10 +279,7 @@ export default {
     resetForm() {
       this.username = ''
       this.password = ''
-      this.selectedArea = ''
-      this.selectedBranch = ''
       this.showPassword = false
-      this.availableBranches = []
       this.clearError()
       this.clearSuccess()
       if (this.$refs.loginForm) {
@@ -379,20 +312,12 @@ export default {
   },
 
   watch: {
-    // Clear error messages when user starts typing or changing selections
+    // Clear error messages when user starts typing
     username() {
       if (this.errorMessage) this.clearError()
       if (this.showSuccessMessage) this.clearSuccess()
     },
     password() {
-      if (this.errorMessage) this.clearError()
-      if (this.showSuccessMessage) this.clearSuccess()
-    },
-    selectedArea() {
-      if (this.errorMessage) this.clearError()
-      if (this.showSuccessMessage) this.clearSuccess()
-    },
-    selectedBranch() {
       if (this.errorMessage) this.clearError()
       if (this.showSuccessMessage) this.clearSuccess()
     },

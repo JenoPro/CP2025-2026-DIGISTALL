@@ -10,6 +10,7 @@ import Stallholders from '../components/Stallholders/Stallholders.vue'
 import MainLayout from '../components/MainLayout/MainLayout.vue'
 import Collectors from '../components/Collectors/Collectors.vue'
 import Stalls from '../components/Stalls/Stalls.vue'
+import BranchManagement from '../components/Branch/Branch.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -31,6 +32,15 @@ const router = createRouter({
           name: 'Complaints',
           component: Complaints,
           meta: { title: 'Complaints' },
+        },
+        {
+          path: 'branch',
+          name: 'Branch',
+          component: BranchManagement,
+          meta: {
+            title: 'Branch Management',
+            requiresAdmin: true,
+          },
         },
         {
           path: 'payment',
@@ -83,6 +93,24 @@ const router = createRouter({
       ],
     },
   ],
+})
+
+// Navigation guard to protect admin routes
+router.beforeEach((to, from, next) => {
+  const userType = sessionStorage.getItem('userType')
+  const currentUser = JSON.parse(sessionStorage.getItem('currentUser') || '{}')
+
+  // Check if route requires admin access
+  if (to.meta?.requiresAdmin) {
+    if (userType === 'admin' || currentUser.userType === 'admin') {
+      next()
+    } else {
+      // Redirect non-admin users to dashboard
+      next('/dashboard')
+    }
+  } else {
+    next()
+  }
 })
 
 export default router

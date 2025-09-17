@@ -25,59 +25,9 @@
           min-height="600"
         >
           <v-card-text class="pa-6">
-            <h3 class="form-title text-center mb-4">Branch Manager Sign In</h3>
+            <h3 class="form-title text-center mb-4">System Login</h3>
 
             <v-form ref="loginForm" v-model="valid" @submit.prevent="handleLogin">
-              <!-- Area Selection Dropdown -->
-              <v-select
-                v-model="selectedArea"
-                :items="availableAreas"
-                label="Select Area"
-                :rules="areaRules"
-                variant="outlined"
-                class="mb-3"
-                :loading="loadingAreas"
-                required
-                prepend-inner-icon="mdi-city"
-                @update:model-value="onAreaChange"
-                density="comfortable"
-              >
-                <template v-slot:no-data>
-                  <v-list-item>
-                    <v-list-item-title>
-                      No areas available. Please contact administrator.
-                    </v-list-item-title>
-                  </v-list-item>
-                </template>
-              </v-select>
-
-              <!-- Branch Selection Dropdown -->
-              <v-select
-                v-model="selectedBranch"
-                :items="availableBranches"
-                label="Select Branch/Location"
-                :rules="branchRules"
-                variant="outlined"
-                class="mb-3"
-                :loading="loadingBranches"
-                required
-                :disabled="!selectedArea"
-                prepend-inner-icon="mdi-domain"
-                density="comfortable"
-              >
-                <template v-slot:no-data>
-                  <v-list-item>
-                    <v-list-item-title>
-                      {{
-                        selectedArea
-                          ? "No branches available for selected area."
-                          : "Please select an area first."
-                      }}
-                    </v-list-item-title>
-                  </v-list-item>
-                </template>
-              </v-select>
-
               <!-- Username Field -->
               <v-text-field
                 v-model="username"
