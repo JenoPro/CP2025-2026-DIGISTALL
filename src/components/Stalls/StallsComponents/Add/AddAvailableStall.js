@@ -65,12 +65,23 @@ export default {
         }
 
         const floorsResult = await floorsResponse.json()
+        console.log('🔍 Backend floors response:', floorsResult)
+
         if (floorsResult.success) {
           this.floorOptions = floorsResult.data.map((floor) => ({
             title: floor.floor_name, // Just show "1st Floor", "2nd Floor", etc.
             value: floor.floor_id,
             floorData: floor,
           }))
+          console.log('🔍 All floors loaded:', this.floorOptions)
+        } else {
+          console.error('API returned success: false for floors:', floorsResult)
+          this.$emit(
+            'show-message',
+            `Failed to load floors: ${floorsResult.message || 'Unknown error'}`,
+            'error',
+          )
+          this.floorOptions = []
         }
 
         // Load all sections for the current branch manager
@@ -88,6 +99,12 @@ export default {
 
         const sectionsResult = await sectionsResponse.json()
         console.log('🔍 Backend sections response:', sectionsResult)
+        console.log('🔍 JWT Token being sent:', token)
+        console.log(
+          '🔍 Decoded token payload:',
+          token ? JSON.parse(atob(token.split('.')[1])) : 'No token',
+        )
+        console.log('🔍 API URL being called:', `${this.apiBaseUrl}/api/sections`)
 
         if (sectionsResult.success) {
           this.allSections = sectionsResult.data
@@ -100,25 +117,25 @@ export default {
             value: section.section_id,
             sectionData: section,
           }))
+        } else {
+          // If API returns success: false, show the error message
+          console.error('API returned success: false for sections:', sectionsResult)
+          this.$emit(
+            'show-message',
+            `Failed to load sections: ${sectionsResult.message || 'Unknown error'}`,
+            'error',
+          )
+          // Clear the options instead of using static fallback
+          this.floorOptions = []
+          this.sectionOptions = []
         }
       } catch (error) {
         console.error('Error loading floors and sections:', error)
         this.$emit('show-message', `Failed to load floors and sections: ${error.message}`, 'error')
 
-        // Fallback to static options if API fails
-        this.floorOptions = [
-          { title: '1st Floor', value: 'floor_1' },
-          { title: '2nd Floor', value: 'floor_2' },
-          { title: '3rd Floor', value: 'floor_3' },
-        ]
-        this.sectionOptions = [
-          { title: 'Electronics Section', value: 'electronics' },
-          { title: 'Clothing Section', value: 'clothing' },
-          { title: 'Food Court', value: 'food_court' },
-          { title: 'Fresh Produce', value: 'produce' },
-          { title: 'Meat Section', value: 'meat' },
-          { title: 'General Section', value: 'general' },
-        ]
+        // Clear the options instead of using static fallback data
+        this.floorOptions = []
+        this.sectionOptions = []
       }
     },
 
