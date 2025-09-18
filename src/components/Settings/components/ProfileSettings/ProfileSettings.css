@@ -1,0 +1,23 @@
+.profile-settings {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.avatar-container {
+  border: 3px solid rgba(var(--v-theme-primary), 0.2);
+  transition: all 0.3s ease;
+}
+
+.avatar-container:hover {
+  border-color: rgba(var(--v-theme-primary), 0.5);
+  transform: scale(1.05);
+}
+
+.avatar-section {
+  padding: 20px 0;
+}
+
+.profile-header {
+  text-align: center;
+  padding: 20px 0;
+}

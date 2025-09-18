@@ -1,0 +1,260 @@
+/* ========================================== */
+/* SETTINGS PAGE STYLES */
+/* ========================================== */
+
+.settings-container {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 40px 32px;
+  min-height: 100vh;
+}
+
+/* Header Section */
+.settings-header {
+  padding: 24px 0;
+  border-bottom: 1px solid rgba(var(--v-border-color), 0.12);
+  margin-bottom: 32px;
+}
+
+.settings-header h2 {
+  color: rgb(var(--v-theme-on-surface));
+}
+
+.settings-header p {
+  color: rgb(var(--v-theme-on-surface-variant));
+}
+
+/* Settings Tabs */
+.settings-tabs {
+  background: rgb(var(--v-theme-surface));
+  border-bottom: 1px solid rgba(var(--v-theme-on-surface), 0.12);
+  margin-bottom: 32px;
+}
+
+.settings-tabs .v-tab {
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: 0.25px;
+  min-height: 48px;
+  padding: 0 24px;
+  color: rgb(var(--v-theme-on-surface-variant));
+}
+
+.settings-tabs .v-tab:hover {
+  color: rgb(var(--v-theme-primary));
+  background: rgba(var(--v-theme-primary), 0.08);
+}
+
+.settings-tabs .v-tab--selected {
+  color: rgb(var(--v-theme-primary));
+}
+
+/* Settings Content */
+.settings-content {
+  min-height: 700px;
+  padding: 32px 0;
+}
+
+.settings-content .v-tabs-window-item {
+  padding: 24px 0;
+}
+
+/* Card Styles */
+.settings-container .v-card {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.settings-container .v-card-title {
+  background: rgba(var(--v-theme-primary), 0.08);
+  color: rgb(var(--v-theme-primary));
+  font-weight: 600;
+  padding: 20px 24px;
+}
+
+.settings-container .v-card-text {
+  padding: 24px;
+}
+
+/* Form Elements */
+.settings-container .v-text-field {
+  margin-bottom: 8px;
+}
+
+.settings-container .v-text-field .v-field {
+  border-radius: 8px;
+}
+
+.settings-container .v-btn {
+  border-radius: 8px;
+  text-transform: none;
+  font-weight: 500;
+  letter-spacing: 0.25px;
+}
+
+/* Switch Styles */
+.settings-container .v-switch {
+  flex: none;
+}
+
+.settings-container .v-switch .v-selection-control {
+  min-height: auto;
+}
+
+/* Alert Styles */
+.settings-container .v-alert {
+  border-radius: 8px;
+  border-left: 4px solid currentColor;
+}
+
+/* Divider Styles */
+.settings-container .v-divider {
+  margin: 16px 0;
+}
+
+/* List Styles */
+.settings-container .v-list {
+  background: transparent;
+}
+
+.settings-container .v-list-item {
+  border-radius: 8px;
+  margin-bottom: 4px;
+}
+
+.settings-container .v-list-item:hover {
+  background: rgba(var(--v-theme-primary), 0.04);
+}
+
+/* Progress Linear */
+.settings-container .v-progress-linear {
+  border-radius: 4px;
+}
+
+/* Chip Styles */
+.settings-container .v-chip {
+  font-weight: 500;
+  letter-spacing: 0.25px;
+}
+
+/* Avatar Styles */
+.settings-container .v-avatar {
+  border: 2px solid rgba(var(--v-theme-primary), 0.2);
+  transition: all 0.3s ease;
+}
+
+.settings-container .v-avatar:hover {
+  border-color: rgba(var(--v-theme-primary), 0.5);
+  transform: scale(1.05);
+}
+
+/* Select Styles */
+.settings-container .v-select .v-field {
+  border-radius: 8px;
+}
+
+/* Responsive Design */
+@media (max-width: 960px) {
+  .settings-container {
+    padding: 16px;
+  }
+
+  .settings-tabs .v-tab {
+    min-width: auto;
+    padding: 0 12px;
+  }
+
+  .settings-tabs .v-tab .v-icon {
+    margin-right: 4px !important;
+  }
+
+  .settings-container .v-card-title {
+    padding: 16px 20px;
+    font-size: 1.1rem;
+  }
+
+  .settings-container .v-card-text {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 600px) {
+  .settings-container {
+    padding: 12px;
+  }
+
+  .header-card .v-card-text {
+    margin: 8px;
+    padding: 16px;
+  }
+
+  .header-card h2 {
+    font-size: 1.5rem !important;
+  }
+
+  .settings-tabs .v-tab {
+    padding: 0 8px;
+    font-size: 0.875rem;
+  }
+
+  .settings-tabs .v-tab .v-icon {
+    display: none;
+  }
+
+  .settings-container .v-card-text {
+    padding: 16px;
+  }
+
+  .settings-container .v-btn {
+    width: 100%;
+    margin-bottom: 8px;
+  }
+}
+
+/* Dark Mode Adjustments */
+.v-theme--dark .header-card {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+}
+
+.v-theme--dark .settings-container .v-card-title {
+  background: rgba(var(--v-theme-primary), 0.12);
+}
+
+/* Animation Classes */
+.settings-container .v-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.settings-container .v-card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+/* Loading States */
+.settings-container .v-progress-circular {
+  margin: 20px auto;
+}
+
+/* Success States */
+.settings-container .v-alert.v-alert--variant-tonal {
+  border-radius: 8px;
+}
+
+/* Custom Scrollbar */
+.settings-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.settings-content::-webkit-scrollbar-track {
+  background: rgba(var(--v-theme-on-surface), 0.1);
+  border-radius: 3px;
+}
+
+.settings-content::-webkit-scrollbar-thumb {
+  background: rgba(var(--v-theme-primary), 0.3);
+  border-radius: 3px;
+}
+
+.settings-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(var(--v-theme-primary), 0.5);
+}

@@ -1,0 +1,23 @@
+/* Responsive styles for SearchAndFilter */
+
+@media (max-width: 768px) {
+  .search-wrapper {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .search-field {
+    max-width: none;
+  }
+
+  .filter-dropdown {
+    right: auto;
+    left: 0;
+    min-width: 100%;
+  }
+
+  .filter-sort-container {
+    justify-content: center;
+  }
+}

@@ -60,29 +60,12 @@
   animation: slideInRight 0.8s ease-out;
 }
 
-/* Responsive white box background */
-.right-section::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: rgba(255, 255, 255, 0.98);
-  backdrop-filter: blur(15px);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  z-index: 1;
-  width: min(95vw, 500px);
-  height: auto;
-  min-height: min(85vh, 700px);
-  max-height: 95vh;
-}
-
 /* Card Styling */
 .login-card {
-  background: transparent !important;
-  box-shadow: none !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important;
   width: min(95vw, 500px) !important;
   max-width: 500px !important;
   position: relative;
@@ -274,9 +257,9 @@
   cursor: not-allowed;
 }
 
-/* FIXED: Loading Overlay - Centered and Properly Sized */
+/* FIXED: Loading Overlay - Light Theme */
 .loading-overlay {
-  background: rgba(0, 0, 0, 0.041) !important; /* Lighter background */
+  background: rgba(255, 255, 255, 0.1) !important; /* Very light white background */
   z-index: 9999;
   position: fixed !important;
   top: 0 !important;
@@ -286,6 +269,11 @@
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
+}
+
+/* Also force light loading overlay for login page specifically */
+body.login-page-forced-light .loading-overlay {
+  background: transparent !important; /* Completely transparent */
 }
 
 .loading-container {
@@ -451,12 +439,6 @@
     padding: 1rem;
   }
 
-  .right-section::before {
-    width: calc(100vw - 2rem);
-    min-height: min(60vh, 500px);
-    border-radius: 16px;
-  }
-
   .login-card {
     width: calc(100vw - 2rem) !important;
     min-height: min(60vh, 500px) !important;
@@ -547,4 +529,188 @@
   .login-btn:hover {
     transform: none;
   }
+}
+
+/* FORCE LIGHT THEME FOR LOGIN PAGE */
+/* Override any dark theme styles when login page is active */
+body.login-page-forced-light,
+body.login-page-forced-light .v-application,
+body.login-page-forced-light .v-theme--light,
+body.login-page-forced-light .v-theme--dark {
+  background-color: #ffffff !important;
+  color: #212529 !important;
+}
+
+/* Force light theme on all login page elements */
+body.login-page-forced-light .login-container {
+  background-image: url('../../assets/background-image.png') !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  background-attachment: fixed !important;
+}
+
+/* Force light theme on cards and surfaces */
+body.login-page-forced-light .v-card,
+body.login-page-forced-light .v-sheet {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  color: #212529 !important;
+}
+
+/* Force light theme on text fields */
+body.login-page-forced-light .v-text-field .v-field,
+body.login-page-forced-light .v-select .v-field {
+  background-color: #ffffff !important;
+  color: #212529 !important;
+}
+
+/* Force light theme on icons */
+body.login-page-forced-light .v-icon {
+  color: inherit !important;
+}
+
+/* Force light theme on snackbar */
+body.login-page-forced-light .v-snackbar {
+  background-color: #ffffff !important;
+  color: #212529 !important;
+}
+
+/* ADDITIONAL SPECIFIC FIXES FOR DARK MODE ISSUES */
+
+/* Force light theme on login button text and content */
+body.login-page-forced-light .login-btn,
+body.login-page-forced-light .login-btn .v-btn__content,
+body.login-page-forced-light .login-btn .v-btn__overlay {
+  color: white !important;
+  background: linear-gradient(135deg, #4f7cff, #3b5bdb) !important;
+}
+
+/* Fix login button icon - remove white background, make icon white */
+body.login-page-forced-light .login-btn .v-icon,
+body.login-page-forced-light .login-btn .v-btn__content .v-icon,
+body.login-page-forced-light .login-btn .v-icon.mdi,
+body.login-page-forced-light .login-btn .mdi::before,
+body.login-page-forced-light .login-btn i.v-icon,
+body.login-page-forced-light .login-btn .v-btn__prepend .v-icon,
+body.login-page-forced-light .v-btn.login-btn .v-icon {
+  color: white !important;
+  background-color: transparent !important;
+  background: none !important;
+  fill: white !important;
+}
+
+/* Force light theme on all icons in login page - remove blue backgrounds */
+body.login-page-forced-light .v-icon,
+body.login-page-forced-light .mdi::before,
+body.login-page-forced-light .v-field__prepend-inner .v-icon,
+body.login-page-forced-light .v-field__append-inner .v-icon {
+  color: #6c757d !important;
+  background-color: transparent !important;
+  background: none !important;
+}
+
+/* Force light theme on input fields and remove blue background on focus */
+body.login-page-forced-light .v-text-field .v-field,
+body.login-page-forced-light .v-select .v-field {
+  background-color: #ffffff !important;
+  color: #212529 !important;
+  border: 1px solid #e0e0e0 !important;
+}
+
+/* Make blue background full width on input focus - not just around text */
+body.login-page-forced-light .v-text-field .v-field--focused,
+body.login-page-forced-light .v-select .v-field--focused,
+body.login-page-forced-light .v-text-field .v-field:focus-within,
+body.login-page-forced-light .v-select .v-field:focus-within {
+  background-color: rgba(52, 152, 219, 0.05) !important;
+  border-color: #3498db !important;
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2) !important;
+}
+
+/* Ensure the entire input field area has the blue background, not just text area */
+body.login-page-forced-light .v-text-field .v-field--focused .v-field__field,
+body.login-page-forced-light .v-select .v-field--focused .v-field__field,
+body.login-page-forced-light .v-text-field .v-field:focus-within .v-field__field,
+body.login-page-forced-light .v-select .v-field:focus-within .v-field__field {
+  background-color: rgba(52, 152, 219, 0.05) !important;
+}
+
+/* Make sure prepend and append areas also get the blue background */
+body.login-page-forced-light .v-text-field .v-field--focused .v-field__prepend-inner,
+body.login-page-forced-light .v-text-field .v-field--focused .v-field__append-inner,
+body.login-page-forced-light .v-text-field .v-field:focus-within .v-field__prepend-inner,
+body.login-page-forced-light .v-text-field .v-field:focus-within .v-field__append-inner {
+  background-color: rgba(52, 152, 219, 0.05) !important;
+}
+
+/* Force light theme on input text */
+body.login-page-forced-light .v-text-field .v-field__input,
+body.login-page-forced-light .v-select .v-field__input,
+body.login-page-forced-light .v-field__input input {
+  color: #212529 !important;
+  background-color: transparent !important;
+}
+
+/* Force light theme on placeholder text */
+body.login-page-forced-light .v-text-field .v-field__input::placeholder,
+body.login-page-forced-light .v-select .v-field__input::placeholder {
+  color: #6c757d !important;
+}
+
+/* Force light theme on labels */
+body.login-page-forced-light .v-label,
+body.login-page-forced-light .v-field-label {
+  color: #6c757d !important;
+}
+
+/* Force light theme on forgot password button */
+body.login-page-forced-light .forgot-password-btn {
+  color: #4f7cff !important;
+}
+
+body.login-page-forced-light .forgot-password-btn:hover {
+  color: #3b5bdb !important;
+  background-color: rgba(79, 124, 255, 0.1) !important;
+}
+
+/* Force light theme on all Vuetify components */
+body.login-page-forced-light .v-theme--dark {
+  --v-theme-background: 255, 255, 255 !important;
+  --v-theme-surface: 255, 255, 255 !important;
+  --v-theme-on-background: 33, 37, 41 !important;
+  --v-theme-on-surface: 33, 37, 41 !important;
+}
+
+/* SIMPLE VALIDATION FIX - BACK TO ORIGINAL STYLING */
+
+/* Force validation messages to use simple, clean styling like before dark theme */
+body.login-page-forced-light .v-messages,
+body.login-page-forced-light .v-messages__message {
+  background-color: transparent !important;
+  color: #d32f2f !important;
+}
+
+/* Remove any overlay background for validation AND loading */
+body.login-page-forced-light .v-overlay,
+body.login-page-forced-light .v-overlay__scrim,
+body.login-page-forced-light .v-overlay--active .v-overlay__scrim {
+  background-color: transparent !important;
+  backdrop-filter: none !important;
+}
+
+/* Simple validation error field styling */
+body.login-page-forced-light .v-field--error .v-field__outline {
+  border-color: #f44336 !important;
+}
+
+/* Keep validation text simple and clean */
+body.login-page-forced-light .v-field__error {
+  color: #d32f2f !important;
+  background: none !important;
+}
+
+/* Ensure no dark backgrounds on any login-related overlays */
+body.login-page-forced-light .v-overlay__content {
+  background: transparent !important;
+  box-shadow: none !important;
 }

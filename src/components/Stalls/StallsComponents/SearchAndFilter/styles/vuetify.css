@@ -1,0 +1,27 @@
+/* Vuetify integration styles for SearchAndFilter */
+
+/* Vuetify Select Fields Override */
+.filter-content .v-select {
+  background-color: var(--input-bg) !important;
+}
+
+.filter-content .v-select .v-field {
+  background-color: var(--input-bg) !important;
+  color: var(--input-text) !important;
+}
+
+.filter-content .v-select .v-field__outline {
+  color: var(--input-border) !important;
+}
+
+.filter-content .v-select .v-field--focused .v-field__outline {
+  color: var(--input-focus) !important;
+}
+
+.filter-content .v-select .v-field__input {
+  color: var(--input-text) !important;
+}
+
+.filter-content .v-select .v-field__prepend-inner {
+  color: var(--text-secondary) !important;
+}

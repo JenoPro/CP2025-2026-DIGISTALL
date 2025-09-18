@@ -1,0 +1,16 @@
+/* SearchAndFilter component styles - Modular structure */
+
+/* Base layout styles */
+@import './base.css';
+
+/* Component-specific styles */
+@import './components.css';
+
+/* Vuetify integration styles */
+@import './vuetify.css';
+
+/* Animation styles */
+@import './animations.css';
+
+/* Responsive styles */
+@import './responsive.css';

@@ -1,9 +1,10 @@
 /* ComplaintsTable.css */
 .complaints-table-container {
-  background: white;
+  background: var(--table-bg);
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px var(--card-shadow);
   position: relative;
+  border: 1px solid var(--card-border);
 }
 
 .complaints-table-wrapper {
@@ -14,11 +15,12 @@
   width: 100%;
   border-collapse: collapse;
   font-size: 14px;
+  background-color: var(--table-bg);
 }
 
 .complaints-table thead {
-  background: #1976d2;
-  color: white;
+  background: var(--table-header-bg);
+  color: var(--text-primary);
 }
 
 /* ✅ Rounded header corners */
@@ -34,18 +36,24 @@
   padding: 16px 12px;
   text-align: left;
   font-weight: 600;
-  font-size: 13px;
+  font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  color: var(--text-primary);
 }
 
 .complaints-table tbody tr {
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid var(--table-border);
   transition: background-color 0.2s ease;
+  background-color: var(--table-bg);
+}
+
+.complaints-table tbody tr:nth-child(even) {
+  background-color: var(--table-stripe);
 }
 
 .complaints-table tbody tr:hover {
-  background: #f8f9fa;
+  background: var(--table-hover) !important;
 }
 
 .complaints-table tbody tr:last-child {
@@ -55,6 +63,13 @@
 .complaints-table td {
   padding: 16px 12px;
   vertical-align: middle;
+  color: #2c3e50;
+  border-bottom: 1px solid var(--table-border);
+}
+
+/* Dark theme override for table cell text */
+body.theme-dark .complaints-table td {
+  color: #e0e0e0;
 }
 
 .complaints-name-cell {

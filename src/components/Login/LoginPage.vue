@@ -39,6 +39,7 @@
                 prepend-inner-icon="mdi-account"
                 placeholder="Enter your username"
                 density="comfortable"
+                :disabled="loading"
               >
               </v-text-field>
 
@@ -56,54 +57,22 @@
                 @click:append-inner="togglePasswordVisibility"
                 placeholder="Enter your password"
                 density="comfortable"
+                :disabled="loading"
               >
               </v-text-field>
 
-              <!-- Login Button -->
+              <!-- Login Button - REMOVED loading prop and simplified -->
               <v-btn
                 type="submit"
                 class="login-btn mb-3"
                 block
                 size="large"
-                :loading="loading"
                 :disabled="!valid || loading"
                 color="primary"
               >
                 <v-icon left class="mr-2">mdi-login</v-icon>
-                {{ loading ? "Authenticating..." : "Login to Dashboard" }}
+                Login to Dashboard
               </v-btn>
-
-              <!-- Error Message Display -->
-              <v-alert
-                v-if="errorMessage"
-                type="error"
-                density="compact"
-                class="error-alert mb-3"
-                closable
-                @click:close="clearError"
-                border="start"
-                variant="tonal"
-              >
-                <template v-slot:prepend>
-                  <v-icon>mdi-alert-circle</v-icon>
-                </template>
-                {{ errorMessage }}
-              </v-alert>
-
-              <!-- Success Message Display -->
-              <v-alert
-                v-if="showSuccessMessage && successMessage"
-                type="success"
-                density="compact"
-                class="success-alert mb-3"
-                border="start"
-                variant="tonal"
-              >
-                <template v-slot:prepend>
-                  <v-icon>mdi-check-circle</v-icon>
-                </template>
-                {{ successMessage }}
-              </v-alert>
 
               <!-- Forgot Password -->
               <div class="text-center mb-3">
@@ -124,7 +93,7 @@
       </v-col>
     </v-row>
 
-    <!-- Professional Loading Overlay -->
+    <!-- SINGLE Professional Loading Overlay with Border-Radius -->
     <v-overlay v-model="loading" class="loading-overlay" persistent :opacity="0.95">
       <div class="loading-container">
         <v-card class="loading-card pa-8 text-center" elevation="12">
@@ -147,7 +116,7 @@
               class="mb-4"
             />
 
-            <!-- Loading Text -->
+            <!-- Dynamic Loading Text -->
             <h3 class="loading-title mb-2">{{ loadingText }}</h3>
             <p class="loading-subtitle mb-4">{{ loadingSubtext }}</p>
 

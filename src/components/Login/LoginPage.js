@@ -37,8 +37,55 @@ export default {
   async mounted() {
     // Clear any existing authentication data
     this.clearAuthData()
+
+    // Force light theme for login page
+    this.forceLoginTheme()
   },
+
+  beforeUnmount() {
+    // Restore original theme when leaving login page
+    this.restoreOriginalTheme()
+
+    // Clear any pending timeouts
+    if (this.redirectTimeout) {
+      clearTimeout(this.redirectTimeout)
+    }
+  },
+
   methods: {
+    // Simple force login page to use light theme (like before dark theme)
+    forceLoginTheme() {
+      // Store current theme
+      this.originalTheme = this.$vuetify.theme.global.name
+
+      // Force Vuetify to light theme
+      this.$vuetify.theme.global.name = 'light'
+
+      // Add login-only class to override any dark theme styles
+      document.body.classList.add('login-page-forced-light')
+
+      // Simple theme class management
+      document.body.classList.remove('theme-dark')
+      document.body.classList.add('theme-light')
+    },
+
+    // Simple restore original theme when leaving login
+    restoreOriginalTheme() {
+      // Remove forced light theme class
+      document.body.classList.remove('login-page-forced-light')
+
+      // Restore original Vuetify theme if it was stored
+      if (this.originalTheme) {
+        this.$vuetify.theme.global.name = this.originalTheme
+
+        // Restore body class based on theme
+        if (this.originalTheme === 'dark') {
+          document.body.classList.remove('theme-light')
+          document.body.classList.add('theme-dark')
+        }
+      }
+    },
+
     clearAuthData() {
       sessionStorage.removeItem('currentUser')
       sessionStorage.removeItem('authToken')
@@ -321,12 +368,5 @@ export default {
       if (this.errorMessage) this.clearError()
       if (this.showSuccessMessage) this.clearSuccess()
     },
-  },
-
-  beforeUnmount() {
-    // Clear any pending timeouts
-    if (this.redirectTimeout) {
-      clearTimeout(this.redirectTimeout)
-    }
   },
 }

@@ -1,0 +1,91 @@
+.language-settings {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.language-card {
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.language-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.language-card.selected {
+  border-color: rgb(var(--v-theme-primary));
+}
+
+.flag-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.flag {
+  width: 48px;
+  height: 32px;
+  border-radius: 4px;
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.flag-us {
+  background: linear-gradient(
+    to bottom,
+    #b22234 0% 7.69%,
+    #ffffff 7.69% 15.38%,
+    #b22234 15.38% 23.07%,
+    #ffffff 23.07% 30.76%,
+    #b22234 30.76% 38.45%,
+    #ffffff 38.45% 46.14%,
+    #b22234 46.14% 53.83%,
+    #ffffff 53.83% 61.52%,
+    #b22234 61.52% 69.21%,
+    #ffffff 69.21% 76.9%,
+    #b22234 76.9% 84.59%,
+    #ffffff 84.59% 92.28%,
+    #b22234 92.28% 100%
+  );
+  position: relative;
+}
+
+.flag-us::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 40%;
+  height: 53.83%;
+  background: #3c3b6e;
+}
+
+.flag-ph {
+  background: linear-gradient(to right, #0038a8 0% 50%, #ce1126 50% 100%);
+  position: relative;
+}
+
+.flag-ph::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 16px 0 16px 20px;
+  border-color: transparent transparent transparent #ffffff;
+}
+
+.language-features {
+  margin-top: 20px;
+}
+
+.language-header {
+  text-align: center;
+  padding: 20px 0;
+}

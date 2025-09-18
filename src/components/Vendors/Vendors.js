@@ -24,7 +24,11 @@ export default {
         { title: 'Action', value: 'actions', sortable: false, align: 'end', width: 140 },
       ],
       collectors: ['John Smith', 'Jane Garcia', 'Marco Reyes', 'Ava Santos'],
-      statuses: ['Active', 'Inactive', 'On Hold'],
+      statuses: [
+        { title: 'Active', value: 'Active' },
+        { title: 'Inactive', value: 'Inactive' },
+        { title: 'On Hold', value: 'On Hold' },
+      ],
 
       vendors: Array.from({ length: 15 }, (_, i) => ({
         id: 123456 + i,
@@ -37,6 +41,7 @@ export default {
       search: '',
       collectorFilter: null,
       statusFilter: null,
+      showFilterPanel: false,
 
       newVendor: {
         id: '',
@@ -175,6 +180,22 @@ export default {
         // if not found, add it (edge case)
         this.vendors.unshift(updatedRow)
       }
+    },
+
+    // Filter methods
+    toggleFilter() {
+      this.showFilterPanel = !this.showFilterPanel
+    },
+
+    clearAllFilters() {
+      this.search = ''
+      this.statusFilter = null
+      this.collectorFilter = null
+      this.showFilterPanel = false
+    },
+
+    applyFilters() {
+      this.showFilterPanel = false
     },
   },
 }

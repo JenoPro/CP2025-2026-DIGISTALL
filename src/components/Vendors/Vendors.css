@@ -4,16 +4,17 @@
 }
 
 .main-content {
-  background-color: #fafafa;
+  background-color: var(--bg-primary);
   min-height: calc(100vh - 64px);
   padding: 24px;
 }
 
 .content-placeholder {
-  background-color: white;
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
   border-radius: 8px;
   padding: 32px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px var(--card-shadow);
   text-align: center;
   min-height: 400px;
   display: flex;
@@ -29,20 +30,137 @@
   font-weight: 300;
 }
 
+/* Dark theme override for placeholder text */
+body.theme-dark .content-placeholder h3 {
+  color: #ffffff;
+}
+
 .content-placeholder p {
   color: #666;
   font-size: 16px;
   line-height: 1.5;
 }
 
+/* Search and Filter Section */
+.search-filter-section {
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px var(--card-shadow);
+  border: 1px solid var(--card-border);
+}
+
+/* Filter Container */
+.filter-container {
+  position: relative;
+  display: inline-block;
+}
+
+/* Filter Dropdown */
+.filter-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 1000;
+  min-width: 300px;
+  margin-top: 8px;
+}
+
+.filter-card {
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--card-border);
+  box-shadow: 0 4px 12px var(--card-shadow) !important;
+  background-color: var(--card-bg);
+}
+
+/* Filter header */
+.filter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background: var(--table-header-bg);
+  border-bottom: 1px solid var(--card-border);
+}
+
+.filter-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.close-btn {
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+  color: var(--text-secondary);
+}
+
+.close-btn:hover {
+  opacity: 1;
+  background-color: var(--table-hover);
+}
+
+/* Filter content */
+.filter-content {
+  padding: 20px;
+  background: var(--card-bg);
+}
+
+/* Filter groups */
+.filter-group {
+  margin-bottom: 20px;
+}
+
+.filter-group:last-of-type {
+  margin-bottom: 0;
+}
+
+.filter-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+  text-align: left;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
 /* Table Styles */
 .vendors-table :deep(thead tr) {
-  background: #0e2e6f;
+  background: var(--table-header-bg);
 }
 
 .vendors-table :deep(thead th) {
-  color: #fff;
-  font-weight: 700;
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.vendors-table :deep(tbody tr) {
+  background-color: var(--table-bg);
+  border-bottom: 1px solid var(--table-border);
+}
+
+.vendors-table :deep(tbody tr:nth-child(even)) {
+  background-color: var(--table-stripe);
+}
+
+.vendors-table :deep(tbody tr:hover) {
+  background-color: var(--table-hover) !important;
+}
+
+.vendors-table :deep(tbody td) {
+  color: #2c3e50;
+}
+
+/* Dark theme override for vendor table text */
+body.theme-dark .vendors-table :deep(tbody td) {
+  color: #e0e0e0;
 }
 
 /* Custom scrollbar for main content */
@@ -102,4 +220,185 @@
   .content-placeholder p {
     font-size: 14px;
   }
+}
+
+/* Search and Filter Styles */
+.search-filter-section {
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px var(--card-shadow);
+  border: 1px solid var(--card-border);
+}
+
+/* Filter dropdown */
+.filter-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 1000;
+  min-width: 300px;
+  margin-top: 8px;
+}
+
+.filter-card {
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--card-border);
+  box-shadow: 0 4px 12px var(--card-shadow) !important;
+  background-color: var(--card-bg);
+}
+
+/* Filter header */
+.filter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background: var(--table-header-bg);
+  border-bottom: 1px solid var(--card-border);
+}
+
+.filter-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.close-btn {
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+  color: var(--text-secondary);
+}
+
+.close-btn:hover {
+  opacity: 1;
+  background-color: var(--table-hover);
+}
+
+/* Filter content */
+.filter-content {
+  padding: 20px;
+  background: var(--card-bg);
+}
+
+/* Filter groups */
+.filter-group {
+  margin-bottom: 20px;
+}
+
+.filter-group:last-of-type {
+  margin-bottom: 0;
+}
+
+.filter-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+  text-align: left;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+/* Status buttons */
+.status-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 0;
+}
+
+.status-btn {
+  height: 40px;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  font-size: 14px;
+  background-color: var(--card-bg) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--card-border) !important;
+}
+
+.status-btn:hover {
+  background-color: var(--table-hover) !important;
+}
+
+.status-btn.active {
+  background-color: var(--primary-color) !important;
+  color: white !important;
+  border-color: var(--primary-color) !important;
+}
+
+/* Action buttons */
+.filter-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding-top: 16px;
+  border-top: 1px solid var(--card-border);
+  margin-top: 16px;
+}
+
+.action-btn {
+  min-width: 90px;
+  height: 36px;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: 0;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+/* Slide down animation for filter dropdown */
+.slide-down-enter-active,
+.slide-down-leave-active {
+  transition: all 0.3s ease;
+  transform-origin: top;
+}
+
+.slide-down-enter-from {
+  opacity: 0;
+  transform: translateY(-10px) scale(0.95);
+}
+
+.slide-down-leave-to {
+  opacity: 0;
+  transform: translateY(-10px) scale(0.95);
+}
+
+.slide-down-enter-to,
+.slide-down-leave-from {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* Vuetify Select Fields Dark Mode Override for Vendors */
+.filter-content .v-select {
+  background-color: var(--input-bg) !important;
+}
+
+.filter-content .v-select .v-field {
+  background-color: var(--input-bg) !important;
+  color: var(--input-text) !important;
+}
+
+.filter-content .v-select .v-field__outline {
+  color: var(--input-border) !important;
+}
+
+.filter-content .v-select .v-field--focused .v-field__outline {
+  color: var(--input-focus) !important;
+}
+
+.filter-content .v-select .v-field__input {
+  color: var(--input-text) !important;
+}
+
+.filter-content .v-select .v-field__prepend-inner {
+  color: var(--text-secondary) !important;
 }

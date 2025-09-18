@@ -5,13 +5,13 @@
       <v-col cols="12" md="6" lg="4">
         <v-text-field
           v-model="searchQuery"
-          label="Search stallholder"
+          label="Search stallholders"
           prepend-inner-icon="mdi-magnify"
           variant="outlined"
           clearable
           hide-details
           class="search-field"
-          placeholder="Search"
+          placeholder="Search by name, business, stall..."
         ></v-text-field>
       </v-col>
 

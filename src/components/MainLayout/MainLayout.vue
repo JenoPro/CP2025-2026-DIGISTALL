@@ -116,6 +116,9 @@ export default {
     },
     handleSettingsClick() {
       console.log("Settings clicked");
+      this.$router.push("/settings").catch(() => {
+        console.log("Navigation to settings handled or already on settings page");
+      });
     },
     handleLogoutClick() {
       console.log("Logout clicked");

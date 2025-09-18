@@ -1,95 +1,101 @@
 export default {
-  name: 'ComplaintsSearch',
+  name: 'ComplaintsSearchFilter',
+  emits: ['search', 'filter'],
   data() {
     return {
       searchQuery: '',
-      activeFilter: 'all',
       showFilterPanel: false,
+      selectedStatus: 'All',
+      statusOptions: [
+        { title: 'All', value: 'All' },
+        { title: 'Pending', value: 'Pending' },
+        { title: 'In Progress', value: 'In Progress' },
+        { title: 'Resolved', value: 'Resolved' },
+        { title: 'Closed', value: 'Closed' },
+      ],
       searchTimeout: null,
     }
   },
   computed: {
     hasActiveFilters() {
-      return this.activeFilter !== 'all' || this.searchQuery.trim() !== '';
-    }
+      return this.selectedStatus !== 'All' || this.searchQuery.trim() !== ''
+    },
+  },
+  watch: {
+    // Watch for search query changes for real-time search
+    searchQuery: {
+      handler() {
+        this.onSearchInput()
+      },
+      immediate: false,
+    },
   },
   mounted() {
     // Close dropdown when clicking outside
-    document.addEventListener('click', this.handleOutsideClick);
-    document.addEventListener('keydown', this.handleKeyDown);
+    document.addEventListener('click', this.handleOutsideClick)
+    document.addEventListener('keydown', this.handleKeyDown)
   },
   beforeUnmount() {
-    document.removeEventListener('click', this.handleOutsideClick);
-    document.removeEventListener('keydown', this.handleKeyDown);
+    document.removeEventListener('click', this.handleOutsideClick)
+    document.removeEventListener('keydown', this.handleKeyDown)
 
+    // Clear any pending search timeout
     if (this.searchTimeout) {
-      clearTimeout(this.searchTimeout);
+      clearTimeout(this.searchTimeout)
     }
   },
   methods: {
-    handleSearch() {
-      this.$emit('search', {
-        query: this.searchQuery.trim(),
-        filter: this.activeFilter,
-      });
-    },
+    onSearchInput() {
+      // Clear previous timeout to debounce search
+      if (this.searchTimeout) {
+        clearTimeout(this.searchTimeout)
+      }
 
-    setFilter(filter) {
-      this.activeFilter = filter;
-      this.handleSearch();
+      // Debounce search to avoid too many emissions (reduced to 150ms for more responsive feel)
+      this.searchTimeout = setTimeout(() => {
+        this.$emit('search', this.searchQuery.trim())
+      }, 150)
     },
-
-    clearSearch() {
-      this.searchQuery = '';
-      this.handleSearch();
-    },
-
-    clearAllFilters() {
-      this.searchQuery = '';
-      this.activeFilter = 'all';
-      this.handleSearch();
-      this.showFilterPanel = false;
-    },
-
     toggleFilter() {
-      this.showFilterPanel = !this.showFilterPanel;
+      this.showFilterPanel = !this.showFilterPanel
     },
-
+    selectStatus(status) {
+      this.selectedStatus = status
+      console.log('Status selected:', status)
+    },
     applyFilters() {
-      this.handleSearch();
-      this.showFilterPanel = false;
-    },
+      const filters = {
+        status: this.selectedStatus === 'All' ? null : this.selectedStatus,
+        search: this.searchQuery.trim() || null,
+      }
 
+      console.log('Applying filters:', filters)
+      this.$emit('filter', filters)
+      this.showFilterPanel = false
+    },
+    clearFilters() {
+      this.selectedStatus = 'All'
+      this.searchQuery = ''
+
+      const filters = {
+        status: null,
+        search: null,
+      }
+
+      console.log('Clearing filters')
+      this.$emit('filter', filters)
+      this.$emit('search', '')
+    },
     handleOutsideClick(event) {
       if (this.$refs.filterContainer && !this.$refs.filterContainer.contains(event.target)) {
-        this.showFilterPanel = false;
+        this.showFilterPanel = false
       }
     },
-
     handleKeyDown(event) {
       // Close on Escape key
       if (event.key === 'Escape' && this.showFilterPanel) {
-        this.showFilterPanel = false;
+        this.showFilterPanel = false
       }
     },
-
-    debouncedSearch() {
-      if (this.searchTimeout) {
-        clearTimeout(this.searchTimeout);
-      }
-
-      this.searchTimeout = setTimeout(() => {
-        this.handleSearch();
-      }, 300);
-    }
   },
-
-  watch: {
-    searchQuery() {
-      // Debounce search to avoid too many API calls
-      this.debouncedSearch();
-    },
-  },
-};
-
-
+}

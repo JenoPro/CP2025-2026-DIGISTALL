@@ -1,16 +1,11 @@
 <!-- eslint-disable vue/multi-word-component-names -->
-    <!-- Complaints.vue -->
+<!-- Complaints.vue -->
 <template>
   <v-app>
     <!-- Main Content -->
     <v-main>
       <v-row>
         <v-col cols="12">
-          <!-- Page Title -->
-          <div class="page-header">
-            <h1 class="page-title">{{ pageTitle }}</h1>
-          </div>
-
           <!-- Search Component -->
           <ComplaintsSearch @search="handleSearch" />
 

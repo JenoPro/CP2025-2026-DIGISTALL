@@ -6,8 +6,8 @@
   right: 0 !important;
   width: 100% !important;
   z-index: 1060 !important; /* Above sidebar and content */
-  border-bottom: 1px solid #e0e0e0;
-  background-color: white !important;
+  border-bottom: 1px solid var(--header-border);
+  background-color: var(--header-bg) !important;
   /* Ensure it stays fixed during scroll */
   transform: translateZ(0);
   will-change: transform;
@@ -17,7 +17,7 @@
   margin: 0;
   font-size: 20px;
   font-weight: 600;
-  color: #333;
+  color: var(--header-text);
   font-family: 'Poppins', sans-serif;
   margin-left: 0 !important; /* Remove default margin */
   padding-left: 100px; /* Add padding for proper spacing */

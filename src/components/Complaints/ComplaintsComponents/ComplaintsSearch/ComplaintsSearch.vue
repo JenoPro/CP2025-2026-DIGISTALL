@@ -5,13 +5,14 @@
       <v-col cols="12" md="6" lg="4">
         <v-text-field
           v-model="searchQuery"
-          label="Search stallholder"
-          prepend-inner-icon="mdi-magnify"
+          label="Search Complaints"
+          placeholder="Search complaints..."
           variant="outlined"
           clearable
           hide-details
+          prepend-inner-icon="mdi-magnify"
+          @input="onSearchInput"
           class="search-field"
-          placeholder="Search"
         ></v-text-field>
       </v-col>
 
@@ -38,7 +39,7 @@
               <div class="filter-header">
                 <div class="filter-header-content">
                   <v-icon icon="mdi-filter-variant" size="small" class="mr-2"></v-icon>
-                  <h6 class="filter-title">Filter Options</h6>
+                  <h6 class="filter-title">FILTER OPTIONS</h6>
                 </div>
                 <button class="close-btn" @click="showFilterPanel = false">
                   <v-icon icon="mdi-close" size="small"></v-icon>
@@ -48,42 +49,23 @@
               <div class="filter-content">
                 <!-- Status Filter -->
                 <div class="filter-group">
-                  <label class="filter-label">Status</label>
+                  <div class="filter-label">STATUS</div>
                   <div class="status-buttons">
                     <button
+                      v-for="status in statusOptions"
+                      :key="status.value"
                       class="status-btn"
-                      :class="{ active: activeFilter === 'all' }"
-                      @click="setFilter('all')"
+                      :class="{ active: selectedStatus === status.value }"
+                      @click="selectStatus(status.value)"
                     >
-                      All
-                    </button>
-                    <button
-                      class="status-btn"
-                      :class="{ active: activeFilter === 'active' }"
-                      @click="setFilter('active')"
-                    >
-                      Active
-                    </button>
-                    <button
-                      class="status-btn"
-                      :class="{ active: activeFilter === 'incomplete' }"
-                      @click="setFilter('incomplete')"
-                    >
-                      Incomplete
-                    </button>
-                    <button
-                      class="status-btn"
-                      :class="{ active: activeFilter === 'pending' }"
-                      @click="setFilter('pending')"
-                    >
-                      Pending
+                      {{ status.title }}
                     </button>
                   </div>
                 </div>
 
                 <!-- Action Buttons -->
                 <div class="filter-actions">
-                  <button class="clear-btn" @click="clearAllFilters">Clear All</button>
+                  <button class="clear-btn" @click="clearFilters">Clear All</button>
                   <button class="apply-btn" @click="applyFilters">Apply Filters</button>
                 </div>
               </div>
@@ -97,5 +79,3 @@
 
 <script src="./ComplaintsSearch.js"></script>
 <style scoped src="./ComplaintsSearch.css"></style>
-
-

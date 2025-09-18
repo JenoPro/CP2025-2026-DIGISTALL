@@ -1,7 +1,7 @@
 /* Sidebar Styles - FIXED POSITION */
 .sidebar {
-  background-color: #f8f9fa;
-  border-right: 1px solid #e0e0e0;
+  background-color: var(--sidebar-bg);
+  border-right: 1px solid var(--sidebar-border);
   height: 100vh !important;
   position: fixed !important;
   top: 0 !important;
@@ -9,7 +9,7 @@
   width: 80px;
   transition: width 0.3s ease;
   z-index: 1500 !important; /* Highest z-index - above header */
-  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 2px 0 8px var(--card-shadow);
   overflow: hidden;
 }
 
@@ -46,7 +46,7 @@
   margin: 0;
   font-size: 20px;
   font-weight: 600;
-  color: #333;
+  color: var(--sidebar-text);
   font-family: 'Poppins', sans-serif;
 }
 
@@ -55,7 +55,7 @@
   padding: 16px 20px 8px;
   font-size: 12px;
   font-weight: 600;
-  color: #666;
+  color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 1px;
 }

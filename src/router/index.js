@@ -11,6 +11,7 @@ import MainLayout from '../components/MainLayout/MainLayout.vue'
 import Collectors from '../components/Collectors/Collectors.vue'
 import Stalls from '../components/Stalls/Stalls.vue'
 import BranchManagement from '../components/Branch/Branch.vue'
+import Settings from '../components/Settings/Settings.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -89,6 +90,12 @@ const router = createRouter({
           name: 'Stalls',
           component: Stalls,
           meta: { title: 'Stalls' },
+        },
+        {
+          path: 'settings',
+          name: 'Settings',
+          component: Settings,
+          meta: { title: 'Settings' },
         },
       ],
     },

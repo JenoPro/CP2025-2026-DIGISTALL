@@ -4,16 +4,17 @@
 }
 
 .main-content {
-  background-color: #fafafa;
+  background-color: var(--bg-primary);
   min-height: calc(100vh - 64px);
   padding: 24px;
 }
 
 .content-placeholder {
-  background-color: white;
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
   border-radius: 8px;
   padding: 32px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px var(--card-shadow);
   text-align: center;
   min-height: 400px;
   display: flex;
@@ -27,6 +28,11 @@
   margin-bottom: 16px;
   font-size: 28px;
   font-weight: 300;
+}
+
+/* Dark theme specific override for black text */
+body.theme-dark .content-placeholder h3 {
+  color: #ffffff;
 }
 
 .content-placeholder p {

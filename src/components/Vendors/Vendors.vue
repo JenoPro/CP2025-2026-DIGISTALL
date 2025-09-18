@@ -28,39 +28,122 @@
           </v-col>
         </v-row>
 
-        <!-- Filters -->
-        <v-row class="mb-4" align="center">
-          <v-col cols="12" md="4">
-            <v-text-field
-              v-model="search"
-              label="Search"
-              variant="outlined"
-              density="comfortable"
-              clearable
-              prepend-inner-icon="mdi-magnify"
-            />
-          </v-col>
-          <v-col cols="6" md="3">
-            <v-select
-              v-model="collectorFilter"
-              :items="collectors"
-              label="Assigned Collector"
-              variant="outlined"
-              density="comfortable"
-              clearable
-            />
-          </v-col>
-          <v-col cols="6" md="3">
-            <v-select
-              v-model="statusFilter"
-              :items="statuses"
-              label="Status"
-              variant="outlined"
-              density="comfortable"
-              clearable
-            />
-          </v-col>
-        </v-row>
+        <!-- Search and Filter Section -->
+        <div class="search-filter-section mb-6">
+          <v-row no-gutters class="align-center justify-space-between">
+            <!-- Search Field -->
+            <v-col cols="12" md="6" lg="4">
+              <v-text-field
+                v-model="search"
+                label="Search vendors"
+                prepend-inner-icon="mdi-magnify"
+                variant="outlined"
+                clearable
+                hide-details
+                class="search-field"
+                placeholder="Search by name, email, business..."
+              ></v-text-field>
+            </v-col>
+
+            <!-- Filter Button -->
+            <v-col cols="auto">
+              <div class="filter-container" ref="filterContainer">
+                <v-btn
+                  variant="outlined"
+                  class="filter-btn"
+                  :class="{ 'filter-active': showFilterPanel }"
+                  @click="toggleFilter"
+                >
+                  <v-icon icon="mdi-filter-variant" size="small" class="mr-2"></v-icon>
+                  Filter
+                  <v-icon
+                    :icon="showFilterPanel ? 'mdi-chevron-up' : 'mdi-chevron-down'"
+                    size="small"
+                    class="ml-1"
+                  ></v-icon>
+                </v-btn>
+
+                <!-- Filter Dropdown Panel -->
+                <transition name="slide-down">
+                  <div v-show="showFilterPanel" class="filter-dropdown">
+                    <div class="filter-card">
+                      <div class="filter-header">
+                        <span class="filter-title">Filter Options</span>
+                        <v-btn
+                          icon
+                          size="small"
+                          variant="plain"
+                          class="close-btn"
+                          @click="showFilterPanel = false"
+                        >
+                          <v-icon icon="mdi-close" size="small"></v-icon>
+                        </v-btn>
+                      </div>
+
+                      <div class="filter-content">
+                        <!-- Status Filter -->
+                        <div class="filter-group">
+                          <label class="filter-label">Status</label>
+                          <div class="status-buttons">
+                            <v-btn
+                              variant="outlined"
+                              class="status-btn"
+                              :class="{ active: statusFilter === null }"
+                              @click="statusFilter = null"
+                            >
+                              All
+                            </v-btn>
+                            <v-btn
+                              v-for="status in statuses"
+                              :key="status.value"
+                              variant="outlined"
+                              class="status-btn"
+                              :class="{ active: statusFilter === status.value }"
+                              @click="statusFilter = status.value"
+                            >
+                              {{ status.title }}
+                            </v-btn>
+                          </div>
+                        </div>
+
+                        <!-- Collector Filter -->
+                        <div class="filter-group">
+                          <label class="filter-label">Assigned Collector</label>
+                          <v-select
+                            v-model="collectorFilter"
+                            :items="collectors"
+                            label="Select collector"
+                            variant="outlined"
+                            clearable
+                            density="comfortable"
+                          />
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="filter-actions">
+                          <v-btn
+                            variant="outlined"
+                            class="action-btn"
+                            @click="clearAllFilters"
+                          >
+                            Clear All
+                          </v-btn>
+                          <v-btn
+                            color="primary"
+                            class="action-btn"
+                            @click="applyFilters"
+                          >
+                            Apply Filters
+                          </v-btn>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </transition>
+              </div>
+            </v-col>
+          </v-row>
+        </div>
 
         <!-- Data Table -->
         <v-data-table

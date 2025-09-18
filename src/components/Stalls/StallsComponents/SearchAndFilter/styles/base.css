@@ -1,0 +1,47 @@
+/* Base layout styles for SearchAndFilter component */
+
+/* Main container */
+.search-filter-section {
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px var(--card-shadow);
+  border: 1px solid var(--card-border);
+}
+
+.search-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+.filter-sort-container {
+  display: flex;
+  gap: 12px;
+}
+
+/* Filter container */
+.filter-container {
+  position: relative;
+}
+
+.filter-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 1000;
+  min-width: 350px;
+  margin-top: 8px;
+}
+
+/* Results section layout */
+.results-info {
+  padding: 16px 0 0;
+  border-top: 1px solid var(--card-border);
+}
+
+.results-left {
+  display: flex;
+  align-items: center;
+}

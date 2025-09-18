@@ -46,18 +46,64 @@ export default {
 
     // UPDATED: Use dynamic floors from API
     floorOptions() {
-      return this.availableFloors.map((floor) => ({
+      const apiFloors = this.availableFloors.map((floor) => ({
         title: floor.title || floor.floor_name,
         value: floor.floor_id || floor.value,
       }))
+
+      // Also include floors from current stall data as backup
+      if (this.stallsData.length > 0) {
+        const stallFloors = [
+          ...new Set(
+            this.stallsData
+              .map((stall) => ({
+                title: stall.floorName || stall.floor,
+                value: stall.floorId || stall.floorName || stall.floor,
+              }))
+              .filter((item) => item.title),
+          ),
+        ]
+
+        // Merge API floors with stall floors, removing duplicates
+        const allFloors = [...apiFloors, ...stallFloors]
+        const uniqueFloors = allFloors.filter(
+          (floor, index, self) => index === self.findIndex((f) => f.value === floor.value),
+        )
+        return uniqueFloors
+      }
+
+      return apiFloors
     },
 
     // UPDATED: Use dynamic sections from API
     sectionOptions() {
-      return this.availableSections.map((section) => ({
+      const apiSections = this.availableSections.map((section) => ({
         title: section.title || section.section_name,
         value: section.section_id || section.value,
       }))
+
+      // Also include sections from current stall data as backup
+      if (this.stallsData.length > 0) {
+        const stallSections = [
+          ...new Set(
+            this.stallsData
+              .map((stall) => ({
+                title: stall.sectionName || stall.section,
+                value: stall.sectionId || stall.sectionName || stall.section,
+              }))
+              .filter((item) => item.title),
+          ),
+        ]
+
+        // Merge API sections with stall sections, removing duplicates
+        const allSections = [...apiSections, ...stallSections]
+        const uniqueSections = allSections.filter(
+          (section, index, self) => index === self.findIndex((s) => s.value === section.value),
+        )
+        return uniqueSections
+      }
+
+      return apiSections
     },
 
     // UPDATED: Generate location options from current stall data
@@ -103,8 +149,17 @@ export default {
           stall.description.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
           stall.section.toLowerCase().includes(this.searchQuery.toLowerCase())
 
-        const matchesFloor = !this.selectedFloor || stall.floor === this.selectedFloor
-        const matchesSection = !this.selectedSection || stall.section === this.selectedSection
+        const matchesFloor =
+          !this.selectedFloor ||
+          stall.floorId === this.selectedFloor ||
+          stall.floor === this.selectedFloor ||
+          stall.floorName === this.selectedFloor
+
+        const matchesSection =
+          !this.selectedSection ||
+          stall.sectionId === this.selectedSection ||
+          stall.section === this.selectedSection ||
+          stall.sectionName === this.selectedSection
         const matchesLocation = !this.selectedLocation || stall.location === this.selectedLocation
 
         const matchesPriceType =

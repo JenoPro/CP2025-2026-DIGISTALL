@@ -1,0 +1,13 @@
+.security-settings {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.security-header {
+  text-align: center;
+  padding: 20px 0;
+}
+
+.password-strength {
+  margin-top: 16px;
+}

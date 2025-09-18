@@ -1,7 +1,8 @@
 .applicants-table {
-  background: white;
+  background: var(--table-bg);
   border-radius: 8px;
   overflow: hidden;
+  box-shadow: 0 2px 8px var(--card-shadow);
 }
 
 .table-card {
@@ -10,8 +11,8 @@
 }
 
 .table-header {
-  background: #1976d2;
-  color: white;
+  background: var(--table-header-bg);
+  color: var(--text-primary);
 }
 
 .header-row,
@@ -24,12 +25,17 @@
 }
 
 .table-row {
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid var(--table-border);
   transition: background-color 0.2s;
+  background-color: var(--table-bg);
+}
+
+.table-row:nth-child(even) {
+  background-color: var(--table-stripe);
 }
 
 .table-row:hover {
-  background-color: #f5f5f5;
+  background-color: var(--table-hover) !important;
 }
 
 .table-row:last-child {
@@ -46,8 +52,8 @@
 
 .header-cell {
   font-weight: 600;
-  font-size: 14px;
-  color: white;
+  font-size: 12px;
+  color: var(--text-primary);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -59,6 +65,11 @@
   overflow: hidden;
 }
 
+/* Dark theme override for table cell text */
+body.theme-dark .table-cell {
+  color: #e0e0e0;
+}
+
 .id-col {
   font-weight: 600;
   justify-content: center;
@@ -66,19 +77,16 @@
 
 .name-col,
 .email-col {
-  justify-content: flex-start;
   justify-content: center;
 }
 
 .phone-col {
   text-transform: uppercase;
-  justify-content: flex-start;
   justify-content: center;
 }
 
 .address-col {
   min-width: 0;
-  justify-content: flex-start;
   justify-content: center;
 }
 
@@ -87,6 +95,7 @@
   overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   word-break: break-word;
   text-align: left;

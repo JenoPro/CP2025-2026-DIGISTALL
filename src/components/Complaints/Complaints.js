@@ -13,7 +13,6 @@ export default {
   },
   data() {
     return {
-      pageTitle: "Complaints Management",
       searchQuery: "",
       activeFilter: "all",
       selectedComplaints: {},
