@@ -169,10 +169,6 @@ export default {
       console.log('Final section options:', this.sectionOptions)
     },
 
-    openAddStallModal() {
-      this.$emit('open-modal')
-    },
-
     closeModal() {
       this.$emit('close-modal')
       this.resetForm()
