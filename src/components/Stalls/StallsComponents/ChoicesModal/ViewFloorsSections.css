@@ -1,0 +1,290 @@
+/* View Modal Styles */
+.view-modal-card {
+  border-radius: 12px !important;
+  overflow: hidden;
+}
+
+.view-modal-header {
+  background: #002181 !important;
+  color: white !important;
+  padding: 16px 24px !important;
+  position: relative;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+}
+
+.view-modal-header span {
+  font-size: 1.25rem !important;
+  font-weight: 600 !important;
+}
+
+/* Search and Filter Bar */
+.search-filter-bar {
+  background: #f8f9fa;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 16px 24px !important;
+}
+
+/* Content Area */
+.content-area {
+  background: white;
+  padding: 24px !important;
+}
+
+/* Loading Container */
+.loading-container {
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Empty State */
+.empty-state {
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Floor Items */
+.floor-item {
+  margin-bottom: 16px;
+}
+
+.floor-card {
+  border-radius: 8px !important;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  border: 1px solid #e0e0e0 !important;
+}
+
+.floor-card:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+  transform: translateY(-1px);
+}
+
+.floor-header {
+  background: #fafafa !important;
+  border-bottom: 1px solid #e0e0e0 !important;
+  padding: 16px 20px !important;
+}
+
+.floor-header h4 {
+  font-size: 1.2rem !important;
+  font-weight: 600 !important;
+  color: #2c3e50 !important;
+  margin: 0 !important;
+}
+
+.floor-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* Sections Container */
+.sections-container {
+  background: white;
+}
+
+.sections-list {
+  background: #fafafa !important;
+  padding: 16px !important;
+}
+
+.section-card {
+  border-radius: 8px !important;
+  transition: all 0.2s ease;
+  background: white !important;
+  border: 1px solid #e0e0e0 !important;
+}
+
+.section-card:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+  transform: translateY(-1px);
+}
+
+.no-sections {
+  background: #fafafa !important;
+  text-align: center;
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px !important;
+  border: 1px solid #e0e0e0 !important;
+  margin: 16px !important;
+}
+
+/* Card Actions */
+.v-card-actions {
+  border-top: 1px solid #e0e0e0 !important;
+  background-color: #fafafa !important;
+  padding: 16px 24px !important;
+}
+
+/* Button Styling */
+.v-btn {
+  border-radius: 8px !important;
+  font-weight: 500 !important;
+  text-transform: none !important;
+  letter-spacing: 0.3px !important;
+}
+
+.cancel-btn {
+  background: rgb(206, 7, 7) !important;
+  color: #ffffff !important;
+  border: 1px solid #17171798 !important;
+  border-radius: 8px !important;
+  padding: 8px 18px !important;
+  transition: all 0.25s ease-in-out !important;
+}
+
+.cancel-btn:hover {
+  background: rgb(180, 6, 6) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 12px rgba(206, 7, 7, 0.3) !important;
+}
+
+/* Responsive Design */
+@media (max-width: 960px) {
+  .view-modal-header {
+    padding: 12px 20px !important;
+  }
+  
+  .view-modal-header span {
+    font-size: 1.1rem !important;
+  }
+  
+  .search-filter-bar {
+    padding: 12px 16px !important;
+  }
+  
+  .content-area {
+    padding: 16px !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .v-dialog {
+    margin: 12px !important;
+  }
+  
+  .view-modal-header {
+    padding: 12px 16px !important;
+  }
+  
+  .floor-header {
+    padding: 12px 16px !important;
+  }
+  
+  .floor-header h4 {
+    font-size: 1.1rem !important;
+  }
+  
+  .sections-list {
+    padding: 12px !important;
+  }
+  
+  .content-area {
+    padding: 12px !important;
+  }
+  
+  .v-card-actions {
+    padding: 12px 16px !important;
+  }
+}
+
+/* Transitions */
+.v-expand-transition-enter-active,
+.v-expand-transition-leave-active {
+  transition: all 0.3s ease;
+}
+
+.v-expand-transition-enter-from,
+.v-expand-transition-leave-to {
+  opacity: 0;
+  max-height: 0;
+}
+
+/* Content Animation */
+.fade-in {
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Scrollbar Styling */
+.content-area::-webkit-scrollbar {
+  width: 6px;
+}
+
+.content-area::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.content-area::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.content-area::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Close Button Styling (if you have one in the header) */
+.view-modal-header .v-btn.icon {
+  border-radius: 50% !important;
+  width: 44px !important;
+  height: 44px !important;
+  min-width: 44px !important;
+  background: rgba(255, 255, 255, 0.9) !important;
+  color: #002181 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+  border: 2px solid rgba(255, 255, 255, 0.3) !important;
+  padding: 0 !important;
+  transition: all 0.2s ease !important;
+}
+
+.view-modal-header .v-btn.icon:hover {
+  background: rgba(255, 255, 255, 1) !important;
+  transform: scale(1.05) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+.view-modal-header .v-btn.icon .v-icon {
+  margin: 0 !important;
+  font-size: 24px !important;
+  color: #002181 !important;
+}
+
+/* Additional styling for better consistency */
+.v-card {
+  border-radius: 12px !important;
+}
+
+.v-text-field .v-field,
+.v-select .v-field {
+  border-radius: 8px !important;
+}
+
+.v-text-field .v-field:hover,
+.v-select .v-field:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+.v-text-field.v-input--focused .v-field,
+.v-select.v-input--focused .v-field {
+  box-shadow: 0 0 0 2px rgba(0, 33, 129, 0.2) !important;
+}

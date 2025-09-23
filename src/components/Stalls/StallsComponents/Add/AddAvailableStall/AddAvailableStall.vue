@@ -154,31 +154,8 @@
         </div>
       </v-card>
     </v-dialog>
-
-    <!-- Floating Button Container -->
-    <div class="floating-button-container">
-      <!-- Pulse rings for ambient effect -->
-      <div class="pulse-rings" v-if="!showModal">
-        <div class="pulse-ring pulse-ring-1"></div>
-        <div class="pulse-ring pulse-ring-2"></div>
-        <div class="pulse-ring pulse-ring-3"></div>
-        <div class="pulse-ring pulse-ring-4"></div>
-      </div>
-
-      <!-- Floating Action Button with Tooltip -->
-      <v-tooltip left>
-        <template v-slot:activator="{ on, attrs }">
-          <v-btn fab color="primary" class="add-stall-btn" :class="{ 'glow-effect': !showModal }"
-            @click="openAddStallModal" v-bind="attrs" v-on="on">
-            <div class="ripple-overlay"></div>
-            <v-icon>mdi-plus</v-icon>
-          </v-btn>
-        </template>
-        <span>Add New Stall</span>
-      </v-tooltip>
-    </div>
   </div>
 </template>
 
-<script src="../Add/AddAvailableStall.js"></script>
-<style scoped src="../Add/AddAvailableStall.css"></style>
+<script src="../AddAvailableStall/AddAvailableStall.js"></script>
+<style scoped src="../AddAvailableStall//AddAvailableStall.css"></style>
