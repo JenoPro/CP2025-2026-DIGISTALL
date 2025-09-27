@@ -9,6 +9,30 @@
       <v-form ref="form" v-model="valid">
         <v-card-text class="pt-4">
           <v-container>
+            <!-- Error Alert -->
+            <v-alert
+              v-if="errorMessage"
+              type="error"
+              variant="tonal"
+              class="mb-4"
+              closable
+              @click:close="errorMessage = ''"
+            >
+              {{ errorMessage }}
+            </v-alert>
+
+            <!-- Success Alert -->
+            <v-alert
+              v-if="successMessage"
+              type="success"
+              variant="tonal"
+              class="mb-4"
+              closable
+              @click:close="successMessage = ''"
+            >
+              {{ successMessage }}
+            </v-alert>
+
             <!-- Branch Info -->
             <v-row v-if="branch">
               <v-col cols="12">
@@ -38,6 +62,7 @@
                   variant="outlined"
                   prepend-inner-icon="mdi-account"
                   placeholder="Enter first name"
+                  :disabled="loading"
                 />
               </v-col>
 
@@ -49,6 +74,7 @@
                   variant="outlined"
                   prepend-inner-icon="mdi-account"
                   placeholder="Enter last name"
+                  :disabled="loading"
                 />
               </v-col>
 
@@ -60,6 +86,7 @@
                   variant="outlined"
                   prepend-inner-icon="mdi-account-circle"
                   placeholder="Enter username"
+                  :disabled="loading"
                 />
               </v-col>
 
@@ -67,11 +94,14 @@
                 <v-text-field
                   v-model="formData.manager_password"
                   label="Password *"
-                  type="password"
+                  :type="showPassword ? 'text' : 'password'"
                   :rules="[rules.required, rules.minLength]"
                   variant="outlined"
                   prepend-inner-icon="mdi-lock"
-                  placeholder="Enter password"
+                  :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                  @click:append-inner="showPassword = !showPassword"
+                  placeholder="Enter password (min 6 characters)"
+                  :disabled="loading"
                 />
               </v-col>
 
@@ -83,6 +113,7 @@
                   variant="outlined"
                   prepend-inner-icon="mdi-email"
                   placeholder="manager@example.com"
+                  :disabled="loading"
                 />
               </v-col>
 
@@ -93,6 +124,7 @@
                   variant="outlined"
                   prepend-inner-icon="mdi-phone"
                   placeholder="+63 XXX XXX XXXX"
+                  :disabled="loading"
                 />
               </v-col>
 
@@ -104,6 +136,7 @@
                   :rules="[rules.required]"
                   variant="outlined"
                   prepend-inner-icon="mdi-check-circle"
+                  :disabled="loading"
                 />
               </v-col>
             </v-row>
@@ -119,7 +152,7 @@
             color="primary"
             @click="assignManager"
             :loading="loading"
-            :disabled="!valid"
+            :disabled="!valid || loading"
           >
             {{ branch?.manager_name ? "Update" : "Assign" }} Manager
           </v-btn>
@@ -149,6 +182,9 @@ export default {
     return {
       valid: false,
       loading: false,
+      showPassword: false,
+      errorMessage: "",
+      successMessage: "",
       formData: {
         first_name: "",
         last_name: "",
@@ -202,6 +238,10 @@ export default {
         contact_number: "",
         status: "Active",
       };
+      this.errorMessage = "";
+      this.successMessage = "";
+      this.showPassword = false;
+
       if (this.$refs.form) {
         this.$refs.form.resetValidation();
       }
@@ -212,25 +252,51 @@ export default {
     },
 
     async assignManager() {
-      const { valid } = await this.$refs.form.validate();
-      if (!valid) return;
+      console.log("🚀 Starting manager assignment process...");
 
+      // Validate form
+      const { valid } = await this.$refs.form.validate();
+      if (!valid) {
+        console.log("❌ Form validation failed");
+        this.errorMessage = "Please fill in all required fields correctly.";
+        return;
+      }
+
+      // Clear previous messages
+      this.errorMessage = "";
+      this.successMessage = "";
       this.loading = true;
+
       try {
+        console.log("📤 Sending request with payload:", {
+          ...this.formData,
+          branch_id: this.branch.branch_id,
+          manager_password: "[HIDDEN]",
+        });
+
         const payload = {
           ...this.formData,
           branch_id: this.branch.branch_id,
         };
 
+        const authToken = sessionStorage.getItem("authToken");
+        if (!authToken) {
+          throw new Error("No authentication token found. Please log in again.");
+        }
+
         const response = await axios.post(
-          "http://localhost:3001/api/admin/branch-managers",
+          "http://localhost:3001/api/branches/branch-managers",
           payload,
           {
             headers: {
-              Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
+              Authorization: `Bearer ${authToken}`,
+              "Content-Type": "application/json",
             },
+            timeout: 10000, // 10 second timeout
           }
         );
+
+        console.log("✅ Server response:", response.data);
 
         if (response.data && response.data.success) {
           // Update branch with manager info
@@ -240,12 +306,41 @@ export default {
             manager_assigned: true,
           };
 
+          this.successMessage = response.data.message || "Manager assigned successfully!";
+
+          // Emit success event
           this.$emit("manager-assigned", updatedBranch);
-          this.closeDialog();
+
+          // Close dialog after a brief delay to show success message
+          setTimeout(() => {
+            this.closeDialog();
+          }, 1500);
+        } else {
+          throw new Error(response.data?.message || "Unexpected response format");
         }
       } catch (error) {
-        console.error("Error assigning manager:", error);
-        // Handle error - could emit an error event or show a snackbar
+        console.error("❌ Error assigning manager:", error);
+
+        let errorMsg = "Failed to assign manager. ";
+
+        if (error.response) {
+          // Server responded with error status
+          console.error("Server error response:", error.response.data);
+          errorMsg +=
+            error.response.data?.message || `Server error (${error.response.status})`;
+        } else if (error.request) {
+          // Request was made but no response received
+          console.error("Network error:", error.request);
+          errorMsg += "Network error. Please check your connection.";
+        } else if (error.code === "ECONNABORTED") {
+          // Request timeout
+          errorMsg += "Request timeout. Please try again.";
+        } else {
+          // Other errors
+          errorMsg += error.message;
+        }
+
+        this.errorMessage = errorMsg;
       } finally {
         this.loading = false;
       }

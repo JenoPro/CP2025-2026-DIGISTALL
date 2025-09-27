@@ -88,7 +88,7 @@ export default {
           }
         }
 
-        // If no stored data, fetch from API (if API endpoint exists)
+        // If no stored data, fetch from API
         const token = sessionStorage.getItem('authToken')
         if (!token) {
           console.warn('⚠️ No authentication token found')
@@ -96,13 +96,55 @@ export default {
           return
         }
 
-        // For now, use the stored admin data from login
-        // In the future, you can add an API endpoint to fetch fresh admin data
-        console.log('⚠️ No stored admin data found')
-        this.error = 'Admin data not available'
+        console.log('📡 Fetching admin data from server...')
+
+        const response = await axios.get('http://localhost:3001/api/auth/admin-info', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          timeout: 10000, // 10 second timeout
+        })
+
+        if (response.data && response.data.success && response.data.admin) {
+          this.adminData = response.data.admin
+          console.log('✅ Admin data loaded from API:', this.adminData)
+
+          // Store in sessionStorage for quick access
+          sessionStorage.setItem('adminData', JSON.stringify(this.adminData))
+        } else {
+          console.warn('⚠️ No admin data found in response')
+          this.error = 'Admin data not available'
+        }
       } catch (error) {
         console.error('❌ Failed to fetch admin data:', error)
-        this.error = 'Failed to load admin information'
+
+        if (error.response?.status === 401) {
+          this.error = 'Authentication expired. Please login again.'
+          // Clear invalid token
+          sessionStorage.removeItem('authToken')
+          localStorage.removeItem('authToken')
+          // Redirect to login
+          this.$router.push('/')
+        } else if (error.response?.status === 403) {
+          this.error = 'Access denied. Admin role required.'
+        } else if (error.code === 'ECONNABORTED') {
+          this.error = 'Request timeout. Please try again.'
+        } else {
+          this.error = 'Failed to load admin information'
+        }
+
+        // Try to use stored data as fallback
+        const storedData = sessionStorage.getItem('adminData')
+        if (storedData) {
+          try {
+            this.adminData = JSON.parse(storedData)
+            console.log('📦 Using stored admin data as fallback')
+            this.error = null
+          } catch (parseError) {
+            console.error('Error parsing stored admin data:', parseError)
+          }
+        }
       } finally {
         this.loading = false
       }
