@@ -37,6 +37,7 @@ export default {
       successMessage: '',
       popupTimeout: null,
       refreshTimeout: null, // Added for auto-refresh timing
+      lastAddedStall: null, // Store the last added stall data for real-time updates
       // API base URL
       // eslint-disable-next-line no-undef
       apiBaseUrl: process.env.VUE_APP_API_URL || 'http://localhost:3001',
@@ -113,7 +114,7 @@ export default {
 
           // Initially show all sections (will be filtered when floor is selected)
           this.sectionOptions = this.allSections.map((section) => ({
-            title: `${section.section_name} (${section.section_code})`,
+            title: section.section_name, // FIXED: Remove section_code reference
             value: section.section_id,
             sectionData: section,
           }))
@@ -153,7 +154,7 @@ export default {
       if (!floorId || !this.allSections.length) {
         // Show all sections if no floor selected or no sections available
         this.sectionOptions = this.allSections.map((section) => ({
-          title: `${section.section_name} (${section.section_code})`,
+          title: section.section_name, // FIXED: Remove section_code reference
           value: section.section_id,
           sectionData: section,
         }))
@@ -166,11 +167,11 @@ export default {
       console.log('Converted floorId to:', numericFloorId)
 
       const filteredSections = this.allSections.filter((section) => {
-        // Try different possible field names for floor_id
-        const sectionFloorId = parseInt(section.floor_id || section.floorId || section.floor_number)
+        // Use floor_id from the updated schema
+        const sectionFloorId = parseInt(section.floor_id)
         const matches = sectionFloorId === numericFloorId
         console.log(
-          `Section ${section.section_name} (floor_id: ${section.floor_id}, floorId: ${section.floorId}, floor_number: ${section.floor_number}) => parsed: ${sectionFloorId}, matches: ${matches}`,
+          `Section ${section.section_name} (floor_id: ${section.floor_id}, floorId: ${section.floorId}) => parsed: ${sectionFloorId}, matches: ${matches}`,
         )
         return matches
       })
@@ -178,7 +179,7 @@ export default {
       console.log('Filtered sections:', filteredSections.length, 'for floor:', numericFloorId)
 
       this.sectionOptions = filteredSections.map((section) => ({
-        title: `${section.section_name} (${section.section_code})`,
+        title: section.section_name, // FIXED: Remove section_code reference
         value: section.section_id,
         sectionData: section,
       }))
@@ -218,10 +219,11 @@ export default {
       setTimeout(() => {
         this.popupState = 'success'
 
-        // Auto close after 2 seconds and trigger refresh
+        // Auto close after 2 seconds and emit stall-added event
         this.popupTimeout = setTimeout(() => {
           this.closeSuccessPopup()
-          this.triggerAutoRefresh() // Added auto-refresh trigger
+          // Emit event with the new stall data for real-time update (no full refresh)
+          this.$emit('stall-added', this.lastAddedStall)
         }, 2000)
       }, 1500)
     },
@@ -238,41 +240,9 @@ export default {
       this.showSuccessPopup = false
       this.popupState = 'loading'
       this.successMessage = ''
-    },
 
-    // NEW METHOD: Auto-refresh functionality
-    triggerAutoRefresh() {
-      console.log('Triggering auto-refresh after successful stall upload...')
-
-      // Method 1: Emit event to parent component to refresh data
-      this.$emit('stall-added')
-
-      // Method 2: If parent component has a refresh method, call it
-      if (this.$parent && this.$parent.refreshStalls) {
-        this.$parent.refreshStalls()
-      }
-
-      // Method 3: If using Vuex store, dispatch refresh action
-      if (this.$store && this.$store.dispatch) {
-        this.$store.dispatch('refreshStalls').catch((error) => {
-          console.warn('Vuex refresh failed:', error)
-        })
-      }
-
-      // Method 4: Force page reload as fallback (use sparingly)
-      // Uncomment the next line if you want to force a full page reload
-      // this.refreshTimeout = setTimeout(() => window.location.reload(), 500)
-
-      // Method 5: Router refresh (if using vue-router)
-      if (this.$router && this.$route) {
-        this.$router.go(0) // This will refresh the current route
-      }
-    },
-
-    // NEW METHOD: Manual refresh trigger (can be called externally)
-    manualRefresh() {
-      console.log('Manual refresh triggered')
-      this.triggerAutoRefresh()
+      // Close the add stall modal after success popup closes
+      this.closeModal()
     },
 
     async convertImageToBase64(file) {
@@ -297,14 +267,14 @@ export default {
       this.loading = true
 
       try {
-        // FIXED: Use the field names that the backend expects
+        // FIXED: Use the correct field names and include floor_id for new schema
         const stallData = {
           stallNumber: this.newStall.stallNumber, // Backend expects 'stallNumber'
           price: parseFloat(this.newStall.price), // Backend expects 'price'
           location: this.newStall.location, // Backend expects 'location'
-          size: this.newStall.size, // Send size directly, no dimensions
-          floor: this.newStall.floor,
-          section: this.newStall.section,
+          size: this.newStall.size, // Send size directly
+          floorId: this.newStall.floorId, // FIXED: Send floorId for new schema
+          sectionId: this.newStall.sectionId, // FIXED: Send sectionId instead of section
           description: this.newStall.description,
           isAvailable: this.newStall.isAvailable,
           priceType: this.newStall.priceType,
@@ -375,14 +345,17 @@ export default {
         }
 
         if (result.success) {
+          // Store the stall data for later use
+          this.lastAddedStall = result.data || stallData
+
           // Show success popup animation
           this.showSuccessAnimation(result.message || 'Stall added successfully!')
 
           // ENHANCED: Additional success actions
-          console.log('Stall added successfully, preparing to refresh...')
+          console.log('Stall added successfully - will show real-time update after popup')
 
-          // Emit success event with stall data for parent components
-          this.$emit('stall-added', result.data || stallData)
+          // Do NOT emit immediately - wait for popup to close to avoid double-display
+          // The event will be emitted from the popup timeout
         } else {
           throw new Error(result.message || 'Failed to add stall')
         }

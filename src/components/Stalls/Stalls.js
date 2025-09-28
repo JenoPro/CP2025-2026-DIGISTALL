@@ -136,13 +136,21 @@ export default {
 
     // Transform backend stall data to frontend format (UPDATED with new hierarchical structure)
     transformStallData(stall) {
-      console.log('Transforming stall data:', stall)
+      console.log('🔄 Transforming stall data:', stall)
+      console.log('🔄 Available ID fields:', {
+        stall_id: stall.stall_id,
+        id: stall.id,
+        ID: stall.ID,
+      })
+
+      const extractedId = stall.stall_id || stall.id || stall.ID
+      console.log('🔄 Extracted ID:', extractedId)
 
       return {
-        // Basic stall info
-        id: stall.stall_id,
-        stallNumber: stall.stall_no,
-        price: this.formatPrice(stall.rental_price),
+        // Basic stall info - More robust ID extraction
+        id: extractedId,
+        stallNumber: stall.stall_no || stall.stallNumber,
+        price: this.formatPrice(stall.rental_price || stall.price),
         location: stall.stall_location,
         size: stall.size,
         dimensions: stall.dimensions,
@@ -225,21 +233,44 @@ export default {
 
     // Edit stall functions
     handleStallEdit(stall) {
+      console.log('🔧 Opening edit modal for stall:', stall)
+      console.log('🔧 Stall ID in object:', stall.id)
+
       this.selectedStall = { ...stall }
+      console.log('🔧 Selected stall set to:', this.selectedStall)
+
       this.showEditModal = true
     },
 
     async handleStallUpdated(updatedStallData) {
       try {
-        // Transform the updated data
+        console.log('🔄 Parent received stall update (raw backend data):', updatedStallData)
+
+        // Transform the raw backend data using the same method used for initial load
         const updatedStall = this.transformStallData(updatedStallData)
+        console.log('🔄 Transformed stall data:', updatedStall)
+
+        console.log('🔄 Looking for stall with ID:', updatedStall.id)
+        console.log(
+          '🔄 Current stallsData IDs:',
+          this.stallsData.map((s) => ({ id: s.id, stallNumber: s.stallNumber })),
+        )
 
         // Update local data
         const index = this.stallsData.findIndex((s) => s.id === updatedStall.id)
+        console.log('🔄 Found stall at index:', index)
 
         if (index > -1) {
+          console.log('🔄 Old stall data:', this.stallsData[index])
           this.stallsData[index] = { ...updatedStall }
+          console.log('🔄 New stall data:', this.stallsData[index])
+
           this.displayStalls = [...this.stallsData]
+          console.log('✅ Local stall data updated successfully!')
+
+          // No additional success message - EditStall component handles the popup
+        } else {
+          console.error('❌ Could not find stall to update in local data')
         }
 
         this.closeEditModal()
@@ -292,11 +323,14 @@ export default {
     // UPDATED: Handle stall added with proper event name
     async handleStallAdded(newStallData) {
       try {
-        console.log('Handling new stall data:', newStallData)
+        console.log('🆕 Handling new stall data (from AddAvailableStall):', newStallData)
+        console.log('🆕 Raw stall data type:', typeof newStallData)
+        console.log('🆕 Raw stall data keys:', Object.keys(newStallData || {}))
 
         // Transform the new stall data and add to local array
         const transformedStall = this.transformStallData(newStallData)
-        console.log('Transformed new stall:', transformedStall)
+        console.log('🆕 Transformed new stall:', transformedStall)
+        console.log('🆕 Final stall ID:', transformedStall.id)
 
         this.stallsData.unshift(transformedStall) // Add to beginning
         this.displayStalls = [...this.stallsData]
