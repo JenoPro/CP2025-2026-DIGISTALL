@@ -45,8 +45,12 @@
 
 /* Choice Icons */
 .choice-icon-container {
-  width: 100px !important;
-  height: 100px !important;
+  width: 65px !important;
+  height: 65px !important;
+  min-width: 65px !important;
+  min-height: 65px !important;
+  max-width: 65px !important;
+  max-height: 65px !important;
   border-radius: 50% !important;
   display: flex !important;
   align-items: center !important;
@@ -54,6 +58,16 @@
   margin: 0 auto 24px !important;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25) !important;
   transition: all 0.3s ease !important;
+  position: relative !important;
+  overflow: hidden !important;
+  flex-shrink: 0 !important;
+  aspect-ratio: 1 / 1 !important;
+}
+
+.choice-icon-container .v-icon {
+  flex-shrink: 0 !important;
+  width: auto !important;
+  height: auto !important;
 }
 
 .choice-card:hover .choice-icon-container {
@@ -69,7 +83,27 @@
 }
 
 .view-icon {
-  background: #ff9800 !important;
+  background: #1976d2 !important;
+}
+
+/* Ensure perfect circles for all icon containers */
+.stall-icon,
+.floor-section-icon,
+.view-icon {
+  border-radius: 50% !important;
+  width: 96px !important;
+  height: 96px !important;
+  position: relative !important;
+}
+
+.stall-icon::after,
+.floor-section-icon::after,
+.view-icon::after {
+  content: '';
+  display: block;
+  padding-bottom: 100%;
+  width: 0;
+  height: 0;
 }
 
 .stall-card:hover .stall-icon {
@@ -81,7 +115,7 @@
 }
 
 .view-card:hover .view-icon {
-  box-shadow: 0 8px 20px rgba(255, 152, 0, 0.4) !important;
+  box-shadow: 0 8px 20px rgba(25, 118, 210, 0.4) !important;
 }
 
 /* Choice Content */
@@ -103,7 +137,7 @@
 }
 
 .view-card:hover .choice-title {
-  color: #ff9800 !important;
+  color: #1976d2 !important;
 }
 
 .choice-description {
@@ -204,17 +238,17 @@
 }
 
 .view-card:hover {
-  border-color: #ff9800 !important;
-  box-shadow: 0 8px 20px rgba(255, 152, 0, 0.15) !important;
+  border-color: #1976d2 !important;
+  box-shadow: 0 8px 20px rgba(25, 118, 210, 0.15) !important;
 }
 
 .view-card .choice-btn {
-  background: #ff9800 !important;
+  background: #1976d2 !important;
   color: white !important;
 }
 
 .view-icon {
-  background: #ff9800 !important;
+  background: #1976d2 !important;
 }
 
 /* Helper Alert */
@@ -413,25 +447,25 @@
   .choice-card {
     height: 360px;
   }
-  
+
   .choice-icon-container {
     width: 80px;
     height: 80px;
     margin-bottom: 20px;
   }
-  
+
   .choice-icon-container .v-icon {
     font-size: 44px;
   }
-  
+
   .choice-title {
     font-size: 1.25rem;
   }
-  
+
   .choice-description {
     font-size: 1rem;
   }
-  
+
   .choice-card-content {
     padding: 28px;
   }
@@ -441,35 +475,35 @@
   .choice-modal-header {
     padding: 20px 24px;
   }
-  
+
   .choice-modal-header span {
     font-size: 1.25rem;
   }
-  
+
   .v-dialog {
     margin: 12px;
   }
-  
+
   .choice-card {
     height: 340px;
   }
-  
+
   .choice-card-content {
     padding: 24px;
   }
-  
+
   .choice-btn {
     min-width: 160px;
     height: 44px;
   }
-  
+
   .floating-button-container {
     bottom: 20px;
     right: 20px;
   }
 
   /* Stack cards vertically on mobile */
-  .v-col[class*="md-4"] {
+  .v-col[class*='md-4'] {
     flex: 0 0 100%;
     max-width: 100%;
   }

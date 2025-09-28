@@ -15,7 +15,6 @@ export default {
       newFloor: {
         floorNumber: '',
         floorName: '',
-        description: '',
         status: 'Active',
       },
 
@@ -23,8 +22,6 @@ export default {
       newSection: {
         floorId: null,
         sectionName: '',
-        sectionCode: '',
-        description: '',
         status: 'Active',
       },
 
@@ -34,12 +31,6 @@ export default {
         floorNumber: (value) => {
           if (!value) return 'Required field'
           return /^[0-9A-Za-z]{1,3}$/.test(value) || 'Must be 1-3 characters (letters/numbers)'
-        },
-        sectionCode: function (value) {
-          if (!value) return 'Required field'
-          // Accept format like SM-GEN-02, SAT-ELEC-01, SAT-DRY-02
-          const regex = /^[A-Z0-9]{2,4}-[A-Z0-9]{2,4}-[0-9]{2}$/
-          return regex.test(value) || 'Format: ABC-DEF-01'
         },
       },
 
@@ -123,7 +114,6 @@ export default {
           body: JSON.stringify({
             floor_number: this.newFloor.floorNumber,
             floor_name: this.newFloor.floorName,
-            description: this.newFloor.description,
             status: this.newFloor.status,
           }),
         })
@@ -178,8 +168,6 @@ export default {
           body: JSON.stringify({
             floor_id: this.newSection.floorId,
             section_name: this.newSection.sectionName,
-            section_code: this.newSection.sectionCode.toUpperCase(),
-            description: this.newSection.description,
             status: this.newSection.status,
           }),
         })
@@ -227,7 +215,6 @@ export default {
       this.newFloor = {
         floorNumber: '',
         floorName: '',
-        description: '',
         status: 'Active',
       }
       this.floorFormValid = false
@@ -240,8 +227,6 @@ export default {
       this.newSection = {
         floorId: null,
         sectionName: '',
-        sectionCode: '',
-        description: '',
         status: 'Active',
       }
       this.sectionFormValid = false

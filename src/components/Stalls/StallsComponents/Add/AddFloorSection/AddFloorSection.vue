@@ -69,13 +69,6 @@
                                     </v-col>
 
                                     <v-col cols="12">
-                                        <v-textarea v-model="newFloor.description" label="Floor Description"
-                                            placeholder="Describe the floor layout, features, accessibility..."
-                                            prepend-icon="mdi-text" outlined rows="3" persistent-hint
-                                            hint="Optional: Provide detailed description of the floor" />
-                                    </v-col>
-
-                                    <v-col cols="12">
                                         <v-select v-model="newFloor.status" :items="statusOptions" label="Floor Status"
                                             prepend-icon="mdi-check-circle" outlined dense persistent-hint
                                             hint="Set the current status of the floor" />
@@ -113,25 +106,9 @@
                                     </v-col>
 
                                     <v-col cols="12" sm="6">
-                                        <v-text-field v-model="newSection.sectionCode"
-                                            :rules="[rules.required, rules.sectionCode]"
-                                            label="Section Code (e.g., SM-GEN-02, SAT-DRY-02)"
-                                            placeholder="e.g., SM-GEN-02" prepend-icon="mdi-tag" outlined dense
-                                            persistent-hint
-                                            hint="Enter unique section identifier (format: ABC-DEF-01)" />
-                                    </v-col>
-
-                                    <v-col cols="12" sm="6">
                                         <v-select v-model="newSection.status" :items="statusOptions"
                                             label="Section Status" prepend-icon="mdi-check-circle" outlined dense
                                             persistent-hint hint="Set the current status of the section" />
-                                    </v-col>
-
-                                    <v-col cols="12">
-                                        <v-textarea v-model="newSection.description" label="Section Description"
-                                            placeholder="Describe the section location, features, accessibility..."
-                                            prepend-icon="mdi-text" outlined rows="3" persistent-hint
-                                            hint="Optional: Provide detailed description of the section" />
                                     </v-col>
                                 </v-row>
 
