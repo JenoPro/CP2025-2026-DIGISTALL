@@ -101,8 +101,11 @@
                     item.name
                   }}</v-list-item-title>
                 </v-list-item-content>
-                <!-- Submenu indicator for Stalls -->
-                <v-list-item-icon v-if="item.hasSubMenu && item.id === 9" class="submenu-arrow">
+                <!-- Submenu indicator for Stalls - Only show if there are raffle/auction stalls -->
+                <v-list-item-icon 
+                  v-if="item.hasSubMenu && item.id === 9 && (availableStallTypes.hasRaffles || availableStallTypes.hasAuctions)" 
+                  class="submenu-arrow"
+                >
                   <v-icon 
                     small 
                     :class="{ 'rotate-180': showStallsSubMenu }"
@@ -120,7 +123,7 @@
               class="stalls-submenu"
             >
               <v-list-item
-                v-for="subItem in item.subItems"
+                v-for="subItem in filteredStallSubItems"
                 :key="subItem.id"
                 class="sidebar-item sub-sub-item"
                 :class="{ active: isActiveRoute(subItem.route) }"

@@ -1,4 +1,5 @@
 import DeleteStall from '../DeleteStall/DeleteStall.vue'
+import { eventBus, EVENTS } from '../../../../eventBus.js'
 
 export default {
   name: 'EditStall',
@@ -336,6 +337,13 @@ export default {
 
           // Emit stall-updated event with raw backend data (parent will transform)
           this.$emit('stall-updated', result.data)
+
+          // NEW: Emit global event for real-time sidebar update
+          eventBus.emit(EVENTS.STALL_UPDATED, {
+            stallData: result.data,
+            priceType: result.data?.priceType || result.data?.price_type,
+            message: result.message || 'Stall updated successfully!',
+          })
 
           // Show success animation AFTER emitting the update event
           const successMessage = result.message || 'Stall updated successfully!'
