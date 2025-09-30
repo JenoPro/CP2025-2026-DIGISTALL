@@ -42,7 +42,7 @@ export default {
     },
     sectionOptions() {
       return this.availableSections.map((section) => ({
-        title: section.title || section.section_name,
+        title: section.section_name || section.title,
         value: section.section_id || section.value,
       }))
     },
@@ -52,9 +52,17 @@ export default {
     },
     priceTypeOptions() {
       const types = this.stallsData.map((stall) => {
-        if (stall.price.includes('Auction')) return 'Auction'
-        if (stall.price.includes('Fixed Price')) return 'Fixed Price'
-        return 'Other'
+        const priceType = stall.priceType || stall.price_type || ''
+        if (priceType.toLowerCase().includes('auction')) return 'Auction'
+        if (priceType.toLowerCase().includes('raffle')) return 'Raffle'
+        if (priceType.toLowerCase().includes('fixed')) return 'Fixed Price'
+        // Also check the price string
+        if (stall.price) {
+          if (stall.price.includes('Auction')) return 'Auction'
+          if (stall.price.includes('Raffle')) return 'Raffle'
+          if (stall.price.includes('Fixed Price')) return 'Fixed Price'
+        }
+        return null
       })
       return [...new Set(types)].filter(Boolean).sort()
     },
@@ -75,6 +83,7 @@ export default {
     },
     filteredAndSortedStalls() {
       let filtered = this.stallsData.filter((stall) => {
+        // Search filter
         const matchesSearch =
           !this.searchQuery ||
           (stall.stallNumber &&
@@ -86,25 +95,39 @@ export default {
           (stall.section_name &&
             stall.section_name.toLowerCase().includes(this.searchQuery.toLowerCase()))
 
-        // REFACTORED: Use == for type coercion
+        // Floor filter - compare IDs (check both camelCase and snake_case)
         const matchesFloor =
           !this.selectedFloor ||
           stall.floor_id == this.selectedFloor ||
-          stall.floor_name == this.selectedFloor
+          stall.floorId == this.selectedFloor
+
+        // Section filter - compare IDs (check both camelCase and snake_case)
         const matchesSection =
           !this.selectedSection ||
           stall.section_id == this.selectedSection ||
-          stall.section_name == this.selectedSection
+          stall.sectionId == this.selectedSection
+
+        // Location filter
         const matchesLocation = !this.selectedLocation || stall.location === this.selectedLocation
+
+        // Price type filter
         const matchesPriceType =
           !this.selectedPriceType ||
-          (this.selectedPriceType === 'Auction' && stall.price.includes('Auction')) ||
-          (this.selectedPriceType === 'Fixed Price' && stall.price.includes('Fixed Price')) ||
-          (this.selectedPriceType === 'Other' &&
-            !stall.price.includes('Auction') &&
-            !stall.price.includes('Fixed Price'))
+          (this.selectedPriceType === 'Auction' &&
+            (stall.price.includes('Auction') ||
+              (stall.priceType && stall.priceType.toLowerCase().includes('auction')))) ||
+          (this.selectedPriceType === 'Raffle' &&
+            (stall.price.includes('Raffle') ||
+              (stall.priceType && stall.priceType.toLowerCase().includes('raffle')))) ||
+          (this.selectedPriceType === 'Fixed Price' &&
+            (stall.price.includes('Fixed Price') ||
+              (stall.priceType && stall.priceType.toLowerCase().includes('fixed'))))
+
+        // Availability filter
         const matchesAvailability =
           this.selectedAvailability === null || stall.isAvailable === this.selectedAvailability
+
+        // Price range filter
         let matchesPriceRange = true
         if (this.priceRange && this.priceRange.length === 2) {
           const match = stall.price.match(/₱([\d,]+)/)
@@ -113,6 +136,28 @@ export default {
             matchesPriceRange = price >= this.priceRange[0] && price <= this.priceRange[1]
           }
         }
+
+        // Debug logging
+        if (this.selectedFloor && !matchesFloor) {
+          console.log('Floor filter failed for stall:', {
+            stallNumber: stall.stallNumber,
+            stall_floor_id: stall.floor_id,
+            stall_floor_name: stall.floor_name,
+            selectedFloor: this.selectedFloor,
+            comparison: stall.floor_id == this.selectedFloor,
+          })
+        }
+
+        if (this.selectedSection && !matchesSection) {
+          console.log('Section filter failed for stall:', {
+            stallNumber: stall.stallNumber,
+            stall_section_id: stall.section_id,
+            stall_section_name: stall.section_name,
+            selectedSection: this.selectedSection,
+            comparison: stall.section_id == this.selectedSection,
+          })
+        }
+
         return (
           matchesSearch &&
           matchesFloor &&
@@ -123,6 +168,7 @@ export default {
           matchesPriceRange
         )
       })
+
       if (this.sortField && this.sortField !== 'default') {
         filtered = this.sortStalls(filtered)
       }
@@ -163,6 +209,28 @@ export default {
       },
       immediate: false,
     },
+    selectedFloor(newVal) {
+      console.log('Floor filter changed to:', newVal)
+      console.log(
+        'Available stalls:',
+        this.stallsData.map((s) => ({
+          id: s.stallNumber,
+          floor_id: s.floor_id,
+          floor_name: s.floor_name,
+        })),
+      )
+    },
+    selectedSection(newVal) {
+      console.log('Section filter changed to:', newVal)
+      console.log(
+        'Available stalls:',
+        this.stallsData.map((s) => ({
+          id: s.stallNumber,
+          section_id: s.section_id,
+          section_name: s.section_name,
+        })),
+      )
+    },
   },
   async mounted() {
     document.addEventListener('click', this.handleOutsideClick)
@@ -181,13 +249,13 @@ export default {
       try {
         const token = sessionStorage.getItem('authToken')
         if (!token) {
+          console.warn('No auth token found, using fallback options')
           this.setFallbackOptions()
           return
         }
 
         console.log('🔄 Loading filter options (floors & sections)...')
         console.log('API Base URL:', this.apiBaseUrl)
-        console.log('Auth token available:', !!token)
 
         // Load floors
         try {
@@ -208,23 +276,18 @@ export default {
                 floor_name: floor.floor_name,
                 floor_number: floor.floor_number,
               }))
+              console.log('✅ Loaded floors:', this.availableFloors)
             } else {
               console.warn('Floors API returned success=false or invalid data:', floorsResult)
-              this.availableFloors = []
+              this.extractFloorsFromStalls()
             }
           } else {
-            console.error(
-              '❌ GET /api/floors failed:',
-              floorsResponse.status,
-              floorsResponse.statusText,
-            )
-            const errorData = await floorsResponse.text()
-            console.error('Error details:', errorData)
-            this.availableFloors = []
+            console.error('❌ GET /api/floors failed:', floorsResponse.status)
+            this.extractFloorsFromStalls()
           }
         } catch (error) {
           console.error('❌ Network error loading floors:', error)
-          this.availableFloors = []
+          this.extractFloorsFromStalls()
         }
 
         // Load sections
@@ -240,41 +303,63 @@ export default {
             const sectionsResult = await sectionsResponse.json()
             if (sectionsResult.success && Array.isArray(sectionsResult.data)) {
               this.availableSections = sectionsResult.data.map((section) => ({
-                title: `${section.section_name} (${section.section_code})`,
+                title: section.section_name,
                 value: section.section_id,
                 section_id: section.section_id,
                 section_name: section.section_name,
                 section_code: section.section_code,
-                floor_id: section.floor_id, // Include floor_id for filtering
+                floor_id: section.floor_id,
               }))
+              console.log('✅ Loaded sections:', this.availableSections)
             } else {
               console.warn('Sections API returned success=false or invalid data:', sectionsResult)
-              this.availableSections = []
+              this.extractSectionsFromStalls()
             }
           } else {
-            console.error(
-              '❌ GET /api/sections failed:',
-              sectionsResponse.status,
-              sectionsResponse.statusText,
-            )
-            const errorData = await sectionsResponse.text()
-            console.error('Error details:', errorData)
-            this.availableSections = []
+            console.error('❌ GET /api/sections failed:', sectionsResponse.status)
+            this.extractSectionsFromStalls()
           }
         } catch (error) {
           console.error('❌ Network error loading sections:', error)
-          this.availableSections = []
+          this.extractSectionsFromStalls()
         }
       } catch (error) {
-        console.error('❌ BACKEND ERROR: Failed to load filter options:', error)
-        console.error('📋 Backend Issues to Check:')
-        console.error('   1. Ensure floorController.js returns proper response format')
-        console.error('   2. Ensure sectionController.js returns proper response format')
-        console.error('   3. Check authentication middleware (req.user.branchManagerId)')
-        console.error('   4. Verify database connection and table existence')
-        console.error('   5. Check server logs for detailed error information')
+        console.error('❌ Failed to load filter options:', error)
         this.setFallbackOptions()
       }
+    },
+    extractFloorsFromStalls() {
+      console.log('📋 Extracting floors from stalls data...')
+      const floors = new Map()
+      this.stallsData.forEach((stall) => {
+        if (stall.floor_id && stall.floor_name) {
+          floors.set(stall.floor_id, {
+            title: stall.floor_name,
+            value: stall.floor_id,
+            floor_id: stall.floor_id,
+            floor_name: stall.floor_name,
+          })
+        }
+      })
+      this.availableFloors = Array.from(floors.values())
+      console.log('✅ Extracted floors:', this.availableFloors)
+    },
+    extractSectionsFromStalls() {
+      console.log('📋 Extracting sections from stalls data...')
+      const sections = new Map()
+      this.stallsData.forEach((stall) => {
+        if (stall.section_id && stall.section_name) {
+          sections.set(stall.section_id, {
+            title: stall.section_name,
+            value: stall.section_id,
+            section_id: stall.section_id,
+            section_name: stall.section_name,
+            floor_id: stall.floor_id,
+          })
+        }
+      })
+      this.availableSections = Array.from(sections.values())
+      console.log('✅ Extracted sections:', this.availableSections)
     },
     setFallbackOptions() {
       this.availableFloors = [
@@ -292,12 +377,9 @@ export default {
       ]
     },
     onSearchInput() {
-      // Clear previous timeout to debounce search
       if (this.searchTimeout) {
         clearTimeout(this.searchTimeout)
       }
-
-      // Debounce search to avoid too many emissions
       this.searchTimeout = setTimeout(() => {
         // The watcher on filteredAndSortedStalls will automatically emit the filtered results
       }, 150)
@@ -306,6 +388,13 @@ export default {
       this.showFilters = !this.showFilters
     },
     applyFilters() {
+      console.log('Applying filters:', {
+        floor: this.selectedFloor,
+        section: this.selectedSection,
+        location: this.selectedLocation,
+        priceType: this.selectedPriceType,
+        availability: this.selectedAvailability,
+      })
       this.showFilters = false
     },
     sortStalls(stalls) {
@@ -320,6 +409,14 @@ export default {
             aValue = this.extractPrice(a.price)
             bValue = this.extractPrice(b.price)
             break
+          case 'floor':
+            aValue = a.floor_name || ''
+            bValue = b.floor_name || ''
+            return aValue.localeCompare(bValue)
+          case 'section':
+            aValue = a.section_name || ''
+            bValue = b.section_name || ''
+            return aValue.localeCompare(bValue)
           default:
             return 0
         }
@@ -364,6 +461,13 @@ export default {
     },
     resetFilters() {
       this.clearAllFilters()
+    },
+    getSortFieldLabel(field) {
+      const option = this.sortOptions.find((opt) => opt.value === field)
+      return option ? option.title : field
+    },
+    clearSort() {
+      this.sortField = 'default'
     },
   },
 }
