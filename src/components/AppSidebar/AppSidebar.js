@@ -22,6 +22,7 @@ export default {
       menuItems: [...this.items],
       isExpanded: false,
       showMoreItems: false,
+      showStallsSubMenu: false, // NEW: Track stalls submenu state
       moreItems: [
         { id: 6, icon: 'mdi-account-group', name: 'Vendors', route: '/vendors' },
         {
@@ -31,7 +32,18 @@ export default {
           route: '/stallholders',
         },
         { id: 8, icon: 'mdi-account-cash', name: 'Collectors', route: '/collectors' },
-        { id: 9, icon: 'mdi-store', name: 'Stalls', route: '/stalls' },
+        {
+          id: 9,
+          icon: 'mdi-store',
+          name: 'Stalls',
+          route: '/stalls',
+          hasSubMenu: true, // NEW: Indicate this item has submenu
+          subItems: [
+            // NEW: Sub-menu items for Stalls
+            { id: 91, icon: 'mdi-ticket-percent', name: 'Raffles', route: '/stalls/raffles' },
+            { id: 92, icon: 'mdi-gavel', name: 'Auctions', route: '/stalls/auctions' },
+          ],
+        },
       ],
     }
   },
@@ -68,13 +80,34 @@ export default {
 
     toggleMoreItems() {
       this.showMoreItems = !this.showMoreItems
+      // Close stalls submenu when more items is collapsed
+      if (!this.showMoreItems) {
+        this.showStallsSubMenu = false
+      }
     },
 
-    setActiveItem(itemId, route) {
-      // Navigate to the route
+    // NEW: Toggle stalls submenu
+    toggleStallsSubMenu() {
+      this.showStallsSubMenu = !this.showStallsSubMenu
+    },
+
+    setActiveItem(itemId, route, hasSubMenu = false) {
+      // Handle stalls menu item with submenu
+      if (itemId === 9 && hasSubMenu) {
+        // If clicking on Stalls, toggle submenu instead of navigating
+        this.toggleStallsSubMenu()
+        // Also navigate to main stalls page
+        if (route && this.$route.path !== route) {
+          this.$router.push(route).catch((err) => {
+            console.log('Navigation handled:', err.message)
+          })
+        }
+        return
+      }
+
+      // Navigate to the route for regular items
       if (route && this.$route.path !== route) {
         this.$router.push(route).catch((err) => {
-          // Handle navigation errors (e.g., navigating to same route)
           console.log('Navigation handled:', err.message)
         })
       }
@@ -83,6 +116,7 @@ export default {
       const isMainItem = this.menuItems.find((item) => item.id === itemId)
       if (isMainItem) {
         this.showMoreItems = false
+        this.showStallsSubMenu = false
       }
 
       // Emit the navigation event to parent

@@ -1,0 +1,725 @@
+.live-page {
+  min-height: 100vh;
+  background: white;
+}
+
+.live-header {
+  background: linear-gradient(135deg, #002181, #0033a1) !important;
+  color: white;
+  box-shadow: 0 4px 20px rgba(0, 33, 129, 0.2);
+}
+
+.live-content {
+  padding: 80px 20px 20px 20px;
+  background: white;
+  min-height: calc(100vh - 64px);
+}
+
+/* New Layout Containers */
+/* Top Container - Video and Control Panel Side by Side */
+.top-container {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  margin: 0 !important;
+  min-height: 550px;
+  box-shadow: 0 2px 12px rgba(0, 33, 129, 0.08);
+  border: 1px solid rgba(0, 33, 129, 0.1);
+}
+
+.video-section {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.control-section {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.control-section .control-panel {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 16px rgba(0, 33, 129, 0.12);
+  border: 1px solid rgba(0, 33, 129, 0.1);
+}
+
+.control-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px !important;
+}
+
+/* Bottom Container - Full-width Auction Monitor */
+.bottom-container {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  margin: 0 !important;
+  min-height: 450px;
+  box-shadow: 0 2px 12px rgba(0, 33, 129, 0.08);
+  border: 1px solid rgba(0, 33, 129, 0.1);
+}
+
+.auction-monitor-section {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.auction-monitor-section .auction-live-panel {
+  height: 100%;
+  flex: 1;
+}
+
+/* Remove old container styles */
+.video-control-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.auction-monitor-container {
+  height: 100%;
+}
+
+.video-control-container .control-panel {
+  flex-shrink: 0;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.auction-monitor-container .auction-live-panel {
+  height: 100%;
+}
+
+/* Video Area */
+.video-area {
+  background: linear-gradient(135deg, #f8f9fa, #e8ebef);
+  border: 2px solid rgba(0, 33, 129, 0.2);
+  border-radius: 12px;
+  height: 100%;
+  min-height: 510px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 33, 129, 0.12);
+}
+
+.live-video-element {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+  background: #000;
+}
+
+.video-placeholder {
+  text-align: center;
+  color: #002181;
+  font-size: 18px;
+  font-weight: 500;
+  padding: 40px 20px;
+}
+
+/* Responsive video adjustments */
+@media (max-width: 768px) {
+  .video-area {
+    min-height: 250px;
+    height: 300px;
+  }
+
+  .live-video-element {
+    max-height: 300px;
+  }
+
+  /* Stack containers vertically on mobile */
+  .top-container {
+    min-height: auto;
+    margin-bottom: 20px !important;
+    padding: 16px;
+  }
+
+  .bottom-container {
+    min-height: 350px;
+    padding: 16px;
+  }
+
+  /* Stack video and control panel vertically on mobile */
+  .control-section {
+    margin-top: 20px;
+  }
+
+  .control-section .control-panel {
+    max-height: 400px;
+  }
+
+  .video-section .video-area {
+    min-height: 250px;
+  }
+}
+
+/* Professional spacing and typography */
+.live-content {
+  background: #f8f9fa;
+}
+
+.top-container,
+.bottom-container {
+  margin-bottom: 24px !important;
+}
+
+/* Enhanced card shadows and borders */
+.control-panel {
+  transition: all 0.3s ease;
+}
+
+.control-panel:hover {
+  box-shadow: 0 6px 20px rgba(0, 33, 129, 0.15) !important;
+  transform: translateY(-2px);
+}
+
+.auction-live-panel {
+  transition: all 0.3s ease;
+}
+
+.auction-live-panel:hover {
+  transform: translateY(-1px);
+}
+
+/* Ensure video takes full container space */
+.video-area video {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: cover;
+  background: #000;
+  border-radius: 10px;
+}
+
+/* Chat Section */
+.chat-container {
+  height: 400px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.chat-header {
+  background: #1976d2;
+  color: white;
+  padding: 12px 16px;
+  border-radius: 12px 12px 0 0;
+  font-weight: 600;
+}
+
+.chat-messages {
+  height: 280px;
+  overflow-y: auto;
+  padding: 12px;
+  background: #fafafa;
+}
+
+.chat-message {
+  margin-bottom: 12px;
+  padding: 8px 12px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.chat-user {
+  font-weight: 600;
+  color: #1976d2;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.chat-text {
+  font-size: 14px;
+  line-height: 1.4;
+  color: #333;
+}
+
+.chat-input {
+  padding: 12px;
+  border-top: 1px solid #e0e0e0;
+  background: white;
+  border-radius: 0 0 12px 12px;
+}
+
+/* Control Panel */
+.control-panel {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  padding: 20px;
+}
+
+.control-header {
+  color: #1976d2;
+  font-weight: 700;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+}
+
+.control-header .v-icon {
+  margin-right: 8px;
+}
+
+.stall-info {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+  border-left: 4px solid #1976d2;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+}
+
+.info-label {
+  font-weight: 600;
+  color: #555;
+  font-size: 14px;
+}
+
+.info-value {
+  color: #333;
+  font-size: 14px;
+}
+
+.price-value {
+  color: #1976d2;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.timer-container {
+  text-align: center;
+  margin: 20px 0;
+  padding: 16px;
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  border-radius: 12px;
+  border: 2px solid #1976d2;
+}
+
+.timer-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.timer-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1976d2;
+}
+
+.timer-value.expired {
+  color: #f44336;
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.action-button {
+  height: 48px !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+  letter-spacing: 0.5px !important;
+  border-radius: 8px !important;
+}
+
+.start-live-btn {
+  background: linear-gradient(45deg, #4caf50, #45a049) !important;
+  color: white !important;
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3) !important;
+}
+
+.participants-btn {
+  background: #1976d2 !important;
+  color: white !important;
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3) !important;
+}
+
+.winner-btn {
+  background: linear-gradient(45deg, #ff9800, #f57c00) !important;
+  color: white !important;
+  box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3) !important;
+}
+
+/* Modal Styles */
+.participants-modal .v-card {
+  border-radius: 12px !important;
+}
+
+.participants-modal .v-card-title {
+  background: #1976d2;
+  color: white !important;
+  font-weight: 700 !important;
+  padding: 20px 24px !important;
+}
+
+.participants-table {
+  margin-top: 8px;
+}
+
+.select-winner-btn {
+  background: linear-gradient(45deg, #ff9800, #f57c00) !important;
+  color: white !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+}
+
+/* Winner Dialog */
+.winner-dialog .v-card {
+  border-radius: 16px !important;
+  text-align: center;
+}
+
+.winner-dialog .v-card-title {
+  color: #1976d2 !important;
+  font-weight: 700 !important;
+  font-size: 24px !important;
+  padding: 24px !important;
+}
+
+.winner-name {
+  color: #ff9800;
+  font-weight: 700;
+  font-size: 20px;
+  margin: 16px 0;
+}
+
+.winner-actions {
+  padding: 16px 24px 24px !important;
+}
+
+.confirm-btn {
+  background: linear-gradient(45deg, #4caf50, #45a049) !important;
+  color: white !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+  margin-right: 8px !important;
+}
+
+.cancel-btn {
+  background: linear-gradient(45deg, #f44336, #d32f2f) !important;
+  color: white !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+}
+
+/* Status Colors */
+.status-chip {
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  font-size: 11px !important;
+}
+
+.status-participating {
+  background: #e8f5e8 !important;
+  color: #2e7d32 !important;
+}
+
+.status-winner {
+  background: #fff3e0 !important;
+  color: #ef6c00 !important;
+}
+
+.status-bidding {
+  background: #e3f2fd !important;
+  color: #1976d2 !important;
+}
+
+/* Responsive */
+@media (max-width: 960px) {
+  .live-content {
+    padding: 12px;
+  }
+
+  .video-area {
+    min-height: 200px;
+  }
+
+  .chat-container {
+    height: 300px;
+    margin-bottom: 16px;
+  }
+
+  .chat-messages {
+    height: 200px;
+  }
+
+  .control-panel {
+    padding: 16px;
+  }
+
+  .timer-value {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 600px) {
+  .live-header .v-toolbar-title {
+    font-size: 18px !important;
+  }
+
+  .video-placeholder {
+    font-size: 16px;
+  }
+
+  .chat-message {
+    margin-bottom: 8px;
+    padding: 6px 10px;
+  }
+
+  .action-button {
+    height: 44px !important;
+    font-size: 14px !important;
+  }
+
+  .stall-info {
+    padding: 12px;
+  }
+
+  .info-item {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 8px;
+  }
+
+  .timer-container {
+    padding: 12px;
+  }
+
+  .timer-value {
+    font-size: 16px;
+  }
+}
+
+/* Video Effects Controls */
+.video-controls-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.video-settings-btn {
+  position: absolute !important;
+  top: 16px;
+  right: 16px;
+  pointer-events: auto;
+  backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.7) !important;
+  z-index: 20;
+  transition: all 0.2s ease;
+}
+
+.video-settings-btn:hover {
+  background: rgba(0, 0, 0, 0.8) !important;
+  transform: scale(1.05);
+}
+
+.video-fullscreen-btn {
+  position: absolute !important;
+  top: 16px;
+  right: 64px;
+  pointer-events: auto;
+  backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.7) !important;
+  z-index: 20;
+  transition: all 0.2s ease;
+}
+
+.video-fullscreen-btn:hover {
+  background: rgba(0, 0, 0, 0.8) !important;
+  transform: scale(1.05);
+}
+
+.video-effects-panel {
+  position: absolute !important;
+  top: 60px;
+  right: 16px;
+  width: 320px;
+  max-height: 450px;
+  overflow-y: auto;
+  pointer-events: auto;
+  backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.98) !important;
+  border: 1px solid rgba(25, 118, 210, 0.2);
+  border-radius: 12px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  z-index: 30;
+}
+
+.effect-section {
+  margin-bottom: 4px;
+}
+
+.effect-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1976d2;
+  display: flex;
+  align-items: center;
+  margin-bottom: 2px;
+}
+
+.effect-description {
+  font-size: 12px;
+  color: #666;
+  margin-left: 24px;
+}
+
+.section-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1976d2;
+  display: flex;
+  align-items: center;
+}
+
+.filter-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.filter-btn {
+  height: 40px !important;
+  border-radius: 8px !important;
+  text-transform: none !important;
+  font-size: 12px !important;
+  transition: all 0.2s ease;
+}
+
+.filter-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(25, 118, 210, 0.2);
+}
+
+/* Video effects transitions */
+.live-video-element {
+  transition:
+    filter 0.4s ease,
+    transform 0.4s ease;
+}
+
+/* Fullscreen mode adjustments */
+.video-area:fullscreen .video-effects-panel {
+  position: fixed !important;
+  top: 80px;
+  right: 20px;
+  z-index: 999999;
+}
+
+.video-area:fullscreen .video-settings-btn,
+.video-area:fullscreen .video-fullscreen-btn {
+  position: fixed !important;
+  z-index: 999999;
+}
+
+.video-area:fullscreen .video-settings-btn {
+  top: 20px;
+  right: 20px;
+}
+
+.video-area:fullscreen .video-fullscreen-btn {
+  top: 20px;
+  right: 80px;
+}
+
+/* Mobile responsive adjustments for video effects */
+@media (max-width: 768px) {
+  .video-effects-panel {
+    width: calc(100vw - 32px);
+    right: 16px;
+    left: 16px;
+    max-height: 400px;
+  }
+
+  .video-settings-btn {
+    top: 12px !important;
+    right: 12px !important;
+  }
+
+  .video-fullscreen-btn {
+    top: 12px !important;
+    right: 60px !important;
+  }
+
+  .filter-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+  }
+
+  .filter-btn {
+    height: 36px !important;
+    font-size: 11px !important;
+  }
+}
+
+/* Switch styling in effects panel */
+.video-effects-panel .v-switch {
+  transform: scale(0.9);
+  transform-origin: right center;
+}
+
+.video-effects-panel .v-switch--inset .v-selection-control__input {
+  color: #1976d2;
+}
+
+/* Custom scrollbar for effects panel */
+.video-effects-panel::-webkit-scrollbar {
+  width: 6px;
+}
+
+.video-effects-panel::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 3px;
+}
+
+.video-effects-panel::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #1976d2, #1565c0);
+  border-radius: 3px;
+}
+
+.video-effects-panel::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #1565c0, #0d47a1);
+}
+
+/* Card title styling */
+.video-effects-panel .v-card-title {
+  background: linear-gradient(135deg, #1976d2, #1565c0);
+  color: white !important;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 12px 12px 0 0 !important;
+}
+
+.video-effects-panel .v-card-title .v-icon {
+  color: white !important;
+}

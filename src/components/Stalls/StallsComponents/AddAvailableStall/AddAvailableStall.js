@@ -20,11 +20,38 @@ export default {
         image: null,
         isAvailable: true,
         priceType: 'Fixed Price',
+        durationHours: 72, // Default 3 days for raffle/auction
       },
+      // Price type options
+      priceTypeOptions: [
+        {
+          title: '🏷️ Fixed Price',
+          value: 'Fixed Price',
+          subtitle: 'Standard monthly rental',
+        },
+        {
+          title: '🎯 Raffle',
+          value: 'Raffle',
+          subtitle: 'Random winner selection',
+        },
+        {
+          title: '🏺 Auction',
+          value: 'Auction',
+          subtitle: 'Highest bidder wins',
+        },
+      ],
       rules: {
         required: (value) => !!value || 'Required field',
         number: (value) => !isNaN(parseFloat(value)) || 'Must be a valid number',
         positiveNumber: (value) => parseFloat(value) > 0 || 'Must be greater than 0',
+        durationHours: (value) => {
+          // Basic validation - we'll handle conditional logic in the computed property
+          const num = parseInt(value)
+          return (
+            (num && num >= 1 && num <= 720) ||
+            'Duration must be between 1-720 hours (1 hour to 30 days)'
+          )
+        },
       },
       // UPDATED: Dynamic options loaded from API
       floorOptions: [],
@@ -280,6 +307,11 @@ export default {
           priceType: this.newStall.priceType,
         }
 
+        // Add duration for raffle/auction stalls
+        if (this.requiresDuration) {
+          stallData.durationHours = parseInt(this.newStall.durationHours)
+        }
+
         // Convert image to base64 if uploaded
         if (this.newStall.image) {
           try {
@@ -496,14 +528,25 @@ export default {
 
     // Check if all required fields are filled
     isFormValid() {
-      return (
+      const baseValidation =
         this.newStall.stallNumber &&
         this.newStall.price &&
         this.newStall.location &&
         this.newStall.size &&
         this.newStall.floorId &&
         this.newStall.sectionId
-      )
+
+      // Additional validation for raffle/auction stalls
+      if (this.requiresDuration) {
+        return (
+          baseValidation &&
+          this.newStall.durationHours &&
+          parseInt(this.newStall.durationHours) >= 1 &&
+          parseInt(this.newStall.durationHours) <= 720
+        )
+      }
+
+      return baseValidation
     },
 
     // Get formatted location for display (now just returns the text value)
@@ -533,6 +576,53 @@ export default {
       )
       return selectedSection ? selectedSection.title : ''
     },
+
+    // NEW: Check if duration field is required based on price type
+    requiresDuration() {
+      return this.newStall.priceType === 'Raffle' || this.newStall.priceType === 'Auction'
+    },
+
+    // NEW: Dynamic price field label based on price type
+    priceFieldLabel() {
+      switch (this.newStall.priceType) {
+        case 'Raffle':
+          return 'Entry Fee (₱)'
+        case 'Auction':
+          return 'Starting Bid (₱)'
+        case 'Fixed Price':
+        default:
+          return 'Monthly Rent (₱)'
+      }
+    },
+
+    // NEW: Duration field hint text based on price type
+    durationHint() {
+      switch (this.newStall.priceType) {
+        case 'Raffle':
+          return 'How long participants can enter the raffle (1-720 hours)'
+        case 'Auction':
+          return 'How long bidders can place bids (1-720 hours)'
+        default:
+          return ''
+      }
+    },
+
+    // NEW: Dynamic validation rules for duration field
+    durationValidationRules() {
+      if (!this.requiresDuration) {
+        return [] // No validation needed for Fixed Price
+      }
+      return [
+        (value) => !!value || 'Duration is required for raffle/auction stalls',
+        (value) => {
+          const num = parseInt(value)
+          return (
+            (num && num >= 1 && num <= 720) ||
+            'Duration must be between 1-720 hours (1 hour to 30 days)'
+          )
+        },
+      ]
+    },
   },
 
   watch: {
@@ -541,6 +631,11 @@ export default {
       this.filterSectionsByFloor(newFloorId)
       // Reset section when floor changes
       this.newStall.sectionId = ''
+    },
+
+    // NEW: Watch for price type changes to debug
+    'newStall.priceType'(newValue, oldValue) {
+      console.log('Price type changed from', oldValue, 'to', newValue)
     },
 
     // Location is now a free text field, so no need for automatic price type setting
@@ -605,6 +700,10 @@ export default {
     } else {
       console.warn('Component mounted - No user authentication found')
     }
+
+    // Debug price type options
+    console.log('Price type options:', this.priceTypeOptions)
+    console.log('Current price type:', this.newStall.priceType)
 
     // Load floors and sections if modal is already open
     if (this.showModal) {

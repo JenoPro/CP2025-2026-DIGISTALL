@@ -199,4 +199,4 @@
 </template>
 
 <script src="./EditStall.js"></script>
-<style scoped src="../Edit/EditStall.css"></style>
+<style scoped src="./EditStall.css"></style>

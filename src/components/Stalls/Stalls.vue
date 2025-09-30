@@ -30,10 +30,6 @@
             <SearchFilter
               :stallsData="stallsData"
               @filtered-stalls="handleFilteredStalls"
-              @show-auction-records="
-                showAuctionFeatures ? (showGeneralAuctionRecords = true) : null
-              "
-              :showAuctionButton="showAuctionFeatures"
             />
 
             <!-- Card Stalls Component -->
@@ -41,9 +37,9 @@
               v-if="hasStalls"
               :stalls="displayStalls"
               @stall-edit="handleStallEdit"
-              @stall-auction="handleStallAuction"
               @stall-live="handleStallLive"
-              :showAuctionFeatures="showAuctionFeatures"
+              @stall-raffle-management="handleRaffleManagement"
+              @stall-auction-management="handleAuctionManagement"
             />
             <!-- Empty State when no stalls are found -->
             <div v-if="!hasStalls && !loading" class="empty-state">
@@ -115,36 +111,6 @@
         @error="handleEditError"
       />
 
-      <!-- Auction Modal - Only visible for Satellite_Manager -->
-      <v-dialog
-        v-if="showAuctionFeatures"
-        v-model="showAuctionModal"
-        class="auction-dialog"
-        persistent
-        scrollable
-      >
-        <v-card>
-          <v-card-title class="d-flex justify-end align-center">
-            <v-btn icon variant="text" @click="handleCloseAuction">
-              <v-icon>mdi-close</v-icon>
-            </v-btn>
-          </v-card-title>
-          <v-card-text class="pa-0">
-            <AuctionTable
-              :stall="selectedStall"
-              @update-status="handleAuctionStatus"
-              @close-auction="handleCloseAuction"
-            />
-          </v-card-text>
-        </v-card>
-      </v-dialog>
-
-      <!-- Auction Records - Only visible for Satellite_Manager -->
-      <AuctionRecords
-        v-if="showAuctionFeatures"
-        v-model="showGeneralAuctionRecords"
-        @close="showGeneralAuctionRecords = false"
-      />
     </v-main>
 
     <!-- Success/Error Snackbar -->

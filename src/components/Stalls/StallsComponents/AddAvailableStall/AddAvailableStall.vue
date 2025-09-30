@@ -22,9 +22,20 @@
 
               <!-- Price -->
               <v-col cols="12" sm="6">
-                <v-text-field v-model="newStall.price" :rules="[rules.required, rules.positiveNumber]" label="Price"
-                  placeholder="e.g., 2500" prepend-icon="mdi-currency-php" outlined dense persistent-hint
-                  hint="Enter monthly rental price" />
+                <v-text-field 
+                  v-model="newStall.price" 
+                  :rules="[rules.required, rules.positiveNumber]" 
+                  :label="priceFieldLabel"
+                  :placeholder="newStall.priceType === 'Raffle' ? 'e.g., 500' : 
+                                newStall.priceType === 'Auction' ? 'e.g., 1000' : 'e.g., 2500'"
+                  prepend-icon="mdi-currency-php" 
+                  outlined 
+                  dense 
+                  persistent-hint
+                  :hint="newStall.priceType === 'Fixed Price' ? 'Enter monthly rental price' :
+                         newStall.priceType === 'Raffle' ? 'Entry fee for raffle participation' :
+                         'Starting bid amount for auction'"
+                />
               </v-col>
 
               <!-- Floor -->
@@ -53,10 +64,41 @@
                   dense persistent-hint hint="Describe the specific location within the building" />
               </v-col>
 
-              <!-- Price Type (Auto-determined) -->
+              <!-- Price Type Dropdown -->
               <v-col cols="12" sm="6">
-                <v-text-field :value="newStall.priceType" label="Price Type" prepend-icon="mdi-tag" outlined dense
-                  readonly persistent-hint hint="Fixed Price for most locations" />
+                <v-select 
+                  v-model="newStall.priceType" 
+                  :items="priceTypeOptions" 
+                  :rules="[rules.required]"
+                  label="Price Type" 
+                  prepend-icon="mdi-tag" 
+                  outlined 
+                  dense
+                  item-title="title"
+                  item-value="value"
+                  persistent-hint
+                  :hint="newStall.priceType === 'Fixed Price' ? 'Standard monthly rental' : 
+                         newStall.priceType === 'Raffle' ? 'Random winner selection with entry fee' :
+                         'Highest bidder wins with starting bid'"
+                />
+              </v-col>
+
+              <!-- Duration Field (for Raffle/Auction only) -->
+              <v-col cols="12" sm="6" v-if="requiresDuration">
+                <v-text-field 
+                  v-model="newStall.durationHours" 
+                  :rules="durationValidationRules"
+                  label="Duration (Hours)"
+                  placeholder="e.g., 72"
+                  prepend-icon="mdi-timer-outline"
+                  type="number"
+                  min="1"
+                  max="720"
+                  outlined 
+                  dense
+                  persistent-hint
+                  :hint="durationHint"
+                />
               </v-col>
 
               <!-- Image Upload -->
@@ -157,5 +199,5 @@
   </div>
 </template>
 
-<script src="../AddAvailableStall/AddAvailableStall.js"></script>
-<style scoped src="../AddAvailableStall//AddAvailableStall.css"></style>
+<script src="./AddAvailableStall.js"></script>
+<style scoped src="./AddAvailableStall.css"></style>

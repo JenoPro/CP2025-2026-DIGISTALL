@@ -1,6 +1,6 @@
-import AddAvailableStall from '../AddAvailableStall.vue'
-import AddFloorSection from '../AddFloorSection.vue'
-import ViewFloorsSections from './ViewFloorsSections.vue'
+import AddAvailableStall from '../../AddAvailableStall/AddAvailableStall.vue'
+import AddFloorSection from '../../AddFloorSection/AddFloorSection.vue'
+import ViewFloorsSections from '../ViewFloorsSection/ViewFloorsSections.vue'
 
 export default {
   name: 'AddChoiceModal',

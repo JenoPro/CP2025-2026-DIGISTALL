@@ -1,0 +1,163 @@
+.active-raffles {
+  padding: 0;
+}
+
+.active-raffles .v-card {
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e0e0e0;
+}
+
+.active-raffles .v-card-title {
+  background: white;
+  color: black;
+  padding: 20px 24px;
+  font-weight: 600;
+  font-size: 1.25rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.active-raffles .v-card-title .v-icon {
+  margin-right: 12px;
+  color: #1976d2;
+}
+
+.active-raffles .v-card-text {
+  padding: 24px;
+  background: white;
+}
+
+/* Search and Filter Section */
+.active-raffles .v-text-field,
+.active-raffles .v-select {
+  margin-bottom: 8px;
+}
+
+.active-raffles .v-text-field .v-icon,
+.active-raffles .v-select .v-icon {
+  color: #1976d2;
+}
+
+/* Loading States */
+.active-raffles .v-progress-circular {
+  margin: 20px auto;
+}
+
+/* No Data State */
+.active-raffles .text-center {
+  padding: 40px 20px;
+}
+
+.active-raffles .text-center .v-icon {
+  opacity: 0.3;
+  margin-bottom: 16px;
+}
+
+.active-raffles .text-center h3 {
+  color: #424242;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.active-raffles .text-center p {
+  color: #757575;
+  font-size: 0.9rem;
+}
+
+/* Dialog Styling */
+.active-raffles .v-dialog .v-card {
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+}
+
+.active-raffles .v-dialog .v-card-title {
+  background: white;
+  color: black;
+  padding: 16px 24px;
+  font-size: 1.1rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.active-raffles .v-dialog .v-card-text {
+  padding: 24px;
+  background: white;
+}
+
+.active-raffles .v-dialog .v-card-actions {
+  padding: 16px 24px;
+  border-top: 1px solid #e0e0e0;
+  background: white;
+}
+
+/* Extend Timer Dialog */
+.active-raffles .v-dialog .v-text-field {
+  margin-top: 8px;
+}
+
+/* Select Winner Dialog */
+.active-raffles .v-dialog .error--text {
+  background: #f44336 !important;
+  color: white !important;
+}
+
+.active-raffles .v-alert {
+  border-radius: 8px;
+}
+
+/* Button Styling */
+.active-raffles .v-btn {
+  border-radius: 6px;
+  font-weight: 600;
+  text-transform: none;
+}
+
+.active-raffles .v-btn--outlined {
+  border-width: 1px;
+  color: #1976d2;
+  border-color: #1976d2;
+}
+
+.active-raffles .v-btn.primary {
+  background: #1976d2 !important;
+  color: white !important;
+}
+
+.active-raffles .v-btn.error {
+  background: #f44336 !important;
+  color: white !important;
+}
+
+.active-raffles .v-btn.success {
+  background: #4caf50 !important;
+  color: white !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .active-raffles .v-card-text {
+    padding: 16px;
+  }
+
+  .active-raffles .v-card-title {
+    padding: 16px;
+    font-size: 1.1rem;
+  }
+
+  .active-raffles .v-dialog .v-card-text {
+    padding: 16px;
+  }
+}
+
+/* Animation for refresh button */
+.active-raffles .v-btn[loading] .v-icon {
+  animation: rotate 1s linear infinite;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

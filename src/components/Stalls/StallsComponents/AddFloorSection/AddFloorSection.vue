@@ -129,5 +129,5 @@
     </div>
 </template>
 
-<script src="../AddFloorSection/AddFloorSection.js"></script>
-<style scoped src="../AddFloorSection/AddFloorSection.css"></style>
+<script src="./AddFloorSection.js"></script>
+<style scoped src="./AddFloorSection.css"></style>
