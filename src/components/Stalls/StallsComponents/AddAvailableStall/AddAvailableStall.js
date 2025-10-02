@@ -1,3 +1,5 @@
+import { eventBus, EVENTS } from '../../../../eventBus.js'
+
 export default {
   name: 'AddAvailableStall',
   props: {
@@ -249,8 +251,16 @@ export default {
         // Auto close after 2 seconds and emit stall-added event
         this.popupTimeout = setTimeout(() => {
           this.closeSuccessPopup()
-          // Emit event with the new stall data for real-time update (no full refresh)
+
+          // Emit local event for parent component
           this.$emit('stall-added', this.lastAddedStall)
+
+          // NEW: Emit global event for real-time sidebar update
+          eventBus.emit(EVENTS.STALL_ADDED, {
+            stallData: this.lastAddedStall,
+            priceType: this.lastAddedStall?.priceType || this.lastAddedStall?.price_type,
+            message: 'Stall added successfully',
+          })
         }, 2000)
       }, 1500)
     },

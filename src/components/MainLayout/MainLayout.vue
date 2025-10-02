@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <AppSidebar :items="menuItems" @menu-item-click="handleMenuItemClick" />
+    <AppSidebar ref="appSidebar" :items="menuItems" @menu-item-click="handleMenuItemClick" />
 
     <AppHeader
       :title="pageTitle"
@@ -130,6 +130,13 @@ export default {
       this.$router.push("/").catch(() => {
         window.location.href = "/";
       });
+    },
+    
+    // NEW: Method to refresh sidebar stall types (can be called when stalls are modified)
+    async refreshSidebarStallTypes() {
+      if (this.$refs.appSidebar && this.$refs.appSidebar.refreshStallTypes) {
+        await this.$refs.appSidebar.refreshStallTypes()
+      }
     },
   },
 };

@@ -1,3 +1,5 @@
+import { eventBus, EVENTS } from '../../../../eventBus.js'
+
 export default {
   name: 'DeleteStall',
   props: {
@@ -140,6 +142,14 @@ export default {
           this.$emit('deleted', {
             stallId: stallId,
             stallData: this.stallData,
+            message: result.message || `Stall ${stallNumber} deleted successfully`,
+          })
+
+          // NEW: Emit global event for real-time sidebar update
+          eventBus.emit(EVENTS.STALL_DELETED, {
+            stallId: stallId,
+            stallData: this.stallData,
+            priceType: this.stallData?.priceType || this.stallData?.price_type,
             message: result.message || `Stall ${stallNumber} deleted successfully`,
           })
         } else {
