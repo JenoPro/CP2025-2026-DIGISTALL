@@ -7,6 +7,11 @@ export default {
       default: () => [],
     },
   },
+  data() {
+    return {
+      expandedDescriptions: {},
+    }
+  },
   mounted() {
     // Check stalls data
     console.log('CardStallsComponent mounted')
@@ -49,6 +54,32 @@ export default {
         case 'Fixed Price':
         default:
           return 'primary'
+      }
+    },
+
+    // NEW: Check if description is long enough to need truncation
+    isDescriptionLong(description) {
+      if (!description) return false
+      return description.length > 80 // Show "show more" if description is longer than 80 characters
+    },
+
+    // NEW: Check if description is expanded
+    isDescriptionExpanded(stallId) {
+      return this.expandedDescriptions[stallId] || false
+    },
+
+    // NEW: Toggle description visibility
+    toggleDescription(stall) {
+      const stallId = stall.stallNumber || stall.id
+      // Use Vue.set or direct assignment for reactivity
+      if (this.$set) {
+        this.$set(this.expandedDescriptions, stallId, !this.expandedDescriptions[stallId])
+      } else {
+        // Fallback for Vue 3 or when $set is not available
+        this.expandedDescriptions = {
+          ...this.expandedDescriptions,
+          [stallId]: !this.expandedDescriptions[stallId],
+        }
       }
     },
   },

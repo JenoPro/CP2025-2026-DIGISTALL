@@ -152,30 +152,6 @@
         </div>
       </div>
     </div>
-
-    <!-- Results Info -->
-    <div class="results-info mt-4 d-flex justify-space-between align-center">
-      <div class="results-left">
-        <v-chip variant="outlined" class="results-chip">
-          {{ resultCount }} stall{{ resultCount !== 1 ? "s" : "" }} found
-        </v-chip>
-        <!-- Active Sort Indicator -->
-        <v-chip
-          v-if="sortField && sortField !== 'default'"
-          variant="outlined"
-          class="sort-indicator ml-2"
-        >
-          <v-icon icon="mdi-sort" size="small" class="mr-1"></v-icon>
-          Sorted by {{ getSortFieldLabel(sortField) }}
-          <v-icon
-            icon="mdi-close"
-            size="small"
-            class="ml-1 cursor-pointer"
-            @click="clearSort"
-          ></v-icon>
-        </v-chip>
-      </div>
-    </div>
   </div>
 </template>
 
