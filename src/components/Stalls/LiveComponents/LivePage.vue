@@ -63,6 +63,14 @@
                 @toggle-flip-horizontal="onFlipHorizontal"
                 @toggle-flip-vertical="onFlipVertical"
               />
+              
+              <!-- Chat Component below video (for non-auctions) -->
+              <ChatBox
+                v-if="!isAuction"
+                :messages="chatMessages"
+                @send-message="sendMessage"
+                class="mt-3"
+              />
             </v-col>
 
             <!-- Control Panel Section -->
@@ -130,39 +138,18 @@
                   />
                 </v-card-text>
               </v-card>
-
-              <!-- Chat Component (for non-auctions) -->
-              <ChatBox
-                v-if="!isAuction"
-                :messages="chatMessages"
-                @send-message="sendMessage"
-                class="mt-3"
-              />
             </v-col>
           </v-row>
 
-          <!-- Second Container: Full-width Live Auction Monitor -->
-          <v-row class="bottom-container">
+          <!-- Bottom Container: Full-width Live Monitor (for auctions only) -->
+          <v-row v-if="isAuction" class="bottom-container">
             <v-col cols="12" class="auction-monitor-section">
-              <!-- Auction Live Panel (for auctions) -->
               <AuctionLivePanel
-                v-if="isAuction"
                 :stall-data="stallData"
                 :is-live="isLiveActive"
                 @bid-placed="onBidPlaced"
                 @auction-ended="onAuctionEnded"
               />
-              
-              <!-- Placeholder for non-auctions -->
-              <v-card v-else class="h-100" variant="outlined">
-                <v-card-text class="text-center pa-8">
-                  <v-icon size="64" color="grey-lighten-1" class="mb-4">mdi-information</v-icon>
-                  <h3 class="text-h6 text-grey-darken-1">Live Stream Active</h3>
-                  <p class="text-body-2 text-grey">
-                    Live streaming is active. Chat with participants using the chat box below.
-                  </p>
-                </v-card-text>
-              </v-card>
             </v-col>
           </v-row>
         </v-container>

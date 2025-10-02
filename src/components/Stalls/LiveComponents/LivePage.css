@@ -19,11 +19,11 @@
 /* Top Container - Video and Control Panel Side by Side */
 .top-container {
   background: #ffffff;
-  border-radius: 12px;
-  padding: 20px;
+  border-radius: 0.75rem; /* Use rem for scalability */
+  padding: 1.25rem; /* Use rem for scalability */
   margin: 0 !important;
-  min-height: 550px;
-  box-shadow: 0 2px 12px rgba(0, 33, 129, 0.08);
+  min-height: 35rem; /* Increased height to accommodate all content */
+  box-shadow: 0 0.125rem 0.75rem rgba(0, 33, 129, 0.08); /* Use rem for scalability */
   border: 1px solid rgba(0, 33, 129, 0.1);
 }
 
@@ -31,36 +31,41 @@
   height: 100%;
   display: flex;
   flex-direction: column;
+  min-height: 32rem; /* Ensure minimum height for alignment */
 }
 
 .control-section {
   height: 100%;
   display: flex;
   flex-direction: column;
+  min-height: 32rem; /* Ensure minimum height for alignment */
 }
 
 .control-section .control-panel {
-  height: 100%;
   display: flex;
   flex-direction: column;
   box-shadow: 0 4px 16px rgba(0, 33, 129, 0.12);
   border: 1px solid rgba(0, 33, 129, 0.1);
+  height: 25rem; /* Match video area height */
+  border-radius: 0.75rem; /* Use rem for scalability */
 }
 
 .control-content {
-  flex: 1;
   overflow-y: auto;
   padding: 16px !important;
+  flex: 1; /* Fill available space in control panel */
+  height: 100%; /* Take full height */
 }
 
 /* Bottom Container - Full-width Auction Monitor */
 .bottom-container {
   background: #ffffff;
-  border-radius: 12px;
-  padding: 20px;
+  border-radius: 0.75rem; /* Use rem for scalability */
+  padding: 1.25rem; /* Use rem for scalability */
   margin: 0 !important;
-  min-height: 450px;
-  box-shadow: 0 2px 12px rgba(0, 33, 129, 0.08);
+  min-height: 28rem; /* Use rem instead of fixed pixels */
+  max-height: 35rem; /* Maximum height for very large screens */
+  box-shadow: 0 0.125rem 0.75rem rgba(0, 33, 129, 0.08); /* Use rem for scalability */
   border: 1px solid rgba(0, 33, 129, 0.1);
 }
 
@@ -100,22 +105,23 @@
 .video-area {
   background: linear-gradient(135deg, #f8f9fa, #e8ebef);
   border: 2px solid rgba(0, 33, 129, 0.2);
-  border-radius: 12px;
-  height: 100%;
-  min-height: 510px;
+  border-radius: 0.75rem; /* Use rem for scalability */
+  flex: 1; /* Take available space in the video section */
+  min-height: 25rem; /* Responsive minimum height */
+  height: 25rem; /* Fixed height to match control panel */
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 4px 16px rgba(0, 33, 129, 0.12);
+  box-shadow: 0 0.25rem 1rem rgba(0, 33, 129, 0.12); /* Use rem for scalability */
 }
 
 .live-video-element {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 10px;
+  border-radius: 0.625rem; /* Use rem for scalability */
   background: #000;
 }
 
@@ -205,53 +211,56 @@
 
 /* Chat Section */
 .chat-container {
-  height: 400px;
+  height: 25rem; /* Use rem for responsiveness to match participants */
+  min-height: 20rem; /* Minimum height for very small screens */
+  max-height: 30rem; /* Maximum height for very large screens */
   background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  border-radius: 0.75rem; /* Use rem for scalability */
+  box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.08); /* Use rem for scalability */
 }
 
 .chat-header {
   background: #1976d2;
   color: white;
-  padding: 12px 16px;
-  border-radius: 12px 12px 0 0;
+  padding: 0.75rem 1rem; /* Use rem for scalability */
+  border-radius: 0.75rem 0.75rem 0 0; /* Use rem for scalability */
   font-weight: 600;
+  font-size: clamp(0.875rem, 2vw, 1rem); /* Responsive font size */
 }
 
 .chat-messages {
-  height: 280px;
+  height: calc(25rem - 8rem); /* Responsive height calculation */
   overflow-y: auto;
-  padding: 12px;
+  padding: 0.75rem; /* Use rem for scalability */
   background: #fafafa;
 }
 
 .chat-message {
-  margin-bottom: 12px;
-  padding: 8px 12px;
+  margin-bottom: 0.75rem; /* Use rem for scalability */
+  padding: 0.5rem 0.75rem; /* Use rem for scalability */
   background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border-radius: 0.5rem; /* Use rem for scalability */
+  box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.05); /* Use rem for scalability */
 }
 
 .chat-user {
   font-weight: 600;
   color: #1976d2;
-  font-size: 14px;
-  margin-bottom: 4px;
+  font-size: clamp(0.75rem, 2vw, 0.875rem); /* Responsive font size */
+  margin-bottom: 0.25rem; /* Use rem for scalability */
 }
 
 .chat-text {
-  font-size: 14px;
+  font-size: clamp(0.75rem, 2vw, 0.875rem); /* Responsive font size */
   line-height: 1.4;
   color: #333;
 }
 
 .chat-input {
-  padding: 12px;
+  padding: 0.75rem; /* Use rem for scalability */
   border-top: 1px solid #e0e0e0;
   background: white;
-  border-radius: 0 0 12px 12px;
+  border-radius: 0 0 0.75rem 0.75rem; /* Use rem for scalability */
 }
 
 /* Control Panel */
@@ -453,66 +462,141 @@
 /* Responsive */
 @media (max-width: 960px) {
   .live-content {
-    padding: 12px;
+    padding: 0.75rem; /* Use rem for scalability */
+  }
+
+  .top-container {
+    min-height: 28rem; /* Reduced height for tablet */
+  }
+
+  .video-section,
+  .control-section {
+    min-height: 26rem; /* Reduced height for tablet */
   }
 
   .video-area {
-    min-height: 200px;
+    min-height: 18rem; /* Responsive video height for tablet */
+    height: 18rem; /* Fixed height for tablet */
+  }
+
+  .control-section .control-panel {
+    height: 18rem; /* Match video area height for tablet */
   }
 
   .chat-container {
-    height: 300px;
-    margin-bottom: 16px;
+    height: 20rem; /* Match participants responsive height */
+    min-height: 18rem;
+    margin-bottom: 1rem; /* Use rem for scalability */
   }
 
   .chat-messages {
-    height: 200px;
+    height: calc(20rem - 7rem); /* Match participants calculation */
+  }
+
+  .bottom-container {
+    min-height: 22rem;
+    max-height: 28rem;
+    padding: 1rem;
   }
 
   .control-panel {
-    padding: 16px;
+    padding: 1rem; /* Use rem for scalability */
   }
 
   .timer-value {
-    font-size: 18px;
+    font-size: clamp(1rem, 3vw, 1.125rem); /* Responsive timer font */
   }
 }
 
 @media (max-width: 600px) {
   .live-header .v-toolbar-title {
-    font-size: 18px !important;
+    font-size: clamp(1rem, 4vw, 1.125rem) !important; /* Responsive header */
   }
 
   .video-placeholder {
-    font-size: 16px;
+    font-size: clamp(0.875rem, 3vw, 1rem); /* Responsive placeholder */
+  }
+
+  .top-container {
+    min-height: 24rem; /* Reduced height for mobile */
+  }
+
+  .video-section,
+  .control-section {
+    min-height: 22rem; /* Reduced height for mobile */
+  }
+
+  .video-area {
+    min-height: 15rem; /* Responsive video height for mobile */
+    height: 15rem; /* Fixed height for mobile */
+  }
+
+  .control-section .control-panel {
+    height: 15rem; /* Match video area height for mobile */
+  }
+
+  .chat-container {
+    height: 18rem; /* Match participants mobile height */
+    min-height: 16rem;
+  }
+
+  .chat-messages {
+    height: calc(18rem - 6.5rem); /* Match participants calculation */
+  }
+
+  .bottom-container {
+    min-height: 18rem;
+    max-height: 24rem;
+    padding: 0.75rem;
   }
 
   .chat-message {
-    margin-bottom: 8px;
-    padding: 6px 10px;
+    margin-bottom: 0.5rem; /* Use rem for scalability */
+    padding: 0.375rem 0.625rem; /* Use rem for scalability */
   }
 
   .action-button {
-    height: 44px !important;
-    font-size: 14px !important;
+    height: 2.75rem !important; /* Use rem for scalability */
+    font-size: clamp(0.75rem, 2.5vw, 0.875rem) !important; /* Responsive button */
   }
 
   .stall-info {
-    padding: 12px;
+    padding: 0.75rem; /* Use rem for scalability */
   }
 
   .info-item {
     flex-direction: column;
     align-items: flex-start;
-    margin-bottom: 8px;
+    margin-bottom: 0.5rem; /* Use rem for scalability */
   }
 
   .timer-container {
-    padding: 12px;
+    padding: 0.75rem; /* Use rem for scalability */
   }
 
   .timer-value {
-    font-size: 16px;
+    font-size: clamp(0.875rem, 3vw, 1rem); /* Responsive timer */
+  }
+}
+
+/* Large screens optimization */
+@media (min-width: 1440px) {
+  .top-container {
+    min-height: 38rem; /* Larger height for big screens */
+  }
+
+  .video-section,
+  .control-section {
+    min-height: 36rem; /* Larger height for big screens */
+  }
+
+  .video-area {
+    min-height: 28rem; /* Larger video area */
+    height: 28rem; /* Fixed height for large screens */
+  }
+
+  .control-section .control-panel {
+    height: 28rem; /* Match video area height for large screens */
   }
 }
 
@@ -722,4 +806,21 @@
 
 .video-effects-panel .v-card-title .v-icon {
   color: white !important;
+}
+
+/* Large screen optimizations for chat to match participants */
+@media (min-width: 1400px) {
+  .chat-container {
+    height: 28rem;
+    max-height: 32rem;
+  }
+
+  .chat-messages {
+    height: calc(28rem - 8.5rem);
+  }
+
+  .bottom-container {
+    min-height: 32rem;
+    max-height: 40rem;
+  }
 }
