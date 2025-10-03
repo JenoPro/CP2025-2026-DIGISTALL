@@ -83,21 +83,36 @@
                 />
               </v-col>
 
-              <!-- Duration Field (for Raffle/Auction only) -->
+              <!-- Smart Deadline Fields (for Raffle/Auction only) -->
               <v-col cols="12" sm="6" v-if="requiresDuration">
                 <v-text-field 
-                  v-model="newStall.durationHours" 
-                  :rules="durationValidationRules"
-                  label="Duration (Hours)"
-                  placeholder="e.g., 72"
-                  prepend-icon="mdi-timer-outline"
+                  v-model="newStall.deadlineDays" 
+                  :rules="[rules.deadline]"
+                  label="Days After First Application"
+                  placeholder="e.g., 3"
+                  prepend-icon="mdi-calendar"
                   type="number"
                   min="1"
-                  max="720"
+                  max="30"
                   outlined 
                   dense
                   persistent-hint
-                  :hint="durationHint"
+                  hint="Timer starts when first applicant applies"
+                />
+              </v-col>
+              
+              <v-col cols="12" sm="6" v-if="requiresDuration">
+                <v-text-field 
+                  v-model="newStall.deadlineTime" 
+                  :rules="[rules.deadlineTime]"
+                  label="Deadline Time"
+                  placeholder="23:00"
+                  prepend-icon="mdi-clock"
+                  type="time"
+                  outlined 
+                  dense
+                  persistent-hint
+                  hint="Time of day for deadline"
                 />
               </v-col>
 

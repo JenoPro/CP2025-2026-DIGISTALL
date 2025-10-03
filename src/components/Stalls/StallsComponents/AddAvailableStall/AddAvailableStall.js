@@ -22,7 +22,10 @@ export default {
         image: null,
         isAvailable: true,
         priceType: 'Fixed Price',
-        durationHours: 72, // Default 3 days for raffle/auction
+        applicationDeadline: '', // Will store calculated deadline when activated
+        deadlineDays: 3, // Number of days after first application
+        deadlineTime: '23:00', // Time of day for deadline (11:00 PM)
+        deadlineActivated: false, // Whether the deadline timer has been activated
       },
       // Price type options
       priceTypeOptions: [
@@ -46,13 +49,19 @@ export default {
         required: (value) => !!value || 'Required field',
         number: (value) => !isNaN(parseFloat(value)) || 'Must be a valid number',
         positiveNumber: (value) => parseFloat(value) > 0 || 'Must be greater than 0',
-        durationHours: (value) => {
-          // Basic validation - we'll handle conditional logic in the computed property
-          const num = parseInt(value)
-          return (
-            (num && num >= 1 && num <= 720) ||
-            'Duration must be between 1-720 hours (1 hour to 30 days)'
-          )
+        deadline: (value) => {
+          if (!this.requiresDuration) return true // Skip validation if not raffle/auction
+          // Validate days (1-30 days)
+          const days = parseInt(value)
+          if (!days || days < 1 || days > 30) {
+            return 'Days must be between 1 and 30'
+          }
+          return true
+        },
+        deadlineTime: (value) => {
+          if (!this.requiresDuration) return true
+          if (!value) return 'Time is required for raffle/auction stalls'
+          return true
         },
       },
       // UPDATED: Dynamic options loaded from API
@@ -233,6 +242,10 @@ export default {
         image: null,
         isAvailable: true,
         priceType: 'Fixed Price',
+        applicationDeadline: '', // Will store calculated deadline when activated
+        deadlineDays: 3, // Number of days after first application
+        deadlineTime: '23:00', // Time of day for deadline (11:00 PM)
+        deadlineActivated: false, // Whether the deadline timer has been activated
       }
       if (this.$refs.form) {
         this.$refs.form.resetValidation()
@@ -317,9 +330,26 @@ export default {
           priceType: this.newStall.priceType,
         }
 
-        // Add duration for raffle/auction stalls
+        // FIXED: Calculate deadline datetime for raffle/auction stalls
         if (this.requiresDuration) {
-          stallData.durationHours = parseInt(this.newStall.durationHours)
+          // Calculate the actual deadline datetime
+          const now = new Date()
+          const deadlineDate = new Date(now)
+          deadlineDate.setDate(deadlineDate.getDate() + parseInt(this.newStall.deadlineDays))
+          
+          // Set the time
+          const [hours, minutes] = this.newStall.deadlineTime.split(':')
+          deadlineDate.setHours(parseInt(hours), parseInt(minutes), 0, 0)
+          
+          // Send as ISO string (what backend expects)
+          stallData.deadline = deadlineDate.toISOString()
+          stallData.applicationDeadline = deadlineDate.toISOString() // Alternative field name
+          
+          console.log('Calculated deadline:', {
+            days: this.newStall.deadlineDays,
+            time: this.newStall.deadlineTime,
+            calculatedDeadline: deadlineDate.toISOString()
+          })
         }
 
         // Convert image to base64 if uploaded
@@ -548,12 +578,12 @@ export default {
 
       // Additional validation for raffle/auction stalls
       if (this.requiresDuration) {
-        return (
-          baseValidation &&
-          this.newStall.durationHours &&
-          parseInt(this.newStall.durationHours) >= 1 &&
-          parseInt(this.newStall.durationHours) <= 720
-        )
+        const deadlineDaysValid = this.newStall.deadlineDays && 
+                                  parseInt(this.newStall.deadlineDays) >= 1 && 
+                                  parseInt(this.newStall.deadlineDays) <= 30
+        const deadlineTimeValid = this.newStall.deadlineTime && this.newStall.deadlineTime.length > 0
+        
+        return baseValidation && deadlineDaysValid && deadlineTimeValid
       }
 
       return baseValidation
@@ -605,33 +635,24 @@ export default {
       }
     },
 
-    // NEW: Duration field hint text based on price type
-    durationHint() {
+    // NEW: Deadline field hint text based on price type
+    deadlineHint() {
       switch (this.newStall.priceType) {
         case 'Raffle':
-          return 'How long participants can enter the raffle (1-720 hours)'
+          return 'When raffle applications will close'
         case 'Auction':
-          return 'How long bidders can place bids (1-720 hours)'
+          return 'When auction applications will close'
         default:
           return ''
       }
     },
 
-    // NEW: Dynamic validation rules for duration field
-    durationValidationRules() {
+    // NEW: Dynamic validation rules for deadline field
+    deadlineValidationRules() {
       if (!this.requiresDuration) {
         return [] // No validation needed for Fixed Price
       }
-      return [
-        (value) => !!value || 'Duration is required for raffle/auction stalls',
-        (value) => {
-          const num = parseInt(value)
-          return (
-            (num && num >= 1 && num <= 720) ||
-            'Duration must be between 1-720 hours (1 hour to 30 days)'
-          )
-        },
-      ]
+      return [this.rules.deadline, this.rules.deadlineTime]
     },
   },
 

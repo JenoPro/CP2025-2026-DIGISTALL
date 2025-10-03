@@ -308,3 +308,45 @@
     left: 15px;
   }
 }
+
+/* Simple deadline field styling - clean and minimal */
+.deadline-fields .v-text-field {
+  margin-bottom: 8px;
+}
+
+.deadline-fields .v-input__prepend-outer {
+  color: #1976d2;
+}
+
+/* Smart Deadline Card Styles */
+.deadline-card {
+  background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%) !important;
+  border: 2px solid #2196f3 !important;
+  border-radius: 12px !important;
+  transition: all 0.2s ease;
+}
+
+.deadline-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(33, 150, 243, 0.15) !important;
+}
+
+.deadline-card .v-card-subtitle {
+  color: #1976d2 !important;
+  font-weight: 600 !important;
+  font-size: 0.875rem !important;
+}
+
+.deadline-card .v-text-field {
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 8px;
+}
+
+.deadline-card .v-chip {
+  background: rgba(33, 150, 243, 0.1) !important;
+  border-color: #2196f3 !important;
+}
+
+.deadline-card .v-chip .v-icon {
+  color: #1976d2 !important;
+}
