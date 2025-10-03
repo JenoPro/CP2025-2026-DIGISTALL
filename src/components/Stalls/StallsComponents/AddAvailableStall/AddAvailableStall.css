@@ -23,12 +23,14 @@
 
 /* Close button hover effect */
 .v-dialog .v-card .v-card-title .v-btn {
-  transition: background-color 0.25s ease, transform 0.2s ease;
+  transition:
+    background-color 0.25s ease,
+    transform 0.2s ease;
 }
 
 /* Success Popup Styles */
 .success-popup-card {
-  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%) !important;
+  background: linear-gradient(135deg, #4caf50 0%, #45a049 100%) !important;
   color: white !important;
   border-radius: 20px !important;
   position: relative;
@@ -94,8 +96,12 @@
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Success Check Animation */
