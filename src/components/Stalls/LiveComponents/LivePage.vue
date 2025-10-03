@@ -144,6 +144,7 @@
           <!-- Bottom Container: Full-width Live Monitor (for auctions only) -->
           <v-row v-if="isAuction" class="bottom-container">
             <v-col cols="12" class="auction-monitor-section">
+              <!-- Auction Live Panel (for auctions) -->
               <AuctionLivePanel
                 :stall-data="stallData"
                 :is-live="isLiveActive"
