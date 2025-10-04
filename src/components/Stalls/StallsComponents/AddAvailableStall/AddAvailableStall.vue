@@ -22,20 +22,12 @@
 
               <!-- Price -->
               <v-col cols="12" sm="6">
-                <v-text-field 
-                  v-model="newStall.price" 
-                  :rules="[rules.required, rules.positiveNumber]" 
-                  :label="priceFieldLabel"
-                  :placeholder="newStall.priceType === 'Raffle' ? 'e.g., 500' : 
-                                newStall.priceType === 'Auction' ? 'e.g., 1000' : 'e.g., 2500'"
-                  prepend-icon="mdi-currency-php" 
-                  outlined 
-                  dense 
-                  persistent-hint
-                  :hint="newStall.priceType === 'Fixed Price' ? 'Enter monthly rental price' :
-                         newStall.priceType === 'Raffle' ? 'Entry fee for raffle participation' :
-                         'Starting bid amount for auction'"
-                />
+                <v-text-field v-model="newStall.price" :rules="[rules.required, rules.positiveNumber]"
+                  :label="priceFieldLabel" :placeholder="newStall.priceType === 'Raffle' ? 'e.g., 500' :
+                    newStall.priceType === 'Auction' ? 'e.g., 1000' : 'e.g., 2500'"
+                  prepend-icon="mdi-currency-php" outlined dense persistent-hint :hint="newStall.priceType === 'Fixed Price' ? 'Enter monthly rental price' :
+                    newStall.priceType === 'Raffle' ? 'Entry fee for raffle participation' :
+                      'Starting bid amount for auction'" />
               </v-col>
 
               <!-- Floor -->
@@ -66,54 +58,24 @@
 
               <!-- Price Type Dropdown -->
               <v-col cols="12" sm="6">
-                <v-select 
-                  v-model="newStall.priceType" 
-                  :items="priceTypeOptions" 
-                  :rules="[rules.required]"
-                  label="Price Type" 
-                  prepend-icon="mdi-tag" 
-                  outlined 
-                  dense
-                  item-title="title"
-                  item-value="value"
-                  persistent-hint
-                  :hint="newStall.priceType === 'Fixed Price' ? 'Standard monthly rental' : 
-                         newStall.priceType === 'Raffle' ? 'Random winner selection with entry fee' :
-                         'Highest bidder wins with starting bid'"
-                />
+                <v-select v-model="newStall.priceType" :items="priceTypeOptions" :rules="[rules.required]"
+                  label="Price Type" prepend-icon="mdi-tag" outlined dense item-title="title" item-value="value"
+                  persistent-hint :hint="newStall.priceType === 'Fixed Price' ? 'Standard monthly rental' :
+                    newStall.priceType === 'Raffle' ? 'Random winner selection with entry fee' :
+                      'Highest bidder wins with starting bid'" />
               </v-col>
 
               <!-- Smart Deadline Fields (for Raffle/Auction only) -->
               <v-col cols="12" sm="6" v-if="requiresDuration">
-                <v-text-field 
-                  v-model="newStall.deadlineDays" 
-                  :rules="[rules.deadline]"
-                  label="Days After First Application"
-                  placeholder="e.g., 3"
-                  prepend-icon="mdi-calendar"
-                  type="number"
-                  min="1"
-                  max="30"
-                  outlined 
-                  dense
-                  persistent-hint
-                  hint="Timer starts when first applicant applies"
-                />
+                <v-text-field v-model="newStall.deadlineDays" :rules="[rules.deadline]"
+                  label="Days After First Application" placeholder="e.g., 3" prepend-icon="mdi-calendar" type="number"
+                  min="1" max="30" outlined dense persistent-hint hint="Timer starts when first applicant applies" />
               </v-col>
-              
+
               <v-col cols="12" sm="6" v-if="requiresDuration">
-                <v-text-field 
-                  v-model="newStall.deadlineTime" 
-                  :rules="[rules.deadlineTime]"
-                  label="Deadline Time"
-                  placeholder="23:00"
-                  prepend-icon="mdi-clock"
-                  type="time"
-                  outlined 
-                  dense
-                  persistent-hint
-                  hint="Time of day for deadline"
-                />
+                <v-text-field v-model="newStall.deadlineTime" :rules="[rules.deadlineTime]" label="Deadline Time"
+                  placeholder="23:00" prepend-icon="mdi-clock" type="time" outlined dense persistent-hint
+                  hint="Time of day for deadline" />
               </v-col>
 
               <!-- Image Upload -->

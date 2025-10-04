@@ -10,10 +10,7 @@
       </p>
     </div>
 
-    <active-auctions 
-      @show-message="handleMessage"
-      @view-auction-details="handleViewDetails"
-    />
+    <active-auctions @show-message="handleMessage" @view-auction-details="handleViewDetails" />
 
     <!-- View Details Modal -->
     <v-dialog v-model="showDetailsModal" max-width="600px" persistent>
@@ -24,7 +21,7 @@
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </v-card-title>
-        
+
         <v-card-text v-if="selectedAuction">
           <v-row>
             <v-col cols="12" md="6">
@@ -42,24 +39,20 @@
               <p><strong>Created:</strong> {{ formatDateTime(selectedAuction.created_at) }}</p>
               <p><strong>Expires:</strong> {{ formatDateTime(selectedAuction.expires_at) }}</p>
               <p><strong>Total Bids:</strong> {{ selectedAuction.bid_count || 0 }}</p>
-              <p v-if="selectedAuction.highest_bidder"><strong>Highest Bidder:</strong> {{ selectedAuction.highest_bidder }}</p>
+              <p v-if="selectedAuction.highest_bidder"><strong>Highest Bidder:</strong> {{
+                selectedAuction.highest_bidder }}</p>
             </v-col>
           </v-row>
-          
+
           <!-- Recent Bids -->
           <div v-if="selectedAuction.recent_bids && selectedAuction.recent_bids.length" class="mt-4">
             <h4 class="mb-2">Recent Bids</h4>
-            <v-chip 
-              v-for="bid in selectedAuction.recent_bids" 
-              :key="bid.bid_id"
-              class="mr-2 mb-2"
-              small
-            >
+            <v-chip v-for="bid in selectedAuction.recent_bids" :key="bid.bid_id" class="mr-2 mb-2" small>
               {{ bid.bidder_name }}: ₱{{ formatPrice(bid.amount) }}
             </v-chip>
           </div>
         </v-card-text>
-        
+
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn text @click="closeDetailsModal">Close</v-btn>
@@ -68,20 +61,10 @@
     </v-dialog>
 
     <!-- Message Snackbar -->
-    <v-snackbar
-      v-model="showMessage"
-      :color="messageType"
-      :timeout="messageTimeout"
-      top
-    >
+    <v-snackbar v-model="showMessage" :color="messageType" :timeout="messageTimeout" top>
       {{ message }}
       <template v-slot:action="{ attrs }">
-        <v-btn
-          color="white"
-          text
-          v-bind="attrs"
-          @click="showMessage = false"
-        >
+        <v-btn color="white" text v-bind="attrs" @click="showMessage = false">
           Close
         </v-btn>
       </template>
@@ -180,11 +163,11 @@ export default {
   .page-header {
     padding: 24px 16px;
   }
-  
+
   .page-title {
     font-size: 1.5rem;
   }
-  
+
   .page-subtitle {
     font-size: 0.9rem;
   }

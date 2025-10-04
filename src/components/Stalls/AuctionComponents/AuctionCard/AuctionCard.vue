@@ -27,13 +27,8 @@
           <span class="expiry-date">{{ formatDateTime(auction.expires_at) }}</span>
         </div>
       </div>
-      <v-progress-linear
-        :value="progressPercentage"
-        :color="timerColor"
-        height="4"
-        rounded
-        class="timer-progress"
-      ></v-progress-linear>
+      <v-progress-linear :value="progressPercentage" :color="timerColor" height="4" rounded
+        class="timer-progress"></v-progress-linear>
     </div>
 
     <!-- Bidders Section -->
@@ -53,11 +48,7 @@
       <div v-if="auction.recent_bids && auction.recent_bids.length" class="recent-bids">
         <p class="recent-label">Recent bids:</p>
         <div class="bid-items">
-          <div
-            v-for="bid in auction.recent_bids.slice(0, 2)"
-            :key="bid.bid_id"
-            class="bid-item"
-          >
+          <div v-for="bid in auction.recent_bids.slice(0, 2)" :key="bid.bid_id" class="bid-item">
             <v-avatar size="20" class="bid-avatar">
               <span class="avatar-text">{{ bid.bidder_name.charAt(0) }}</span>
             </v-avatar>
@@ -80,12 +71,7 @@
 
     <!-- Action Buttons -->
     <v-card-actions class="card-actions">
-      <v-btn
-        small
-        text
-        color="primary"
-        @click="$emit('view-details', auction)"
-      >
+      <v-btn small text color="primary" @click="$emit('view-details', auction)">
         <v-icon small left>mdi-eye</v-icon>
         View Details
       </v-btn>
@@ -93,36 +79,19 @@
       <v-spacer></v-spacer>
 
       <!-- Go Live Button -->
-      <v-btn
-        v-if="canGoLive"
-        small
-        color="#1976d2"
-        @click="goLive"
-        class="go-live-btn"
-      >
+      <v-btn v-if="canGoLive" small color="#1976d2" @click="goLive" class="go-live-btn">
         <v-icon small left>mdi-broadcast</v-icon>
         Go Live
       </v-btn>
 
       <!-- Extend Timer Button -->
-      <v-btn
-        v-if="canExtendTimer && !canGoLive"
-        small
-        outlined
-        color="warning"
-        @click="$emit('extend-timer', auction)"
-      >
+      <v-btn v-if="canExtendTimer && !canGoLive" small outlined color="warning" @click="$emit('extend-timer', auction)">
         <v-icon small left>mdi-timer-plus</v-icon>
         Extend
       </v-btn>
 
       <!-- End Auction Button -->
-      <v-btn
-        v-if="canSelectWinner && !canGoLive"
-        small
-        color="error"
-        @click="$emit('select-winner', auction)"
-      >
+      <v-btn v-if="canSelectWinner && !canGoLive" small color="error" @click="$emit('select-winner', auction)">
         <v-icon small left>mdi-gavel</v-icon>
         End Auction
       </v-btn>

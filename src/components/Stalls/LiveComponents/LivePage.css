@@ -22,7 +22,7 @@
   border-radius: 0.75rem; /* Use rem for scalability */
   padding: 1.25rem; /* Use rem for scalability */
   margin: 0 !important;
-  min-height: 35rem; /* Increased height to accommodate all content */
+  min-height: 36rem; /* Increased height to accommodate all content */
   box-shadow: 0 0.125rem 0.75rem rgba(0, 33, 129, 0.08); /* Use rem for scalability */
   border: 1px solid rgba(0, 33, 129, 0.1);
 }
@@ -31,14 +31,14 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  min-height: 32rem; /* Ensure minimum height for alignment */
+  min-height: 33rem; /* Match control panel height */
 }
 
 .control-section {
   height: 100%;
   display: flex;
   flex-direction: column;
-  min-height: 32rem; /* Ensure minimum height for alignment */
+  min-height: 33rem; /* Match video section height */
 }
 
 .control-section .control-panel {
@@ -46,7 +46,7 @@
   flex-direction: column;
   box-shadow: 0 4px 16px rgba(0, 33, 129, 0.12);
   border: 1px solid rgba(0, 33, 129, 0.1);
-  height: 25rem; /* Match video area height */
+  height: 33rem; /* Match video area height */
   border-radius: 0.75rem; /* Use rem for scalability */
 }
 
@@ -55,29 +55,6 @@
   padding: 16px !important;
   flex: 1; /* Fill available space in control panel */
   height: 100%; /* Take full height */
-}
-
-/* Bottom Container - Full-width Auction Monitor */
-.bottom-container {
-  background: #ffffff;
-  border-radius: 0.75rem; /* Use rem for scalability */
-  padding: 1.25rem; /* Use rem for scalability */
-  margin: 0 !important;
-  min-height: 28rem; /* Use rem instead of fixed pixels */
-  max-height: 35rem; /* Maximum height for very large screens */
-  box-shadow: 0 0.125rem 0.75rem rgba(0, 33, 129, 0.08); /* Use rem for scalability */
-  border: 1px solid rgba(0, 33, 129, 0.1);
-}
-
-.auction-monitor-section {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-.auction-monitor-section .auction-live-panel {
-  height: 100%;
-  flex: 1;
 }
 
 /* Raffle Live Panel Styling */
@@ -128,6 +105,33 @@
 
 .timer-value.expired {
   color: #f44336;
+}
+
+/* Auction Controls Section */
+.auction-controls-section {
+  border-top: 1px solid #e0e0e0;
+  padding-top: 16px;
+}
+
+.auction-controls-section .section-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #002181;
+  display: flex;
+  align-items: center;
+}
+
+.controls-buttons .v-btn {
+  margin-bottom: 8px;
+}
+
+.controls-buttons .v-btn:last-child {
+  margin-bottom: 0;
+}
+
+.controls-buttons .v-chip {
+  width: 100%;
+  justify-content: center;
 }
 
 .raffle-stats .stat-card {
@@ -218,11 +222,6 @@
     padding: 16px;
   }
 
-  .bottom-container {
-    min-height: 350px;
-    padding: 16px;
-  }
-
   /* Stack video and control panel vertically on mobile */
   .control-section {
     margin-top: 20px;
@@ -242,8 +241,7 @@
   background: #f8f9fa;
 }
 
-.top-container,
-.bottom-container {
+.top-container {
   margin-bottom: 24px !important;
 }
 
@@ -611,12 +609,6 @@
     height: calc(18rem - 6.5rem); /* Match participants calculation */
   }
 
-  .bottom-container {
-    min-height: 18rem;
-    max-height: 24rem;
-    padding: 0.75rem;
-  }
-
   .chat-message {
     margin-bottom: 0.5rem; /* Use rem for scalability */
     padding: 0.375rem 0.625rem; /* Use rem for scalability */
@@ -883,9 +875,28 @@
   .chat-messages {
     height: calc(28rem - 8.5rem);
   }
+}
 
-  .bottom-container {
-    min-height: 32rem;
-    max-height: 40rem;
-  }
+/* Auction-specific styles with reduced padding */
+.live-content.auction-mode {
+  padding: 70px 15px 15px 15px; /* Reduced from 80px 20px 20px 20px */
+}
+
+.top-container.auction-mode {
+  padding: 0.875rem; /* Reduced from 1.25rem */
+}
+
+.control-content.auction-mode {
+  padding: 12px !important; /* Reduced from 16px */
+}
+
+/* Enhanced auction control buttons */
+.auction-controls-section .controls-buttons .v-btn {
+  height: 40px !important;
+  font-size: 0.95rem !important;
+  font-weight: 600 !important;
+}
+
+.auction-controls-section .controls-buttons .v-btn .v-icon {
+  margin-right: 8px !important;
 }

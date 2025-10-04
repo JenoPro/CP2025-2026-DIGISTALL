@@ -10,79 +10,38 @@
         {{ isExpired ? 'Time\'s Up!' : 'Time Remaining' }}
       </div>
     </div>
-    
+
     <!-- Progress Ring -->
     <div class="timer-progress">
       <svg class="progress-ring" width="80" height="80">
-        <circle
-          class="progress-ring-background"
-          cx="40"
-          cy="40"
-          r="36"
-          fill="transparent"
-          stroke="#e0e0e0"
-          stroke-width="4"
-        />
-        <circle
-          class="progress-ring-fill"
-          cx="40"
-          cy="40"
-          r="36"
-          fill="transparent"
-          :stroke="progressColor"
-          stroke-width="4"
-          stroke-linecap="round"
-          :stroke-dasharray="circumference"
-          :stroke-dashoffset="strokeDashoffset"
-          transform="rotate(-90 40 40)"
-        />
+        <circle class="progress-ring-background" cx="40" cy="40" r="36" fill="transparent" stroke="#e0e0e0"
+          stroke-width="4" />
+        <circle class="progress-ring-fill" cx="40" cy="40" r="36" fill="transparent" :stroke="progressColor"
+          stroke-width="4" stroke-linecap="round" :stroke-dasharray="circumference"
+          :stroke-dashoffset="strokeDashoffset" transform="rotate(-90 40 40)" />
       </svg>
       <div class="progress-content">
-        <v-icon 
-          :color="isExpired ? 'error' : 'primary'" 
-          size="24"
-        >
+        <v-icon :color="isExpired ? 'error' : 'primary'" size="24">
           {{ isExpired ? 'mdi-clock-alert' : 'mdi-clock' }}
         </v-icon>
       </div>
     </div>
-    
+
     <!-- Status Indicators -->
     <div class="timer-status mt-2">
-      <v-chip
-        v-if="!isActive && !isExpired"
-        color="warning"
-        size="small"
-        variant="flat"
-      >
+      <v-chip v-if="!isActive && !isExpired" color="warning" size="small" variant="flat">
         <v-icon start size="16">mdi-pause</v-icon>
         Paused
       </v-chip>
-      <v-chip
-        v-else-if="isExpired"
-        color="error"
-        size="small"
-        variant="flat"
-      >
+      <v-chip v-else-if="isExpired" color="error" size="small" variant="flat">
         <v-icon start size="16">mdi-stop</v-icon>
         Ended
       </v-chip>
-      <v-chip
-        v-else-if="isUrgent"
-        color="warning"
-        size="small"
-        variant="flat"
-        class="pulse"
-      >
+      <v-chip v-else-if="isUrgent" color="warning" size="small" variant="flat" class="pulse">
         <v-icon start size="16">mdi-alert</v-icon>
         Urgent
       </v-chip>
-      <v-chip
-        v-else
-        color="success"
-        size="small"
-        variant="flat"
-      >
+      <v-chip v-else color="success" size="small" variant="flat">
         <v-icon start size="16">mdi-play</v-icon>
         Active
       </v-chip>
@@ -121,7 +80,7 @@ export default {
       const totalSeconds = Math.max(0, this.timeRemaining)
       const minutes = Math.floor(totalSeconds / 60)
       const seconds = totalSeconds % 60
-      
+
       return {
         minutes: minutes.toString().padStart(2, '0'),
         seconds: seconds.toString().padStart(2, '0'),
@@ -153,12 +112,12 @@ export default {
       if (oldTime > this.urgentThreshold && newTime <= this.urgentThreshold) {
         this.$emit('urgent')
       }
-      
+
       // Emit time up when reaching zero
       if (oldTime > 0 && newTime <= 0) {
         this.$emit('timeUp')
       }
-      
+
       // Emit periodic updates
       this.$emit('timeUpdate', newTime)
     },
@@ -186,7 +145,7 @@ export default {
   font-size: 2rem;
   font-weight: 700;
   color: #1976d2;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .timer-display.urgent .time-value {
@@ -248,30 +207,41 @@ export default {
 
 /* Animations */
 @keyframes pulse {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: scale(1);
   }
+
   50% {
     transform: scale(1.05);
   }
 }
 
 @keyframes blink {
-  0%, 50% {
+
+  0%,
+  50% {
     opacity: 1;
   }
-  51%, 100% {
+
+  51%,
+  100% {
     opacity: 0.3;
   }
 }
 
 @keyframes shake {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateX(0);
   }
+
   25% {
     transform: translateX(-2px);
   }
+
   75% {
     transform: translateX(2px);
   }
@@ -286,19 +256,19 @@ export default {
   .time-value {
     font-size: 1.5rem;
   }
-  
+
   .timer-progress svg {
     width: 60px;
     height: 60px;
   }
-  
+
   .timer-progress .progress-ring-background,
   .timer-progress .progress-ring-fill {
     r: 26;
     cx: 30;
     cy: 30;
   }
-  
+
   .countdown-timer {
     padding: 12px;
   }
@@ -306,6 +276,7 @@ export default {
 
 /* Accessibility */
 @media (prefers-reduced-motion: reduce) {
+
   .time-value,
   .countdown-timer.urgent .timer-display,
   .pulse,

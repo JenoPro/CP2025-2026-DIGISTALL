@@ -52,6 +52,11 @@ export default {
       showParticipantsModal: false,
       apiBaseUrl: 'http://localhost:3000',
       isLiveActive: false,
+
+      // Auction Control Properties
+      auctionStatus: 'pending', // pending, live, paused, ended
+      auctionLoading: false,
+
       videoStream: null,
       currentVideoFilter: 'none',
       videoFlipHorizontal: false,
@@ -73,7 +78,7 @@ export default {
       ],
       currentTime: new Date(),
       countdown: 300,
-      auctionCountdown: 60,
+      auctionCountdown: 1200, // 20 minutes (20 * 60 = 1200 seconds)
       raffleWinner: null,
       auctionWinner: null,
       ticketsSold: 0,
@@ -153,6 +158,23 @@ export default {
           return 'info'
       }
     },
+
+    // Helper method for auction status colors
+    getAuctionStatusColor() {
+      switch (this.auctionStatus) {
+        case 'live':
+          return 'success'
+        case 'pending':
+          return 'warning'
+        case 'paused':
+          return 'info'
+        case 'ended':
+          return 'error'
+        default:
+          return 'grey'
+      }
+    },
+
     goBack() {
       this.$router.go(-1)
     },
@@ -179,6 +201,7 @@ export default {
           type: this.type,
           starting_price: 100,
         }
+        this.itemType = this.type
       }
       // Fetch participants/bidders after stall data
       if (this.isRaffle) {
@@ -325,6 +348,90 @@ export default {
         this.showMessage = false
       }, 3000)
     },
+
+    // Auction Control Methods
+    async startAuction() {
+      try {
+        this.auctionLoading = true
+
+        // API call to start auction - replace with actual endpoint
+        // await this.apiCall('POST', `/auctions/${this.stallData.id}/start`)
+
+        // Simulate API call
+        await new Promise((resolve) => setTimeout(resolve, 1000))
+
+        this.auctionStatus = 'live'
+        this.isLiveActive = true
+
+        this.handleMessage('Auction started successfully!', 'success')
+      } catch (error) {
+        console.error('Error starting auction:', error)
+        this.handleMessage('Failed to start auction', 'error')
+      } finally {
+        this.auctionLoading = false
+      }
+    },
+
+    async pauseAuction() {
+      try {
+        this.auctionLoading = true
+
+        // API call to pause auction
+        // await this.apiCall('POST', `/auctions/${this.stallData.id}/pause`)
+
+        // Simulate API call
+        await new Promise((resolve) => setTimeout(resolve, 1000))
+
+        this.auctionStatus = 'paused'
+
+        this.handleMessage('Auction paused', 'info')
+      } catch (error) {
+        console.error('Error pausing auction:', error)
+        this.handleMessage('Failed to pause auction', 'error')
+      } finally {
+        this.auctionLoading = false
+      }
+    },
+
+    async endAuction() {
+      try {
+        this.auctionLoading = true
+
+        // API call to end auction
+        // await this.apiCall('POST', `/auctions/${this.stallData.id}/end`)
+
+        // Simulate API call
+        await new Promise((resolve) => setTimeout(resolve, 1000))
+
+        this.auctionStatus = 'ended'
+        this.isLiveActive = false
+
+        // Handle winner determination if bidders exist
+        if (this.bidders.length > 0) {
+          const highestBidder = this.bidders.reduce((prev, current) => {
+            return (prev.bid_amount || prev.lastBid || 0) >
+              (current.bid_amount || current.lastBid || 0)
+              ? prev
+              : current
+          })
+          this.auctionWinner = highestBidder
+          this.selectedWinner = this.auctionWinner
+          this.showWinnerDialog = true
+          this.handleMessage(
+            `Auction won by: ${this.auctionWinner.name} with bid ₱${this.formatPrice(this.auctionWinner.bid_amount || this.auctionWinner.lastBid)}`,
+            'success',
+          )
+        } else {
+          this.handleMessage('Auction ended with no bids', 'info')
+        }
+      } catch (error) {
+        console.error('Error ending auction:', error)
+        this.handleMessage('Failed to end auction', 'error')
+      } finally {
+        this.auctionLoading = false
+      }
+    },
+
     selectRaffleWinner() {
       if (this.participants.length > 0) {
         const randomIndex = Math.floor(Math.random() * this.participants.length)
@@ -351,33 +458,13 @@ export default {
       this.showWinnerDialog = false
       this.selectedWinner = null
     },
-    // Winner selection methods
-    endAuction() {
-      if (this.bidders.length > 0) {
-        const highestBidder = this.bidders.reduce((prev, current) => {
-          return prev.bid_amount > current.bid_amount ? prev : current
-        })
-        this.auctionWinner = highestBidder
-        this.selectedWinner = this.auctionWinner
-        this.showWinnerDialog = true
-        this.handleMessage(
-          'Auction won by: ' +
-            this.auctionWinner.name +
-            ' with bid ₱' +
-            this.auctionWinner.bid_amount,
-          'success',
-        )
-      } else {
-        this.handleMessage('No bidders in this auction', 'warning')
-      }
-    },
     // Restart functionality
     restartCountdown() {
       if (this.isRaffle) {
         this.countdown = 300
         this.raffleWinner = null
       } else if (this.isAuction) {
-        this.auctionCountdown = 60
+        this.auctionCountdown = 1200 // Reset to 20 minutes
         this.auctionWinner = null
       }
       this.selectedWinner = null
@@ -395,14 +482,12 @@ export default {
     // Auction event handlers
     onBidPlaced(bidData) {
       // Handle bid placement from auction panel
-      console.log('Bid placed:', bidData)
       // Update bidders list if needed
       this.handleMessage(`New bid placed: ₱${this.formatPrice(bidData.amount)}`, 'success')
     },
 
     onAuctionEnded(winnerData) {
       // Handle auction end from auction panel
-      console.log('Auction ended:', winnerData)
       this.auctionWinner = winnerData
       this.handleMessage(`Auction ended! Winner: ${winnerData.name}`, 'success')
     },

@@ -1,22 +1,29 @@
 /* View Modal Styles */
 .view-modal-card {
-  border-radius: 12px !important;
-  overflow: hidden;
+  border-radius: 16px !important;
+  overflow: hidden !important;
 }
 
 .view-modal-header {
   background: #002181 !important;
   color: white !important;
-  padding: 16px 24px !important;
-  position: relative;
+  padding: 24px 28px !important;
   display: flex !important;
   justify-content: space-between !important;
   align-items: center !important;
 }
 
 .view-modal-header span {
-  font-size: 1.25rem !important;
+  font-size: 1.4rem !important;
   font-weight: 600 !important;
+}
+
+/* Close Button Styling */
+.view-modal-header .v-btn--icon {
+  border-radius: 50% !important;
+  min-width: 50px !important;
+  height: 50px !important;
+  width: 50px !important;
 }
 
 /* Search and Filter Bar */
