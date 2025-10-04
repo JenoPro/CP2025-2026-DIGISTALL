@@ -270,7 +270,7 @@ export default {
       console.log('Applicants page initialized')
       // Debug localStorage contents
       console.log('🔍 Debug Auth Status:', {
-        sessionAuthToken: sessionStorage.getItem('authToken') 
+        sessionAuthToken: sessionStorage.getItem('authToken')
           ? `Present (${sessionStorage.getItem('authToken').length} chars)`
           : 'Not found',
         localStorageToken: localStorage.getItem('token')
@@ -280,8 +280,8 @@ export default {
           ? `Present (${localStorage.getItem('authToken').length} chars)`
           : 'Not found',
         currentUser: sessionStorage.getItem('currentUser') ? 'Present' : 'Not found',
-        userType: sessionStorage.getItem('userType') || 'Not set'
-      });
+        userType: sessionStorage.getItem('userType') || 'Not set',
+      })
       console.log('- user:', localStorage.getItem('user'))
       console.log('- branch_manager_id:', localStorage.getItem('branch_manager_id'))
       console.log('- branch_id:', localStorage.getItem('branch_id'))
@@ -327,78 +327,79 @@ export default {
       // Example: this.$api.declineApplicant(applicant.id)
     },
 
-        // Fetch stall applicants from database
+    // Fetch stall applicants from database
     async fetchStallApplicants() {
-      if (this.currentApplicantType !== 'Stall Applicants') return;
+      if (this.currentApplicantType !== 'Stall Applicants') return
 
-      this.loading = true;
-      this.error = null;
+      this.loading = true
+      this.error = null
 
       try {
-        console.log('🎯 Fetching stall applicants...');
-        
+        console.log('🎯 Fetching stall applicants...')
+
         // Check if we have a token (check multiple storage locations)
-        const token = sessionStorage.getItem('authToken') || 
-                     localStorage.getItem('token') || 
-                     localStorage.getItem('authToken');
-        
+        const token =
+          sessionStorage.getItem('authToken') ||
+          localStorage.getItem('token') ||
+          localStorage.getItem('authToken')
+
         if (!token) {
-          throw new Error('Authentication token not found. Please log in again.');
+          throw new Error('Authentication token not found. Please log in again.')
         }
 
-        console.log('🔑 Token found, making API request...');
+        console.log('🔑 Token found, making API request...')
 
         // Use the endpoint that automatically gets branch manager ID from token
         const response = await fetch(`http://localhost:3001/api/applicants/my-stall-applicants`, {
           method: 'GET',
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        });
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        })
 
-        console.log('📡 Response status:', response.status);
+        console.log('📡 Response status:', response.status)
 
         // Handle different error responses
         if (!response.ok) {
           if (response.status === 401) {
             // Clear all possible token storage locations
-            localStorage.removeItem('token');
-            localStorage.removeItem('authToken');
-            localStorage.removeItem('userInfo');
-            localStorage.removeItem('user');
-            sessionStorage.removeItem('authToken');
-            sessionStorage.removeItem('currentUser');
-            sessionStorage.removeItem('userType');
-            sessionStorage.removeItem('branchManagerId');
-            sessionStorage.removeItem('adminId');
-            throw new Error('Your session has expired. Please log in again.');
+            localStorage.removeItem('token')
+            localStorage.removeItem('authToken')
+            localStorage.removeItem('userInfo')
+            localStorage.removeItem('user')
+            sessionStorage.removeItem('authToken')
+            sessionStorage.removeItem('currentUser')
+            sessionStorage.removeItem('userType')
+            sessionStorage.removeItem('branchManagerId')
+            sessionStorage.removeItem('adminId')
+            throw new Error('Your session has expired. Please log in again.')
           } else if (response.status === 403) {
-            throw new Error('You do not have permission to view these applicants.');
+            throw new Error('You do not have permission to view these applicants.')
           } else if (response.status === 404) {
-            throw new Error('Branch manager information not found.');
+            throw new Error('Branch manager information not found.')
           } else {
-            throw new Error(`Server error: ${response.status}`);
+            throw new Error(`Server error: ${response.status}`)
           }
         }
 
-        const result = await response.json();
-        console.log('📦 API Response:', result);
+        const result = await response.json()
+        console.log('📦 API Response:', result)
 
         if (result.success) {
           // Check if we have applicants data
           if (!result.data || !result.data.applicants) {
-            console.warn('⚠️ No applicants data in response');
-            this.stallApplicants = [];
-            return;
+            console.warn('⚠️ No applicants data in response')
+            this.stallApplicants = []
+            return
           }
 
           // Transform the API data to match our component structure
-          this.stallApplicants = result.data.applicants.map(applicant => {
+          this.stallApplicants = result.data.applicants.map((applicant) => {
             try {
-              return this.transformApplicantData(applicant);
+              return this.transformApplicantData(applicant)
             } catch (transformError) {
-              console.error('❌ Error transforming applicant:', applicant, transformError);
+              console.error('❌ Error transforming applicant:', applicant, transformError)
               // Return a basic object so one bad record doesn't break everything
               return {
                 id: `#${String(applicant.applicant_id).padStart(4, '0')}`,
@@ -408,77 +409,78 @@ export default {
                 phoneNumber: applicant.contact_number || '',
                 address: applicant.address || '',
                 type: 'stall',
-                error: 'Data transformation error'
-              };
+                error: 'Data transformation error',
+              }
             }
-          });
+          })
 
-          console.log(`✅ Successfully fetched ${this.stallApplicants.length} stall applicants`);
+          console.log(`✅ Successfully fetched ${this.stallApplicants.length} stall applicants`)
 
           // Log branch manager info if available
           if (result.data.branch_manager) {
-            console.log('👤 Branch Manager:', result.data.branch_manager.manager_name);
-            console.log('🏢 Branch:', result.data.branch_manager.branch_name);
+            console.log('👤 Branch Manager:', result.data.branch_manager.manager_name)
+            console.log('🏢 Branch:', result.data.branch_manager.branch_name)
           }
 
           // Log statistics if available
           if (result.data.statistics) {
-            console.log('📊 Statistics:', result.data.statistics);
+            console.log('📊 Statistics:', result.data.statistics)
           }
 
           // Show success message if toast is available
           if (this.$toast) {
-            this.$toast.success(`Loaded ${this.stallApplicants.length} applicant(s)`);
+            this.$toast.success(`Loaded ${this.stallApplicants.length} applicant(s)`)
           }
-
         } else {
-          throw new Error(result.message || 'Failed to fetch applicants');
+          throw new Error(result.message || 'Failed to fetch applicants')
         }
-
       } catch (error) {
-        console.error('❌ Error fetching stall applicants:', error);
-        this.error = error.message;
-        this.stallApplicants = [];
-        
+        console.error('❌ Error fetching stall applicants:', error)
+        this.error = error.message
+        this.stallApplicants = []
+
         // Show error message to user
-        const errorMessage = error.message.includes('Authentication') || error.message.includes('session')
-          ? error.message 
-          : `Failed to load stall applicants: ${error.message}`;
-        
+        const errorMessage =
+          error.message.includes('Authentication') || error.message.includes('session')
+            ? error.message
+            : `Failed to load stall applicants: ${error.message}`
+
         if (this.$toast) {
-          this.$toast.error(errorMessage);
+          this.$toast.error(errorMessage)
         } else {
-          console.error('📢', errorMessage);
-          alert(errorMessage); // Fallback if no toast
+          console.error('📢', errorMessage)
+          alert(errorMessage) // Fallback if no toast
         }
 
         // Redirect to login if authentication error
-        if (error.message.includes('log in again') || error.message.includes('session has expired')) {
+        if (
+          error.message.includes('log in again') ||
+          error.message.includes('session has expired')
+        ) {
           setTimeout(() => {
             // Redirect to login page
-            this.$router.push('/login');
-          }, 2000);
+            this.$router.push('/login')
+          }, 2000)
         }
-
       } finally {
-        this.loading = false;
+        this.loading = false
       }
     },
 
     // Transform API response data to component format
     transformApplicantData(apiData) {
       // Debug: Log the API data structure
-      console.log('🔍 Transform Debug - API Data:', apiData);
-      console.log('🔍 Civil Status:', apiData.applicant_civil_status);
-      console.log('🔍 Spouse Data:', apiData.spouse);
-      console.log('🔍 Business Info:', apiData.business_information);
-      console.log('🔍 Other Info:', apiData.other_information);
-      
+      console.log('🔍 Transform Debug - API Data:', apiData)
+      console.log('🔍 Civil Status:', apiData.applicant_civil_status)
+      console.log('🔍 Spouse Data:', apiData.spouse)
+      console.log('🔍 Business Info:', apiData.business_information)
+      console.log('🔍 Other Info:', apiData.other_information)
+
       // Ensure applications array exists and has items
-      const applications = apiData.applications || [];
-      
+      const applications = apiData.applications || []
+
       // Get the most recent application (first item, assuming sorted by date DESC from backend)
-      const latestApplication = applications.length > 0 ? applications[0] : null;
+      const latestApplication = applications.length > 0 ? applications[0] : null
 
       // Base applicant object
       const transformedData = {
@@ -489,66 +491,74 @@ export default {
         phoneNumber: apiData.contact_number || '',
         address: apiData.address || '',
         type: 'stall',
-        
+
         // Complete personal information from applicant table
         first_name: apiData.first_name || '',
         last_name: apiData.last_name || '',
         applicant_birthdate: apiData.applicant_birthdate || null,
         applicant_civil_status: apiData.applicant_civil_status || null,
         applicant_educational_attainment: apiData.applicant_educational_attainment || null,
-        
+
         // Spouse information (if married and has spouse data)
-        spouse_information: apiData.spouse ? {
-          spouse_full_name: apiData.spouse.spouse_full_name || '',
-          spouse_birthdate: apiData.spouse.spouse_birthdate || null,
-          spouse_educational_attainment: apiData.spouse.spouse_educational_attainment || '',
-          spouse_contact_number: apiData.spouse.spouse_contact_number || '',
-          spouse_occupation: apiData.spouse.spouse_occupation || ''
-        } : null,
-        
+        spouse_information: apiData.spouse
+          ? {
+              spouse_full_name: apiData.spouse.spouse_full_name || '',
+              spouse_birthdate: apiData.spouse.spouse_birthdate || null,
+              spouse_educational_attainment: apiData.spouse.spouse_educational_attainment || '',
+              spouse_contact_number: apiData.spouse.spouse_contact_number || '',
+              spouse_occupation: apiData.spouse.spouse_occupation || '',
+            }
+          : null,
+
         // Business information
-        business_information: apiData.business_information ? {
-          nature_of_business: apiData.business_information.nature_of_business || 'Not specified',
-          capitalization: apiData.business_information.capitalization || 0,
-          source_of_capital: apiData.business_information.source_of_capital || 'Not specified',
-          previous_business_experience: apiData.business_information.previous_business_experience || 'None',
-          relative_stall_owner: apiData.business_information.relative_stall_owner || 'No'
-        } : {
-          nature_of_business: 'Not specified',
-          capitalization: 0,
-          source_of_capital: 'Not specified',
-          previous_business_experience: 'None',
-          relative_stall_owner: 'No'
-        },
-        
+        business_information: apiData.business_information
+          ? {
+              nature_of_business:
+                apiData.business_information.nature_of_business || 'Not specified',
+              capitalization: apiData.business_information.capitalization || 0,
+              source_of_capital: apiData.business_information.source_of_capital || 'Not specified',
+              previous_business_experience:
+                apiData.business_information.previous_business_experience || 'None',
+              relative_stall_owner: apiData.business_information.relative_stall_owner || 'No',
+            }
+          : {
+              nature_of_business: 'Not specified',
+              capitalization: 0,
+              source_of_capital: 'Not specified',
+              previous_business_experience: 'None',
+              relative_stall_owner: 'No',
+            },
+
         // Other information (documents and additional data)
-        other_information: apiData.other_information ? {
-          signature_of_applicant: apiData.other_information.signature_of_applicant || null,
-          house_sketch_location: apiData.other_information.house_sketch_location || null,
-          valid_id: apiData.other_information.valid_id || null,
-          email_address: apiData.other_information.email_address || apiData.email || ''
-        } : {
-          signature_of_applicant: null,
-          house_sketch_location: null,
-          valid_id: null,
-          email_address: apiData.email || ''
-        },
-        
+        other_information: apiData.other_information
+          ? {
+              signature_of_applicant: apiData.other_information.signature_of_applicant || null,
+              house_sketch_location: apiData.other_information.house_sketch_location || null,
+              valid_id: apiData.other_information.valid_id || null,
+              email_address: apiData.other_information.email_address || apiData.email || '',
+            }
+          : {
+              signature_of_applicant: null,
+              house_sketch_location: null,
+              valid_id: null,
+              email_address: apiData.email || '',
+            },
+
         // Dates
         applied_date: apiData.applied_date || null,
         created_at: apiData.created_at || null,
         updated_at: apiData.updated_at || null,
-        
+
         // All applications for reference
-        all_applications: applications
-      };
+        all_applications: applications,
+      }
 
       // Add latest application details if available
       if (latestApplication) {
-        transformedData.application_id = latestApplication.application_id;
-        transformedData.application_date = latestApplication.application_date;
-        transformedData.application_status = latestApplication.application_status || 'Pending';
-        
+        transformedData.application_id = latestApplication.application_id
+        transformedData.application_date = latestApplication.application_date
+        transformedData.application_status = latestApplication.application_status || 'Pending'
+
         // Add stall information if available
         if (latestApplication.stall) {
           transformedData.stall_info = {
@@ -562,44 +572,44 @@ export default {
             stall_status: latestApplication.stall.stall_status,
             is_available: latestApplication.stall.is_available,
             raffle_auction_deadline: latestApplication.stall.raffle_auction_deadline,
-            deadline_active: latestApplication.stall.deadline_active
-          };
+            deadline_active: latestApplication.stall.deadline_active,
+          }
         } else {
-          transformedData.stall_info = null;
+          transformedData.stall_info = null
         }
       } else {
         // No applications yet
-        transformedData.application_id = null;
-        transformedData.application_date = null;
-        transformedData.application_status = 'No Application';
-        transformedData.stall_info = null;
+        transformedData.application_id = null
+        transformedData.application_date = null
+        transformedData.application_status = 'No Application'
+        transformedData.stall_info = null
       }
 
       // Debug: Log the final transformed data
-      console.log('✅ Transform Result:', transformedData);
-      console.log('✅ Spouse Info in Result:', transformedData.spouse_information);
+      console.log('✅ Transform Result:', transformedData)
+      console.log('✅ Spouse Info in Result:', transformedData.spouse_information)
 
-      return transformedData;
+      return transformedData
     },
 
     // Optional: Add method to get application count per applicant
     getApplicationCount(applicant) {
-      return applicant.all_applications?.length || 0;
+      return applicant.all_applications?.length || 0
     },
 
     // Optional: Get all stalls an applicant has applied for
     getAppliedStalls(applicant) {
-      if (!applicant.all_applications) return [];
-      
+      if (!applicant.all_applications) return []
+
       return applicant.all_applications
-        .filter(app => app.stall)
-        .map(app => ({
+        .filter((app) => app.stall)
+        .map((app) => ({
           stall_no: app.stall.stall_no,
           location: `${app.stall.floor_name} - ${app.stall.section_name}`,
           status: app.application_status,
           price_type: app.stall.price_type,
-          rental_price: app.stall.rental_price
-        }));
+          rental_price: app.stall.rental_price,
+        }))
     },
 
     // Refresh stall applicants data

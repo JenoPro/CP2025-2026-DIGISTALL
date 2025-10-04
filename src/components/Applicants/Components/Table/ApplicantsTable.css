@@ -285,7 +285,7 @@
     grid-template-columns: 100px 180px 180px 120px 300px 120px 240px;
     gap: 10px;
   }
-  
+
   .stall-layout {
     grid-template-columns: 80px 160px 160px 110px 220px 160px 100px 200px;
     gap: 8px;
@@ -297,7 +297,7 @@
     grid-template-columns: 80px 160px 160px 110px 250px 100px 200px;
     gap: 8px;
   }
-  
+
   .stall-layout {
     grid-template-columns: 70px 140px 140px 100px 180px 140px 80px 160px;
     gap: 6px;
@@ -309,7 +309,7 @@
     grid-template-columns: 70px 140px 140px 100px 200px 80px 160px;
     gap: 6px;
   }
-  
+
   .stall-layout {
     grid-template-columns: 60px 120px 120px 90px 150px 120px 70px 140px;
     gap: 5px;

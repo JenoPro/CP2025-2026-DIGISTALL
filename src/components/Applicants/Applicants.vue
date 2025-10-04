@@ -44,13 +44,23 @@
               <VendorSearchFilter @search="handleSearch" @filter="handleFilter" />
 
               <!-- Loading State -->
-              <div v-if="loading && currentApplicantType === 'Stall Applicants'" class="text-center py-8">
-                <v-progress-circular indeterminate color="primary" size="64"></v-progress-circular>
+              <div
+                v-if="loading && currentApplicantType === 'Stall Applicants'"
+                class="text-center py-8"
+              >
+                <v-progress-circular
+                  indeterminate
+                  color="primary"
+                  size="64"
+                ></v-progress-circular>
                 <p class="mt-4 text-h6">Loading stall applicants...</p>
               </div>
 
               <!-- Error State -->
-              <div v-else-if="error && currentApplicantType === 'Stall Applicants'" class="text-center py-8">
+              <div
+                v-else-if="error && currentApplicantType === 'Stall Applicants'"
+                class="text-center py-8"
+              >
                 <v-icon color="error" size="64">mdi-alert-circle</v-icon>
                 <p class="mt-4 text-h6 error--text">{{ error }}</p>
                 <v-btn @click="refreshStallApplicants" color="primary" class="mt-4">
