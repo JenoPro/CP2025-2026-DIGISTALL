@@ -3,12 +3,13 @@
     <v-card elevation="1" class="table-card">
       <!-- Custom Table Header -->
       <div class="table-header">
-        <div class="header-row">
+        <div class="header-row" :class="applicantType === 'Stall Applicants' ? 'stall-layout' : 'vendor-layout'">
           <div class="header-cell id-col">ID</div>
           <div class="header-cell name-col">Full Name</div>
           <div class="header-cell email-col">Email Address</div>
           <div class="header-cell phone-col">Phone Number</div>
           <div class="header-cell address-col">Address</div>
+          <div class="header-cell stall-col" v-if="applicantType === 'Stall Applicants'">Stall Applied</div>
           <div class="header-cell info-col">More Info</div>
           <div class="header-cell action-col">Action</div>
         </div>
@@ -16,7 +17,7 @@
 
       <!-- Table Body -->
       <div class="table-body">
-        <div v-for="applicant in applicants" :key="applicant.id" class="table-row">
+        <div v-for="applicant in applicants" :key="applicant.id" class="table-row" :class="applicantType === 'Stall Applicants' ? 'stall-layout' : 'vendor-layout'">
           <div class="table-cell id-col">
             {{ applicant.id }}
           </div>
@@ -32,6 +33,28 @@
           <div class="table-cell address-col">
             <div class="address-text">
               {{ applicant.address }}
+            </div>
+          </div>
+          <div class="table-cell stall-col" v-if="applicantType === 'Stall Applicants'">
+            <div v-if="applicant.stall_info" class="stall-info">
+              <div class="stall-primary">
+                <strong>{{ applicant.stall_info.stall_no }}</strong>
+              </div>
+              <div class="stall-secondary">
+                {{ applicant.stall_info.stall_location }}
+              </div>
+              <div class="stall-details">
+                <span class="stall-section">{{ applicant.stall_info.section_name }}</span>
+                <span class="stall-price">₱{{ formatCurrency(applicant.stall_info.rental_price) }}</span>
+              </div>
+              <div class="stall-type">
+                <v-chip size="x-small" :color="getStallTypeColor(applicant.stall_info.price_type)">
+                  {{ applicant.stall_info.price_type }}
+                </v-chip>
+              </div>
+            </div>
+            <div v-else class="no-stall-info">
+              <em>No stall information</em>
             </div>
           </div>
           <div class="table-cell info-col">
@@ -92,9 +115,8 @@
           <v-tabs v-model="activeTab" color="primary" class="border-b">
             <v-tab value="personal">Personal Information</v-tab>
             <v-tab value="business">Business Information</v-tab>
-            <v-tab value="spouse" v-if="selectedApplicant?.spouse"
-              >Spouse Information</v-tab
-            >
+            <v-tab value="stall" v-if="selectedApplicant?.stall_info && applicantType === 'Stall Applicants'">Stall Information</v-tab>
+            <v-tab value="spouse" v-if="selectedApplicant?.spouse_information">Spouse Information</v-tab>
             <v-tab value="documents">Other Information</v-tab>
           </v-tabs>
 
@@ -210,8 +232,79 @@
               </div>
             </v-tabs-window-item>
 
+            <!-- Stall Information Tab -->
+            <v-tabs-window-item value="stall" v-if="selectedApplicant?.stall_info && applicantType === 'Stall Applicants'">
+              <div class="info-section">
+                <h3 class="section-title">Stall Application Details</h3>
+                <v-row>
+                  <v-col cols="12" md="6">
+                    <div class="info-item">
+                      <span class="info-label">Stall Number:</span>
+                      <span class="info-value stall-number">{{ selectedApplicant.stall_info.stall_no }}</span>
+                    </div>
+                  </v-col>
+                  <v-col cols="12" md="6">
+                    <div class="info-item">
+                      <span class="info-label">Location:</span>
+                      <span class="info-value">{{ selectedApplicant.stall_info.stall_location }}</span>
+                    </div>
+                  </v-col>
+                  <v-col cols="12" md="6">
+                    <div class="info-item">
+                      <span class="info-label">Section:</span>
+                      <span class="info-value">{{ selectedApplicant.stall_info.section_name }}</span>
+                    </div>
+                  </v-col>
+                  <v-col cols="12" md="6">
+                    <div class="info-item">
+                      <span class="info-label">Floor:</span>
+                      <span class="info-value">{{ selectedApplicant.stall_info.floor_name }}</span>
+                    </div>
+                  </v-col>
+                  <v-col cols="12" md="6">
+                    <div class="info-item">
+                      <span class="info-label">Rental Price:</span>
+                      <span class="info-value price">₱{{ formatCurrency(selectedApplicant.stall_info.rental_price) }}</span>
+                    </div>
+                  </v-col>
+                  <v-col cols="12" md="6">
+                    <div class="info-item">
+                      <span class="info-label">Price Type:</span>
+                      <span class="info-value">
+                        <v-chip size="small" :color="getStallTypeColor(selectedApplicant.stall_info.price_type)">
+                          {{ selectedApplicant.stall_info.price_type }}
+                        </v-chip>
+                      </span>
+                    </div>
+                  </v-col>
+                  <v-col cols="12" md="6">
+                    <div class="info-item">
+                      <span class="info-label">Application Date:</span>
+                      <span class="info-value">{{ formatDate(selectedApplicant.application_date) }}</span>
+                    </div>
+                  </v-col>
+                  <v-col cols="12" md="6">
+                    <div class="info-item">
+                      <span class="info-label">Application Status:</span>
+                      <span class="info-value">
+                        <v-chip size="small" :color="getApplicationStatusColor(selectedApplicant.application_status)">
+                          {{ selectedApplicant.application_status }}
+                        </v-chip>
+                      </span>
+                    </div>
+                  </v-col>
+                  <v-col cols="12" md="6">
+                    <div class="info-item">
+                      <span class="info-label">Stall Status:</span>
+                      <span class="info-value">{{ selectedApplicant.stall_info.stall_status }}</span>
+                    </div>
+                  </v-col>
+                </v-row>
+              </div>
+            </v-tabs-window-item>
+
             <!-- Spouse Information Tab -->
-            <v-tabs-window-item value="spouse" v-if="selectedApplicant?.spouse">
+            <v-tabs-window-item value="spouse" v-if="selectedApplicant?.spouse_information">
               <div class="info-section">
                 <h3 class="section-title">Spouse Details</h3>
                 <v-row>
@@ -219,7 +312,7 @@
                     <div class="info-item">
                       <span class="info-label">Full Name:</span>
                       <span class="info-value">{{
-                        selectedApplicant.spouse.spouse_full_name
+                        selectedApplicant.spouse_information.spouse_full_name
                       }}</span>
                     </div>
                   </v-col>
@@ -227,7 +320,7 @@
                     <div class="info-item">
                       <span class="info-label">Birth Date:</span>
                       <span class="info-value">{{
-                        formatDate(selectedApplicant.spouse.spouse_birthdate)
+                        formatDate(selectedApplicant.spouse_information.spouse_birthdate)
                       }}</span>
                     </div>
                   </v-col>
@@ -235,7 +328,7 @@
                     <div class="info-item">
                       <span class="info-label">Educational Attainment:</span>
                       <span class="info-value">{{
-                        selectedApplicant.spouse.spouse_educational_attainment
+                        selectedApplicant.spouse_information.spouse_educational_attainment
                       }}</span>
                     </div>
                   </v-col>
@@ -243,7 +336,7 @@
                     <div class="info-item">
                       <span class="info-label">Contact Number:</span>
                       <span class="info-value">{{
-                        selectedApplicant.spouse.spouse_contact_number
+                        selectedApplicant.spouse_information.spouse_contact_number
                       }}</span>
                     </div>
                   </v-col>
@@ -251,7 +344,7 @@
                     <div class="info-item">
                       <span class="info-label">Occupation:</span>
                       <span class="info-value">{{
-                        selectedApplicant.spouse.spouse_occupation
+                        selectedApplicant.spouse_information.spouse_occupation
                       }}</span>
                     </div>
                   </v-col>

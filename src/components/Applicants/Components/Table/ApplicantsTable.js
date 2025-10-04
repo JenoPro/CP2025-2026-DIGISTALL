@@ -5,8 +5,12 @@ export default {
       type: Array,
       default: () => [],
     },
+    applicantType: {
+      type: String,
+      default: 'Vendor Applicants',
+    },
   },
-  emits: ['accept', 'decline'],
+  emits: ['accept', 'decline', 'refresh'],
   data() {
     return {
       showConfirmDialog: false,
@@ -56,6 +60,34 @@ export default {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
       }).format(amount)
+    },
+    getStallTypeColor(priceType) {
+      switch (priceType) {
+        case 'Fixed Price':
+          return 'blue'
+        case 'Raffle':
+          return 'green'
+        case 'Auction':
+          return 'orange'
+        default:
+          return 'gray'
+      }
+    },
+    getApplicationStatusColor(status) {
+      switch (status) {
+        case 'Approved':
+          return 'success'
+        case 'Pending':
+          return 'warning'
+        case 'Under Review':
+          return 'info'
+        case 'Rejected':
+          return 'error'
+        case 'Cancelled':
+          return 'gray'
+        default:
+          return 'gray'
+      }
     },
   },
 }
