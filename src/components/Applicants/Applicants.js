@@ -1,12 +1,16 @@
 // Import components
 import VendorSearchFilter from './Components/Search/ApplicantsSearch.vue'
 import VendorApplicantsTable from './Components/Table/ApplicantsTable.vue'
+import ApproveApplicants from './Components/ApproveApplicants/ApproveApplicants.vue'
+import DeclineApplicants from './Components/DeclineApplicants/DeclineApplicants.vue'
 
 export default {
   name: 'Applicants',
   components: {
     VendorSearchFilter,
     VendorApplicantsTable,
+    ApproveApplicants,
+    DeclineApplicants,
   },
   data() {
     return {
@@ -20,6 +24,10 @@ export default {
         { value: 'vendor', label: 'Vendor Applicants' },
         { value: 'stall', label: 'Stall Applicants' },
       ],
+      // Modal states for approve/decline
+      showApproveModal: false,
+      showDeclineModal: false,
+      selectedApplicant: null,
       // Sample data for vendor applicants with detailed information
       vendorApplicants: [
         {
@@ -177,6 +185,8 @@ export default {
       // Loading and error states
       loading: false,
       error: null,
+      // Email sending state
+      emailSending: false,
     }
   },
   computed: {
@@ -315,16 +325,54 @@ export default {
 
     // Handle accept applicant action
     handleAccept(applicant) {
-      console.log('Accept applicant:', applicant)
-      // Here you would typically make an API call to accept the applicant
-      // Example: this.$api.acceptApplicant(applicant.id)
+      console.log('🎯 Opening approve modal for:', applicant)
+      this.selectedApplicant = applicant
+      this.showApproveModal = true
     },
 
     // Handle decline applicant action
     handleDecline(applicant) {
-      console.log('Decline applicant:', applicant)
-      // Here you would typically make an API call to decline the applicant
-      // Example: this.$api.declineApplicant(applicant.id)
+      console.log('🚫 Opening decline modal for:', applicant)
+      this.selectedApplicant = applicant
+      this.showDeclineModal = true
+    },
+
+    // Handle approve modal close
+    closeApproveModal() {
+      this.showApproveModal = false
+      this.selectedApplicant = null
+    },
+
+    // Handle decline modal close
+    closeDeclineModal() {
+      this.showDeclineModal = false
+      this.selectedApplicant = null
+    },
+
+    // Handle successful approval
+    onApplicantApproved(result) {
+      console.log('✅ Applicant approved:', result)
+
+      // Refresh the applicant list
+      if (this.currentApplicantType === 'Stall Applicants') {
+        this.refreshStallApplicants()
+      }
+
+      // Close the modal
+      this.closeApproveModal()
+    },
+
+    // Handle successful decline
+    onApplicantDeclined(result) {
+      console.log('✅ Applicant declined:', result)
+
+      // Refresh the applicant list
+      if (this.currentApplicantType === 'Stall Applicants') {
+        this.refreshStallApplicants()
+      }
+
+      // Close the modal
+      this.closeDeclineModal()
     },
 
     // Fetch stall applicants from database

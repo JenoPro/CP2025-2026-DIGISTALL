@@ -82,6 +82,22 @@
           </v-row>
         </v-container>
       </v-main>
+
+      <!-- Approve Applicant Modal -->
+      <ApproveApplicants
+        :applicant="selectedApplicant"
+        :show="showApproveModal"
+        @close="closeApproveModal"
+        @approved="onApplicantApproved"
+      />
+
+      <!-- Decline Applicant Modal -->
+      <DeclineApplicants
+        :applicant="selectedApplicant"
+        :show="showDeclineModal"
+        @close="closeDeclineModal"
+        @declined="onApplicantDeclined"
+      />
     </div>
   </v-app>
 </template>
