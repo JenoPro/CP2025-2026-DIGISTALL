@@ -38,6 +38,9 @@ export default {
           phoneNumber: '09123456789',
           address: 'Block 6 Lot 15 Maharlika Village Barangay Rosario Naga City',
           type: 'vendor',
+          status: 'Approved', // Add status for testing (using DB enum values)
+          application_status: 'Approved', // Database field
+          approved_at: '2025-10-03T10:30:00Z', // Add approval date
           // Additional detailed information
           applicant_birthdate: '1985-03-15',
           applicant_civil_status: 'Married',
@@ -71,6 +74,9 @@ export default {
           phoneNumber: '09123456790',
           address: 'Block 2 Lot 8 San Francisco Village Barangay Centro Naga City',
           type: 'vendor',
+          status: 'Rejected', // Add declined status for testing (using DB enum values)
+          application_status: 'Rejected', // Database field
+          declined_at: '2025-10-04T14:15:00Z', // Add decline date
           applicant_birthdate: '1990-11-08',
           applicant_civil_status: 'Single',
           applicant_educational_attainment: 'College Graduate',
@@ -97,6 +103,7 @@ export default {
           phoneNumber: '09123456791',
           address: 'Block 3 Lot 12 Rizal Street Barangay Sabang Naga City',
           type: 'vendor',
+          application_status: 'Pending', // Database field for pending status
           applicant_birthdate: '1982-05-20',
           applicant_civil_status: 'Married',
           applicant_educational_attainment: 'High School Graduate',
@@ -353,6 +360,13 @@ export default {
     onApplicantApproved(result) {
       console.log('✅ Applicant approved:', result)
 
+      // Update the applicant status immediately for better UX
+      if (result.applicant) {
+        this.updateApplicantStatus(result.applicant.applicant_id, 'Approved', {
+          approved_at: new Date().toISOString()
+        })
+      }
+
       // Refresh the applicant list
       if (this.currentApplicantType === 'Stall Applicants') {
         this.refreshStallApplicants()
@@ -366,6 +380,12 @@ export default {
     onApplicantDeclined(result) {
       console.log('✅ Applicant declined:', result)
 
+      // For declined applicants, remove them from the list immediately
+      // since they are deleted from the database
+      if (result.applicant && result.deleted) {
+        this.removeApplicantFromList(result.applicant.applicant_id)
+      }
+
       // Refresh the applicant list
       if (this.currentApplicantType === 'Stall Applicants') {
         this.refreshStallApplicants()
@@ -373,6 +393,48 @@ export default {
 
       // Close the modal
       this.closeDeclineModal()
+    },
+
+    // Helper method to update applicant status in local data
+    updateApplicantStatus(applicantId, status, additionalData = {}) {
+      // Update vendor applicants
+      const vendorIndex = this.vendorApplicants.findIndex(
+        applicant => applicant.applicant_id === applicantId
+      )
+      if (vendorIndex !== -1) {
+        this.vendorApplicants[vendorIndex] = {
+          ...this.vendorApplicants[vendorIndex],
+          status: status,
+          application_status: status, // Update database field
+          ...additionalData
+        }
+      }
+
+      // Update stall applicants
+      const stallIndex = this.stallApplicants.findIndex(
+        applicant => applicant.applicant_id === applicantId
+      )
+      if (stallIndex !== -1) {
+        this.stallApplicants[stallIndex] = {
+          ...this.stallApplicants[stallIndex],
+          status: status,
+          application_status: status, // Update database field
+          ...additionalData
+        }
+      }
+    },
+
+    // Helper method to remove applicant from local data (for declined applicants)
+    removeApplicantFromList(applicantId) {
+      // Remove from vendor applicants
+      this.vendorApplicants = this.vendorApplicants.filter(
+        applicant => applicant.applicant_id !== applicantId
+      )
+
+      // Remove from stall applicants
+      this.stallApplicants = this.stallApplicants.filter(
+        applicant => applicant.applicant_id !== applicantId
+      )
     },
 
     // Fetch stall applicants from database
@@ -485,7 +547,112 @@ export default {
       } catch (error) {
         console.error('❌ Error fetching stall applicants:', error)
         this.error = error.message
-        this.stallApplicants = []
+        
+        // Add mock stall applicants with status for testing status display functionality
+        this.stallApplicants = [
+          {
+            id: '#0025',
+            applicant_id: 25,
+            fullName: 'Roberto Miguel Santos',
+            email: 'roberto.santos@email.com',
+            phoneNumber: '09123456791',
+            address: 'Block 4 Lot 12 Bagumbayan Village Barangay Tabuco Naga City',
+            stallType: 'Food Stall - Filipino Cuisine',
+            type: 'stall',
+            status: 'Approved', // Add approved status for testing (using DB enum values)
+            application_status: 'Approved', // Database field
+            approved_at: '2025-10-02T09:15:00Z', // Add approval date
+            // Complete stall information
+            stall_info: {
+              stall_no: 'FS-A15',
+              stall_location: 'Food Court Area A',
+              section_name: 'Filipino Cuisine Section',
+              rental_price: 5000.00,
+              price_type: 'Monthly',
+              preferred_stall_type: 'Food Stall',
+              stall_category: 'Filipino Cuisine',
+              stall_size: 'Medium (3x3m)',
+              stall_location_preference: 'Main Street Area',
+            },
+            applicant_birthdate: '1988-05-20',
+            applicant_civil_status: 'Married',
+            applicant_educational_attainment: 'Vocational Graduate',
+            business_information: {
+              nature_of_business: 'Food Service - Filipino Dishes',
+              capitalization: 80000.0,
+              source_of_capital: 'Family Loan',
+              previous_business_experience: 'Operated small eatery for 3 years',
+              relative_stall_owner: 'No',
+            },
+          },
+          {
+            id: '#0026',
+            applicant_id: 26,
+            fullName: 'Elena Reyes Morales',
+            email: 'elena.morales@email.com',
+            phoneNumber: '09123456792',
+            address: 'Block 1 Lot 5 San Isidro Village Barangay Cararayan Naga City',
+            stallType: 'Retail Stall - Clothing & Accessories',
+            type: 'stall',
+            status: 'Rejected', // Add declined status for testing (using DB enum values)
+            application_status: 'Rejected', // Database field
+            declined_at: '2025-10-04T11:30:00Z', // Add decline date
+            stall_info: {
+              stall_no: 'RS-B08',
+              stall_location: 'Retail Area B',
+              section_name: 'Fashion & Accessories',
+              rental_price: 7500.00,
+              price_type: 'Monthly',
+              preferred_stall_type: 'Retail Stall',
+              stall_category: 'Clothing & Accessories',
+              stall_size: 'Large (4x4m)',
+              stall_location_preference: 'Fashion District',
+            },
+            applicant_birthdate: '1992-08-14',
+            applicant_civil_status: 'Single',
+            applicant_educational_attainment: 'College Graduate',
+            business_information: {
+              nature_of_business: 'Fashion Retail',
+              capitalization: 120000.0,
+              source_of_capital: 'Personal Savings',
+              previous_business_experience: 'Managed clothing boutique for 2 years',
+              relative_stall_owner: 'Yes - Sister owns Stall #12',
+            },
+          },
+          {
+            id: '#0027',
+            applicant_id: 27,
+            fullName: 'Carlos David Fernandez',
+            email: 'carlos.fernandez@email.com',
+            phoneNumber: '09123456793',
+            address: 'Block 8 Lot 20 Villa Mercedes Subdivision Barangay Dayangdang Naga City',
+            stallType: 'Service Stall - Gadget Repair',
+            type: 'stall',
+            status: 'Pending', // Add pending status for testing (using DB enum values)
+            application_status: 'Pending', // Database field
+            stall_info: {
+              stall_no: 'SS-C03',
+              stall_location: 'Service Area C',
+              section_name: 'Electronics & Repair',
+              rental_price: 3500.00,
+              price_type: 'Monthly',
+              preferred_stall_type: 'Service Stall',
+              stall_category: 'Electronics Repair',
+              stall_size: 'Small (2x2m)',
+              stall_location_preference: 'Tech Hub Area',
+            },
+            applicant_birthdate: '1985-12-03',
+            applicant_civil_status: 'Married',
+            applicant_educational_attainment: 'Technical Vocational Graduate',
+            business_information: {
+              nature_of_business: 'Mobile Phone & Gadget Repair',
+              capitalization: 45000.0,
+              source_of_capital: 'Personal Savings + Equipment Loan',
+              previous_business_experience: 'Worked as technician for 8 years',
+              relative_stall_owner: 'No',
+            },
+          }
+        ]
 
         // Show error message to user
         const errorMessage =

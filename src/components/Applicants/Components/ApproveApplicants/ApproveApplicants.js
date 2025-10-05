@@ -70,7 +70,7 @@ export default {
 
         this.processingMessage = 'Updating database...'
 
-        // Update database status to approved
+        // Update database status to approved (this also stores credentials in your backend)
         const updateResult = await this.updateApplicantStatus(
           this.applicant.applicant_id,
           'approved',
@@ -81,6 +81,8 @@ export default {
         if (!updateResult.success) {
           throw new Error(updateResult.message || 'Failed to update database')
         }
+
+        console.log('✅ Applicant approved and credentials stored in database')
 
         this.processingMessage = 'Sending credentials email...'
 
@@ -117,12 +119,17 @@ export default {
           }
         }
 
-        // Emit success event to parent component
+        // Emit success event to parent component with realtime update
         this.$emit('approved', {
           applicant: this.applicant,
           credentials: this.credentials,
           emailSent: this.emailSent,
         })
+
+        // Emit for realtime updates (no refresh needed)
+        this.$emit('applicant-approved', this.applicant.applicant_id)
+        this.$emit('refresh-data')
+
       } catch (error) {
         console.error('❌ Unexpected error in approveApplicant:', error)
 
@@ -138,24 +145,8 @@ export default {
 
     async updateApplicantStatus(applicantId, status, username = null, password = null) {
       try {
-        console.log('📤 Updating applicant status:', { applicantId, status, username, password })
+        console.log('📤 Approving applicant via backend:', { applicantId, status, username })
 
-        // TEMPORARY: Mock successful response until backend endpoint is implemented
-        console.log('⚠️ WARNING: Using mock response - backend endpoint not implemented')
-        console.log(
-          '📄 See APPLICANT-STATUS-API-REQUIREMENTS.md for backend implementation details',
-        )
-
-        // Simulate API delay
-        await new Promise((resolve) => setTimeout(resolve, 1000))
-
-        return {
-          success: true,
-          message: 'Status updated successfully (mocked response - backend endpoint needed)',
-        }
-
-        // TODO: Uncomment this when backend endpoint is implemented
-        /*
         const token = sessionStorage.getItem('authToken') || 
                      localStorage.getItem('token') || 
                      localStorage.getItem('authToken')
@@ -164,50 +155,47 @@ export default {
           throw new Error('Authentication token not found. Please log in again.')
         }
 
-        const updateData = {
-          status: status
-        }
-
-        // Add credentials if approving
-        if (status === 'approved' && username && password) {
-          updateData.username = username
-          updateData.password = password
-        }
-
-        const response = await fetch(`http://localhost:3001/api/applicants/${applicantId}/status`, {
+        // Use the correct backend endpoint for approval
+        const response = await fetch(`http://localhost:3001/api/applicants/${applicantId}/approve`, {
           method: 'PUT',
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify(updateData)
+          body: JSON.stringify({
+            username: username,
+            password: password
+          })
         })
 
-        console.log('📡 Status update response:', response.status)
+        console.log('📡 Approval response:', response.status)
 
         if (!response.ok) {
           if (response.status === 401) {
             throw new Error('Your session has expired. Please log in again.')
           } else if (response.status === 403) {
-            throw new Error('You do not have permission to update this applicant.')
+            throw new Error('You do not have permission to approve this applicant.')
           } else if (response.status === 404) {
             throw new Error('Applicant not found.')
+          } else if (response.status === 400) {
+            const errorData = await response.json()
+            throw new Error(errorData.message || 'Invalid request data.')
           } else {
             throw new Error(`Server error: ${response.status}`)
           }
         }
 
         const result = await response.json()
-        console.log('📦 Status update result:', result)
+        console.log('📦 Approval result:', result)
 
         if (result.success) {
-          return { success: true, message: 'Status updated successfully' }
+          return { success: true, message: 'Applicant approved successfully', data: result.data }
         } else {
-          throw new Error(result.message || 'Failed to update status')
+          throw new Error(result.message || 'Failed to approve applicant')
         }
-        */
+
       } catch (error) {
-        console.error('❌ Error updating applicant status:', error)
+        console.error('❌ Error approving applicant:', error)
         return { success: false, message: error.message }
       }
     },

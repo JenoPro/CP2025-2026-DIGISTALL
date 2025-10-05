@@ -11,7 +11,7 @@
           <div class="header-cell address-col">Address</div>
           <div class="header-cell stall-col" v-if="applicantType === 'Stall Applicants'">Stall Applied</div>
           <div class="header-cell info-col">More Info</div>
-          <div class="header-cell action-col">Action</div>
+          <div class="header-cell action-col">Status/Action</div>
         </div>
       </div>
 
@@ -70,7 +70,32 @@
             </v-btn>
           </div>
           <div class="table-cell action-col">
-            <div class="action-buttons">
+            <!-- Show Status Badge for Approved/Rejected/Under Review Applicants -->
+            <div v-if="isProcessedStatus(applicant.application_status)" class="status-display">
+              <div 
+                class="status-badge" 
+                :class="{
+                  'status-approved': applicant.application_status === 'Approved',
+                  'status-declined': applicant.application_status === 'Rejected',
+                  'status-under-review': applicant.application_status === 'Under Review',
+                  'status-cancelled': applicant.application_status === 'Cancelled'
+                }"
+              >
+                <v-icon 
+                  :icon="getStatusIcon(applicant.application_status)" 
+                  size="16" 
+                  :color="getStatusColor(applicant.application_status)"
+                  class="mr-1"
+                ></v-icon>
+                {{ getStatusText(applicant.application_status) }}
+              </div>
+              <div v-if="applicant.approved_at || applicant.declined_at || applicant.updated_at" class="status-date">
+                {{ formatStatusDate(applicant.approved_at || applicant.declined_at || applicant.updated_at) }}
+              </div>
+            </div>
+            
+            <!-- Show Action Buttons for Pending Applicants -->
+            <div v-else class="action-buttons">
               <v-btn
                 variant="flat"
                 color="success"

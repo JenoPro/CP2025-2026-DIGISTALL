@@ -2,7 +2,8 @@ import emailjs from '@emailjs/browser'
 
 // EmailJS Configuration
 const EMAILJS_SERVICE_ID = 'service_e2awvdk'
-const EMAILJS_TEMPLATE_ID = 'template_r6kxcnh'
+const EMAILJS_APPROVE_TEMPLATE_ID = 'template_r6kxcnh' // Template for approve emails
+const EMAILJS_DECLINE_TEMPLATE_ID = 'template_jmqrem5' // Template for decline emails
 const EMAILJS_PUBLIC_KEY = 'sTpDE-Oq2-9XH_UZd'
 const SENDER_EMAIL = 'requiem121701@gmail.com'
 const SENDER_NAME = 'Stall Management System'
@@ -82,7 +83,7 @@ export const sendCredentialsEmailFetch = async (
 
     const templateParams = {
       service_id: EMAILJS_SERVICE_ID,
-      template_id: EMAILJS_TEMPLATE_ID,
+      template_id: EMAILJS_APPROVE_TEMPLATE_ID,
       user_id: EMAILJS_PUBLIC_KEY,
       template_params: {
         from_name: SENDER_NAME,
@@ -164,7 +165,7 @@ export const sendCredentialsEmailXHR = async (
 
       const templateParams = {
         service_id: EMAILJS_SERVICE_ID,
-        template_id: EMAILJS_TEMPLATE_ID,
+        template_id: EMAILJS_APPROVE_TEMPLATE_ID,
         user_id: EMAILJS_PUBLIC_KEY,
         template_params: {
           from_name: SENDER_NAME,
@@ -289,7 +290,7 @@ Stall Management Admin Team`,
       reply_to: SENDER_EMAIL,
     }
 
-    const response = await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams, {
+    const response = await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_APPROVE_TEMPLATE_ID, templateParams, {
       publicKey: EMAILJS_PUBLIC_KEY,
       blockHeadless: false,
       blockList: {
@@ -361,7 +362,7 @@ export const sendDeclineNotificationEmail = async (
 
     const templateParams = {
       service_id: EMAILJS_SERVICE_ID,
-      template_id: EMAILJS_TEMPLATE_ID,
+      template_id: EMAILJS_DECLINE_TEMPLATE_ID,
       user_id: EMAILJS_PUBLIC_KEY,
       template_params: {
         from_name: SENDER_NAME,

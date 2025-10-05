@@ -89,5 +89,69 @@ export default {
           return 'gray'
       }
     },
+    
+    formatStatusDate(date) {
+      if (!date) return ''
+      const options = { 
+        year: 'numeric', 
+        month: 'short', 
+        day: 'numeric'
+      }
+      return new Date(date).toLocaleDateString('en-US', options)
+    },
+    
+    getStatusIcon(status) {
+      switch (status) {
+        case 'Approved':
+          return 'mdi-check-circle'
+        case 'Rejected':
+          return 'mdi-close-circle'
+        case 'Under Review':
+          return 'mdi-clock-alert-outline'
+        case 'Cancelled':
+          return 'mdi-cancel'
+        case 'Pending':
+        default:
+          return 'mdi-clock-outline'
+      }
+    },
+    
+    getStatusColor(status) {
+      switch (status) {
+        case 'Approved':
+          return 'success'
+        case 'Rejected':
+          return 'error'
+        case 'Under Review':
+          return 'info'
+        case 'Cancelled':
+          return 'warning'
+        case 'Pending':
+        default:
+          return 'warning'
+      }
+    },
+    
+    getStatusText(status) {
+      switch (status) {
+        case 'Approved':
+          return 'APPROVED'
+        case 'Rejected':
+          return 'REJECTED'
+        case 'Under Review':
+          return 'UNDER REVIEW'
+        case 'Cancelled':
+          return 'CANCELLED'
+        case 'Pending':
+        default:
+          return 'PENDING'
+      }
+    },
+
+    // Check if application status is processed (not pending)
+    isProcessedStatus(status) {
+      const processedStatuses = ['Approved', 'Rejected', 'Under Review', 'Cancelled']
+      return processedStatuses.includes(status)
+    },
   },
 }
