@@ -76,6 +76,7 @@
                 :applicant-type="currentApplicantType"
                 @accept="handleAccept"
                 @decline="handleDecline"
+                @recheck="handleRecheck"
                 @refresh="refreshStallApplicants"
               />
             </v-col>
@@ -97,6 +98,7 @@
         :show="showDeclineModal"
         @close="closeDeclineModal"
         @declined="onApplicantDeclined"
+        @applicant-status-updated="onApplicantStatusUpdated"
       />
     </div>
   </v-app>

@@ -280,6 +280,33 @@
   border-color: #9c27b0;
 }
 
+/* Interactive Status Badges */
+.status-declined-recheck {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.status-declined-recheck:hover {
+  background-color: #fff3e0 !important;
+  color: #ef6c00 !important;
+  border-color: #ff9800 !important;
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(255, 152, 0, 0.3);
+}
+
+.status-under-review-approve {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.status-under-review-approve:hover {
+  background-color: #e8f5e8 !important;
+  color: #2e7d32 !important;
+  border-color: #4caf50 !important;
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+}
+
 .status-date {
   font-size: 10px;
   color: #757575;

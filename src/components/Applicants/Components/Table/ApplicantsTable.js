@@ -10,7 +10,7 @@ export default {
       default: 'Vendor Applicants',
     },
   },
-  emits: ['accept', 'decline', 'refresh'],
+  emits: ['accept', 'decline', 'recheck', 'refresh'],
   data() {
     return {
       showConfirmDialog: false,
@@ -152,6 +152,17 @@ export default {
     isProcessedStatus(status) {
       const processedStatuses = ['Approved', 'Rejected', 'Under Review', 'Cancelled']
       return processedStatuses.includes(status)
+    },
+
+    // Handle status badge click for re-check or approve
+    handleStatusClick(applicant) {
+      if (applicant.application_status === 'Rejected') {
+        // Re-check functionality for rejected applicants
+        this.$emit('recheck', applicant)
+      } else if (applicant.application_status === 'Under Review') {
+        // Approve functionality for under review applicants
+        this.$emit('accept', applicant)
+      }
     },
   },
 }

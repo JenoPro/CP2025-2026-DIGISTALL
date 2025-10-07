@@ -117,12 +117,13 @@ export default {
           }
         }
 
-        // Step 3: Update loading message for data deletion
-        this.loadingMessage = 'Declining applicant and deleting data...'
+        // Step 3: Update loading message for status update
+        this.loadingMessage = 'Declining applicant and updating status...'
 
-        // Step 4: Decline applicant via backend (this will delete all data)
-        const declineResult = await this.declineApplicantViaBackend(
+        // Step 4: Update applicant status to 'Rejected' via backend (no data deletion)
+        const declineResult = await this.updateApplicantStatus(
           this.applicant.applicant_id || this.applicant.id,
+          'Rejected',
           this.declineReason.trim(),
         )
 
@@ -130,7 +131,7 @@ export default {
           throw new Error(declineResult.message || 'Failed to decline applicant')
         }
 
-        console.log('✅ Applicant declined and all data deleted successfully')
+        console.log('✅ Applicant status updated to Rejected successfully')
 
         // Step 5: Show success state
         this.popupState = 'success'
@@ -143,16 +144,20 @@ export default {
           this.showLoadingPopup = false
           this.closeModal()
 
-          // Emit events for realtime updates (no refresh needed)
+          // Emit events for realtime updates (status changed, not deleted)
           this.$emit('declined', {
             applicant: this.applicant,
             reason: this.declineReason,
             emailSent: this.emailSent,
-            deleted: true,
+            statusUpdated: true,
           })
 
           // Emit to parent components for immediate list updates
-          this.$emit('applicant-deleted', this.applicant.applicant_id || this.applicant.id)
+          this.$emit('applicant-status-updated', {
+            id: this.applicant.applicant_id || this.applicant.id,
+            status: 'Rejected',
+            declined_at: new Date().toISOString(),
+          })
           this.$emit('refresh-data')
 
           // Show success toast
@@ -204,9 +209,10 @@ export default {
           status: status,
         }
 
-        // Add decline reason if declining
-        if (status === 'declined' && reason) {
+        // Add decline reason and timestamp if declining/rejecting
+        if ((status === 'declined' || status === 'Rejected') && reason) {
           updateData.decline_reason = reason
+          updateData.declined_at = new Date().toISOString()
         }
 
         const response = await fetch(`http://localhost:3001/api/applicants/${applicantId}/status`, {
@@ -296,14 +302,14 @@ export default {
         if (result.success) {
           return {
             success: true,
-            message: 'Applicant declined and all data deleted',
+            message: 'Applicant status updated to Rejected',
             data: result.data,
           }
         } else {
-          throw new Error(result.message || 'Failed to decline applicant')
+          throw new Error(result.message || 'Failed to update applicant status')
         }
       } catch (error) {
-        console.error('❌ Error declining applicant via backend:', error)
+        console.error('❌ Error updating applicant status via backend:', error)
         return { success: false, message: error.message }
       }
     },

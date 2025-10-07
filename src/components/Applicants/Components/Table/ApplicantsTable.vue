@@ -72,7 +72,61 @@
           <div class="table-cell action-col">
             <!-- Show Status Badge for Approved/Rejected/Under Review Applicants -->
             <div v-if="isProcessedStatus(applicant.application_status)" class="status-display">
+              <!-- Re-check tooltip for Rejected status -->
+              <v-tooltip v-if="applicant.application_status === 'Rejected'" bottom>
+                <template v-slot:activator="{ props }">
+                  <div 
+                    class="status-badge status-declined-recheck" 
+                    :class="{
+                      'status-approved': applicant.application_status === 'Approved',
+                      'status-declined': applicant.application_status === 'Rejected',
+                      'status-under-review': applicant.application_status === 'Under Review',
+                      'status-cancelled': applicant.application_status === 'Cancelled'
+                    }"
+                    v-bind="props"
+                    @click="handleStatusClick(applicant)"
+                  >
+                    <v-icon 
+                      :icon="getStatusIcon(applicant.application_status)" 
+                      size="16" 
+                      :color="getStatusColor(applicant.application_status)"
+                      class="mr-1"
+                    ></v-icon>
+                    {{ getStatusText(applicant.application_status) }}
+                  </div>
+                </template>
+                <span>Click to re-check this applicant</span>
+              </v-tooltip>
+
+              <!-- Approve tooltip for Under Review status -->
+              <v-tooltip v-else-if="applicant.application_status === 'Under Review'" bottom>
+                <template v-slot:activator="{ props }">
+                  <div 
+                    class="status-badge status-under-review-approve" 
+                    :class="{
+                      'status-approved': applicant.application_status === 'Approved',
+                      'status-declined': applicant.application_status === 'Rejected',
+                      'status-under-review': applicant.application_status === 'Under Review',
+                      'status-cancelled': applicant.application_status === 'Cancelled'
+                    }"
+                    v-bind="props"
+                    @click="handleStatusClick(applicant)"
+                  >
+                    <v-icon 
+                      icon="mdi-check-circle-outline"
+                      size="16" 
+                      :color="getStatusColor(applicant.application_status)"
+                      class="mr-1"
+                    ></v-icon>
+                    {{ getStatusText(applicant.application_status) }}
+                  </div>
+                </template>
+                <span>Click to approve this applicant</span>
+              </v-tooltip>
+
+              <!-- Regular status badge for other statuses -->
               <div 
+                v-else
                 class="status-badge" 
                 :class="{
                   'status-approved': applicant.application_status === 'Approved',

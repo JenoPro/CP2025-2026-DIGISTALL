@@ -70,10 +70,10 @@ export default {
 
         this.processingMessage = 'Updating database...'
 
-        // Update database status to approved (this also stores credentials in your backend)
+        // Update database status to approved using the same endpoint that works for decline/recheck
         const updateResult = await this.updateApplicantStatus(
           this.applicant.applicant_id,
-          'approved',
+          'Approved', // Use proper capitalization for database enum
           username,
           password,
         )
@@ -155,21 +155,20 @@ export default {
           throw new Error('Authentication token not found. Please log in again.')
         }
 
-        // Use the correct backend endpoint for approval
-        const response = await fetch(
-          `http://localhost:3001/api/applicants/${applicantId}/approve`,
-          {
-            method: 'PUT',
-            headers: {
-              Authorization: `Bearer ${token}`,
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              username: username,
-              password: password,
-            }),
+        // Use the same /status endpoint that works for decline/recheck
+        const response = await fetch(`http://localhost:3001/api/applicants/${applicantId}/status`, {
+          method: 'PUT',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
           },
-        )
+          body: JSON.stringify({
+            status: status,
+            // Note: credentials are just for email/frontend display, not stored in DB
+            username: username,
+            password: password,
+          }),
+        })
 
         console.log('📡 Approval response:', response.status)
 

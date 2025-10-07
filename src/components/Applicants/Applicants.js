@@ -194,6 +194,8 @@ export default {
       error: null,
       // Email sending state
       emailSending: false,
+      // Auto-cleanup timer for 30-day rejected applicants removal
+      autoCleanupTimer: null,
     }
   },
   computed: {
@@ -248,9 +250,16 @@ export default {
     if (this.currentApplicantType === 'Stall Applicants') {
       this.fetchStallApplicants()
     }
+
+    // Start auto-cleanup for declined applicants older than 30 days
+    this.startAutoCleanupTimer()
   },
   beforeUnmount() {
     document.removeEventListener('click', this.handleOutsideClick)
+    // Clear auto-cleanup timer
+    if (this.autoCleanupTimer) {
+      clearInterval(this.autoCleanupTimer)
+    }
   },
   methods: {
     // Handle dropdown toggle
@@ -344,6 +353,74 @@ export default {
       this.showDeclineModal = true
     },
 
+    // Handle re-check applicant action (for rejected applicants) - FIXED TO USE BACKEND API
+    async handleRecheck(applicant) {
+      console.log('🔄 Re-checking rejected applicant:', applicant)
+
+      try {
+        // Make API call to update status to "Under Review" in the backend database
+        const token =
+          sessionStorage.getItem('authToken') ||
+          localStorage.getItem('token') ||
+          localStorage.getItem('authToken')
+
+        if (!token) {
+          throw new Error('Authentication token not found. Please log in again.')
+        }
+
+        const response = await fetch(
+          `http://localhost:3001/api/applicants/${applicant.applicant_id || applicant.id}/status`,
+          {
+            method: 'PUT',
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              status: 'Under Review',
+            }),
+          },
+        )
+
+        console.log('📡 Recheck API response status:', response.status)
+
+        if (!response.ok) {
+          if (response.status === 401) {
+            throw new Error('Your session has expired. Please log in again.')
+          } else if (response.status === 403) {
+            throw new Error('You do not have permission to update this applicant.')
+          } else if (response.status === 404) {
+            throw new Error('Applicant not found.')
+          } else {
+            throw new Error(`Server error: ${response.status}`)
+          }
+        }
+
+        const result = await response.json()
+        console.log('📦 Recheck API result:', result)
+
+        if (result.success) {
+          // Update local data only after successful backend update
+          this.updateApplicantStatus(applicant.applicant_id || applicant.id, 'Under Review')
+
+          // Show success message
+          if (this.$toast) {
+            this.$toast.success(
+              `✅ ${applicant.fullName} application successfully moved to Under Review for re-checking`,
+            )
+          }
+        } else {
+          throw new Error(result.message || 'Failed to update status')
+        }
+      } catch (error) {
+        console.error('❌ Error updating applicant status to Under Review:', error)
+
+        if (this.$toast) {
+          this.$toast.error(`❌ Failed to update status: ${error.message}`)
+        }
+      }
+    },
+
     // Handle approve modal close
     closeApproveModal() {
       this.showApproveModal = false
@@ -380,19 +457,32 @@ export default {
     onApplicantDeclined(result) {
       console.log('✅ Applicant declined:', result)
 
-      // For declined applicants, remove them from the list immediately
-      // since they are deleted from the database
-      if (result.applicant && result.deleted) {
-        this.removeApplicantFromList(result.applicant.applicant_id)
+      // Update status instead of removing from list
+      if (result.applicant && result.statusUpdated) {
+        this.updateApplicantStatus(
+          result.applicant.applicant_id || result.applicant.id,
+          'Rejected',
+          {
+            declined_at: new Date().toISOString(),
+          },
+        )
       }
 
-      // Refresh the applicant list
+      // Refresh the applicant list to show updated status
       if (this.currentApplicantType === 'Stall Applicants') {
         this.refreshStallApplicants()
       }
 
       // Close the modal
       this.closeDeclineModal()
+    },
+
+    // Handle status updates from decline modal
+    onApplicantStatusUpdated(updateData) {
+      console.log('📊 Status updated:', updateData)
+      this.updateApplicantStatus(updateData.id, updateData.status, {
+        declined_at: updateData.declined_at,
+      })
     },
 
     // Helper method to update applicant status in local data
@@ -830,6 +920,92 @@ export default {
     // Refresh stall applicants data
     async refreshStallApplicants() {
       await this.fetchStallApplicants()
+    },
+
+    // Start auto-cleanup timer for 30-day rejected applicants removal
+    startAutoCleanupTimer() {
+      // Run cleanup every 24 hours (86400000 ms)
+      this.autoCleanupTimer = setInterval(() => {
+        this.autoCleanupDeclinedApplicants()
+      }, 86400000) // 24 hours
+
+      // Also run cleanup immediately on component mount
+      this.autoCleanupDeclinedApplicants()
+    },
+
+    // Auto-cleanup function to remove rejected applicants older than 30 days
+    async autoCleanupDeclinedApplicants() {
+      console.log('🧹 Starting auto-cleanup for declined applicants older than 30 days...')
+
+      try {
+        const thirtyDaysAgo = new Date()
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
+
+        // Find rejected applicants older than 30 days
+        const expiredApplicants = [...this.vendorApplicants, ...this.stallApplicants].filter(
+          (applicant) => {
+            if (applicant.application_status !== 'Rejected' || !applicant.declined_at) {
+              return false
+            }
+
+            const declinedDate = new Date(applicant.declined_at)
+            return declinedDate < thirtyDaysAgo
+          },
+        )
+
+        console.log(`🔍 Found ${expiredApplicants.length} rejected applicants older than 30 days`)
+
+        // Remove each expired applicant
+        for (const applicant of expiredApplicants) {
+          try {
+            await this.deleteExpiredApplicant(applicant.applicant_id || applicant.id)
+            this.removeApplicantFromList(applicant.applicant_id || applicant.id)
+            console.log(`🗑️ Removed expired applicant: ${applicant.fullName}`)
+          } catch (error) {
+            console.error(`❌ Failed to remove expired applicant ${applicant.fullName}:`, error)
+          }
+        }
+
+        if (expiredApplicants.length > 0) {
+          console.log(
+            `✅ Auto-cleanup completed: ${expiredApplicants.length} expired applicants removed`,
+          )
+        }
+      } catch (error) {
+        console.error('❌ Error during auto-cleanup:', error)
+      }
+    },
+
+    // Delete expired applicant from database
+    async deleteExpiredApplicant(applicantId) {
+      try {
+        const token =
+          sessionStorage.getItem('authToken') ||
+          localStorage.getItem('token') ||
+          localStorage.getItem('authToken')
+
+        if (!token) {
+          throw new Error('Authentication token not found')
+        }
+
+        const response = await fetch(`http://localhost:3001/api/applicants/${applicantId}`, {
+          method: 'DELETE',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        })
+
+        if (!response.ok) {
+          throw new Error(`Failed to delete applicant: ${response.status}`)
+        }
+
+        const result = await response.json()
+        return result
+      } catch (error) {
+        console.error('❌ Error deleting expired applicant:', error)
+        throw error
+      }
     },
   },
 }
