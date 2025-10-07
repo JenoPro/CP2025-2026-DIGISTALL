@@ -512,7 +512,7 @@
   height: 80px;
   border-radius: 50%;
   background: rgba(40, 167, 69, 0.2);
-  border: 3px solid #28a745;
+  border: 3px solid #ffffff;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -522,8 +522,8 @@
 .checkmark {
   width: 30px;
   height: 15px;
-  border-left: 4px solid #28a745;
-  border-bottom: 4px solid #28a745;
+  border-left: 4px solid #ffffff;
+  border-bottom: 4px solid #ffffff;
   transform: rotate(-45deg);
   margin-top: -5px;
   animation: checkmarkDraw 0.4s ease-out 0.2s both;
@@ -647,7 +647,7 @@
   font-size: 1.5rem;
   margin: 0;
   font-weight: 600;
-  color: #28a745;
+  color: #fefefe;
 }
 
 .error-title {
