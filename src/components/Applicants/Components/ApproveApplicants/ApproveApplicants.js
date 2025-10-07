@@ -129,7 +129,6 @@ export default {
         // Emit for realtime updates (no refresh needed)
         this.$emit('applicant-approved', this.applicant.applicant_id)
         this.$emit('refresh-data')
-
       } catch (error) {
         console.error('❌ Unexpected error in approveApplicant:', error)
 
@@ -147,26 +146,30 @@ export default {
       try {
         console.log('📤 Approving applicant via backend:', { applicantId, status, username })
 
-        const token = sessionStorage.getItem('authToken') || 
-                     localStorage.getItem('token') || 
-                     localStorage.getItem('authToken')
-        
+        const token =
+          sessionStorage.getItem('authToken') ||
+          localStorage.getItem('token') ||
+          localStorage.getItem('authToken')
+
         if (!token) {
           throw new Error('Authentication token not found. Please log in again.')
         }
 
         // Use the correct backend endpoint for approval
-        const response = await fetch(`http://localhost:3001/api/applicants/${applicantId}/approve`, {
-          method: 'PUT',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
+        const response = await fetch(
+          `http://localhost:3001/api/applicants/${applicantId}/approve`,
+          {
+            method: 'PUT',
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              username: username,
+              password: password,
+            }),
           },
-          body: JSON.stringify({
-            username: username,
-            password: password
-          })
-        })
+        )
 
         console.log('📡 Approval response:', response.status)
 
@@ -193,7 +196,6 @@ export default {
         } else {
           throw new Error(result.message || 'Failed to approve applicant')
         }
-
       } catch (error) {
         console.error('❌ Error approving applicant:', error)
         return { success: false, message: error.message }

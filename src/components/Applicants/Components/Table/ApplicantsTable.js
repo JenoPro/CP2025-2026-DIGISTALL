@@ -89,17 +89,17 @@ export default {
           return 'gray'
       }
     },
-    
+
     formatStatusDate(date) {
       if (!date) return ''
-      const options = { 
-        year: 'numeric', 
-        month: 'short', 
-        day: 'numeric'
+      const options = {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
       }
       return new Date(date).toLocaleDateString('en-US', options)
     },
-    
+
     getStatusIcon(status) {
       switch (status) {
         case 'Approved':
@@ -115,7 +115,7 @@ export default {
           return 'mdi-clock-outline'
       }
     },
-    
+
     getStatusColor(status) {
       switch (status) {
         case 'Approved':
@@ -131,7 +131,7 @@ export default {
           return 'warning'
       }
     },
-    
+
     getStatusText(status) {
       switch (status) {
         case 'Approved':

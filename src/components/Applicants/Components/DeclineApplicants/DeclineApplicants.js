@@ -22,7 +22,7 @@ export default {
       sendNotification: true,
       reasonError: '',
       processingMessage: '',
-      
+
       // Loading popup states (like AddAvailableStall)
       showLoadingPopup: false,
       popupState: 'loading', // 'loading', 'success', 'error'
@@ -53,7 +53,7 @@ export default {
       this.sendNotification = true
       this.reasonError = ''
       this.processingMessage = ''
-      
+
       // Reset loading popup states
       this.showLoadingPopup = false
       this.popupState = 'loading'
@@ -119,9 +119,12 @@ export default {
 
         // Step 3: Update loading message for data deletion
         this.loadingMessage = 'Declining applicant and deleting data...'
-        
+
         // Step 4: Decline applicant via backend (this will delete all data)
-        const declineResult = await this.declineApplicantViaBackend(this.applicant.applicant_id || this.applicant.id, this.declineReason.trim())
+        const declineResult = await this.declineApplicantViaBackend(
+          this.applicant.applicant_id || this.applicant.id,
+          this.declineReason.trim(),
+        )
 
         if (!declineResult.success) {
           throw new Error(declineResult.message || 'Failed to decline applicant')
@@ -131,7 +134,7 @@ export default {
 
         // Step 5: Show success state
         this.popupState = 'success'
-        this.successMessage = emailSuccess 
+        this.successMessage = emailSuccess
           ? 'Application declined and notification sent!'
           : 'Application declined successfully!'
 
@@ -139,13 +142,13 @@ export default {
         setTimeout(() => {
           this.showLoadingPopup = false
           this.closeModal()
-          
+
           // Emit events for realtime updates (no refresh needed)
           this.$emit('declined', {
             applicant: this.applicant,
             reason: this.declineReason,
             emailSent: this.emailSent,
-            deleted: true
+            deleted: true,
           })
 
           // Emit to parent components for immediate list updates
@@ -163,9 +166,7 @@ export default {
             reason: this.declineReason,
             emailSent: this.emailSent,
           })
-
         }, 2000) // Show success for 2 seconds
-
       } catch (error) {
         console.error('❌ Error in decline process:', error)
 
@@ -176,7 +177,7 @@ export default {
         // Auto-close error popup
         setTimeout(() => {
           this.showLoadingPopup = false
-          
+
           if (this.$toast) {
             this.$toast.error(`❌ Failed to decline applicant: ${error.message}`)
           } else {
@@ -190,16 +191,17 @@ export default {
       try {
         console.log('📤 Updating applicant status:', { applicantId, status, reason })
 
-        const token = sessionStorage.getItem('authToken') || 
-                     localStorage.getItem('token') || 
-                     localStorage.getItem('authToken')
-        
+        const token =
+          sessionStorage.getItem('authToken') ||
+          localStorage.getItem('token') ||
+          localStorage.getItem('authToken')
+
         if (!token) {
           throw new Error('Authentication token not found. Please log in again.')
         }
 
         const updateData = {
-          status: status
+          status: status,
         }
 
         // Add decline reason if declining
@@ -210,10 +212,10 @@ export default {
         const response = await fetch(`http://localhost:3001/api/applicants/${applicantId}/status`, {
           method: 'PUT',
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
           },
-          body: JSON.stringify(updateData)
+          body: JSON.stringify(updateData),
         })
 
         console.log('📡 Status update response:', response.status)
@@ -238,7 +240,6 @@ export default {
         } else {
           throw new Error(result.message || 'Failed to update status')
         }
-
       } catch (error) {
         console.error('❌ Error updating applicant status:', error)
         return { success: false, message: error.message }
@@ -249,24 +250,28 @@ export default {
       try {
         console.log('🗑️ Declining applicant via backend:', { applicantId, reason })
 
-        const token = sessionStorage.getItem('authToken') || 
-                     localStorage.getItem('token') || 
-                     localStorage.getItem('authToken')
-        
+        const token =
+          sessionStorage.getItem('authToken') ||
+          localStorage.getItem('token') ||
+          localStorage.getItem('authToken')
+
         if (!token) {
           throw new Error('Authentication token not found. Please log in again.')
         }
 
-        const response = await fetch(`http://localhost:3001/api/applicants/${applicantId}/decline`, {
-          method: 'PUT',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
+        const response = await fetch(
+          `http://localhost:3001/api/applicants/${applicantId}/decline`,
+          {
+            method: 'PUT',
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              reason: reason,
+            }),
           },
-          body: JSON.stringify({
-            reason: reason
-          })
-        })
+        )
 
         console.log('📡 Decline response:', response.status)
 
@@ -289,11 +294,14 @@ export default {
         console.log('📦 Decline result:', result)
 
         if (result.success) {
-          return { success: true, message: 'Applicant declined and all data deleted', data: result.data }
+          return {
+            success: true,
+            message: 'Applicant declined and all data deleted',
+            data: result.data,
+          }
         } else {
           throw new Error(result.message || 'Failed to decline applicant')
         }
-
       } catch (error) {
         console.error('❌ Error declining applicant via backend:', error)
         return { success: false, message: error.message }

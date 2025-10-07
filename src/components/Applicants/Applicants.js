@@ -363,7 +363,7 @@ export default {
       // Update the applicant status immediately for better UX
       if (result.applicant) {
         this.updateApplicantStatus(result.applicant.applicant_id, 'Approved', {
-          approved_at: new Date().toISOString()
+          approved_at: new Date().toISOString(),
         })
       }
 
@@ -399,27 +399,27 @@ export default {
     updateApplicantStatus(applicantId, status, additionalData = {}) {
       // Update vendor applicants
       const vendorIndex = this.vendorApplicants.findIndex(
-        applicant => applicant.applicant_id === applicantId
+        (applicant) => applicant.applicant_id === applicantId,
       )
       if (vendorIndex !== -1) {
         this.vendorApplicants[vendorIndex] = {
           ...this.vendorApplicants[vendorIndex],
           status: status,
           application_status: status, // Update database field
-          ...additionalData
+          ...additionalData,
         }
       }
 
       // Update stall applicants
       const stallIndex = this.stallApplicants.findIndex(
-        applicant => applicant.applicant_id === applicantId
+        (applicant) => applicant.applicant_id === applicantId,
       )
       if (stallIndex !== -1) {
         this.stallApplicants[stallIndex] = {
           ...this.stallApplicants[stallIndex],
           status: status,
           application_status: status, // Update database field
-          ...additionalData
+          ...additionalData,
         }
       }
     },
@@ -428,12 +428,12 @@ export default {
     removeApplicantFromList(applicantId) {
       // Remove from vendor applicants
       this.vendorApplicants = this.vendorApplicants.filter(
-        applicant => applicant.applicant_id !== applicantId
+        (applicant) => applicant.applicant_id !== applicantId,
       )
 
       // Remove from stall applicants
       this.stallApplicants = this.stallApplicants.filter(
-        applicant => applicant.applicant_id !== applicantId
+        (applicant) => applicant.applicant_id !== applicantId,
       )
     },
 
@@ -547,7 +547,7 @@ export default {
       } catch (error) {
         console.error('❌ Error fetching stall applicants:', error)
         this.error = error.message
-        
+
         // Add mock stall applicants with status for testing status display functionality
         this.stallApplicants = [
           {
@@ -567,7 +567,7 @@ export default {
               stall_no: 'FS-A15',
               stall_location: 'Food Court Area A',
               section_name: 'Filipino Cuisine Section',
-              rental_price: 5000.00,
+              rental_price: 5000.0,
               price_type: 'Monthly',
               preferred_stall_type: 'Food Stall',
               stall_category: 'Filipino Cuisine',
@@ -601,7 +601,7 @@ export default {
               stall_no: 'RS-B08',
               stall_location: 'Retail Area B',
               section_name: 'Fashion & Accessories',
-              rental_price: 7500.00,
+              rental_price: 7500.0,
               price_type: 'Monthly',
               preferred_stall_type: 'Retail Stall',
               stall_category: 'Clothing & Accessories',
@@ -634,7 +634,7 @@ export default {
               stall_no: 'SS-C03',
               stall_location: 'Service Area C',
               section_name: 'Electronics & Repair',
-              rental_price: 3500.00,
+              rental_price: 3500.0,
               price_type: 'Monthly',
               preferred_stall_type: 'Service Stall',
               stall_category: 'Electronics Repair',
@@ -651,7 +651,7 @@ export default {
               previous_business_experience: 'Worked as technician for 8 years',
               relative_stall_owner: 'No',
             },
-          }
+          },
         ]
 
         // Show error message to user

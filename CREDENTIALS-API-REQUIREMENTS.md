@@ -71,7 +71,7 @@ export const storeCredentials = async (req, res) => {
       full_name,
       contact_number,
       status = 'active',
-      created_by
+      created_by,
     } = req.body
 
     // Validate required fields
@@ -109,7 +109,8 @@ export const storeCredentials = async (req, res) => {
     }
 
     // Insert credentials
-    const [result] = await connection.execute(`
+    const [result] = await connection.execute(
+      `
       INSERT INTO credential (
         applicant_id, 
         username, 
@@ -121,19 +122,22 @@ export const storeCredentials = async (req, res) => {
         created_by, 
         created_at
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())
-    `, [
-      applicant_id,
-      username,
-      password, // Note: Should be hashed in production
-      email,
-      full_name,
-      contact_number,
-      status,
-      created_by
-    ])
+    `,
+      [
+        applicant_id,
+        username,
+        password, // Note: Should be hashed in production
+        email,
+        full_name,
+        contact_number,
+        status,
+        created_by,
+      ],
+    )
 
     // Get the created credential
-    const [newCredential] = await connection.execute(`
+    const [newCredential] = await connection.execute(
+      `
       SELECT 
         credential_id,
         applicant_id,
@@ -145,14 +149,15 @@ export const storeCredentials = async (req, res) => {
         created_at
       FROM credential 
       WHERE credential_id = ?
-    `, [result.insertId])
+    `,
+      [result.insertId],
+    )
 
     res.status(201).json({
       success: true,
       message: 'Credentials stored successfully for mobile app access',
       data: newCredential[0],
     })
-
   } catch (error) {
     console.error('❌ Store credentials error:', error)
     res.status(500).json({
@@ -177,11 +182,12 @@ export const verifyCredentials = async (req, res) => {
   let connection
   try {
     connection = await createConnection()
-    
+
     const { username } = req.params
     const { password } = req.body
 
-    const [user] = await connection.execute(`
+    const [user] = await connection.execute(
+      `
       SELECT 
         credential_id,
         applicant_id,
@@ -192,26 +198,27 @@ export const verifyCredentials = async (req, res) => {
         status
       FROM credential 
       WHERE username = ? AND password = ? AND status = 'active'
-    `, [username, password])
+    `,
+      [username, password],
+    )
 
     if (user.length === 0) {
       return res.status(401).json({
         success: false,
-        message: 'Invalid username or password'
+        message: 'Invalid username or password',
       })
     }
 
     res.json({
       success: true,
       message: 'Login successful',
-      data: user[0]
+      data: user[0],
     })
-
   } catch (error) {
     console.error('❌ Verify credentials error:', error)
     res.status(500).json({
       success: false,
-      message: 'Failed to verify credentials'
+      message: 'Failed to verify credentials',
     })
   } finally {
     if (connection) await connection.end()
@@ -228,39 +235,38 @@ export const updateCredentialStatus = async (req, res) => {
   let connection
   try {
     connection = await createConnection()
-    
+
     const credentialId = req.params.id
     const { status } = req.body
 
     if (!['active', 'inactive'].includes(status)) {
       return res.status(400).json({
         success: false,
-        message: 'Invalid status. Must be active or inactive'
+        message: 'Invalid status. Must be active or inactive',
       })
     }
 
     const [result] = await connection.execute(
       'UPDATE credential SET status = ?, updated_at = NOW() WHERE credential_id = ?',
-      [status, credentialId]
+      [status, credentialId],
     )
 
     if (result.affectedRows === 0) {
       return res.status(404).json({
         success: false,
-        message: 'Credential not found'
+        message: 'Credential not found',
       })
     }
 
     res.json({
       success: true,
-      message: `Credential ${status === 'active' ? 'activated' : 'deactivated'} successfully`
+      message: `Credential ${status === 'active' ? 'activated' : 'deactivated'} successfully`,
     })
-
   } catch (error) {
     console.error('❌ Update credential status error:', error)
     res.status(500).json({
       success: false,
-      message: 'Failed to update credential status'
+      message: 'Failed to update credential status',
     })
   } finally {
     if (connection) await connection.end()
@@ -273,10 +279,10 @@ export const updateCredentialStatus = async (req, res) => {
 Add these routes to your main server file:
 
 ```javascript
-import { 
-  storeCredentials, 
-  verifyCredentials, 
-  updateCredentialStatus 
+import {
+  storeCredentials,
+  verifyCredentials,
+  updateCredentialStatus,
 } from './path/to/credentialsController.js'
 
 // Add these routes
@@ -334,12 +340,12 @@ import jwt from 'jsonwebtoken'
 
 // Generate token after successful login
 const token = jwt.sign(
-  { 
-    credentialId: user.credential_id, 
-    username: user.username 
+  {
+    credentialId: user.credential_id,
+    username: user.username,
   },
   process.env.JWT_SECRET,
-  { expiresIn: '30d' }
+  { expiresIn: '30d' },
 )
 ```
 

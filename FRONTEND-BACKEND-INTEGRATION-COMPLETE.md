@@ -5,12 +5,14 @@
 ### 🔧 **Changes Made:**
 
 #### **1. ApproveApplicants Component**
+
 - ✅ **Updated API Endpoint**: Now uses `PUT /api/applicants/:id/approve`
 - ✅ **Removed Mock Response**: Uses real backend approval endpoint
 - ✅ **Removed Separate Credentials Call**: Your backend handles credential storage automatically
 - ✅ **Error Handling**: Comprehensive error messages for different HTTP status codes
 
-#### **2. DeclineApplicants Component**  
+#### **2. DeclineApplicants Component**
+
 - ✅ **Updated API Endpoint**: Now uses `PUT /api/applicants/:id/decline`
 - ✅ **Replaced deleteApplicantData**: New `declineApplicantViaBackend` method
 - ✅ **Complete Data Deletion**: Your backend deletes all related data in correct order
@@ -21,6 +23,7 @@
 ### 🚀 **How It Works Now:**
 
 #### **Approve Applicant Flow:**
+
 ```javascript
 1. Generate username/password on frontend
 2. Call PUT /api/applicants/:id/approve with credentials
@@ -31,6 +34,7 @@
 ```
 
 #### **Decline Applicant Flow:**
+
 ```javascript
 1. Send decline email first (if enabled)
 2. Call PUT /api/applicants/:id/decline with reason
@@ -38,7 +42,7 @@
    - application table records
    - other_information table
    - business_information table
-   - spouse table  
+   - spouse table
    - credential table (if any)
    - applicant table (main record)
 4. Show success confirmation
@@ -49,6 +53,7 @@
 ### 🔍 **Backend Endpoints Used:**
 
 #### **Approval Endpoint:**
+
 ```http
 PUT /api/applicants/:id/approve
 Authorization: Bearer <token>
@@ -61,6 +66,7 @@ Content-Type: application/json
 ```
 
 **Backend Response:**
+
 ```json
 {
   "success": true,
@@ -76,6 +82,7 @@ Content-Type: application/json
 ```
 
 #### **Decline Endpoint:**
+
 ```http
 PUT /api/applicants/:id/decline
 Authorization: Bearer <token>
@@ -87,6 +94,7 @@ Content-Type: application/json
 ```
 
 **Backend Response:**
+
 ```json
 {
   "success": true,
@@ -107,6 +115,7 @@ Content-Type: application/json
 ### 🎯 **Testing Instructions:**
 
 #### **Test Approve Functionality:**
+
 1. **Navigate to Applicants page**
 2. **Click "Approve" on any pending applicant**
 3. **Check Console Logs**: Should show real API calls, not mocks
@@ -114,6 +123,7 @@ Content-Type: application/json
 5. **Check Email**: Approval email should be sent with generated credentials
 
 #### **Test Decline Functionality:**
+
 1. **Navigate to Applicants page**
 2. **Click "Decline" on any pending applicant**
 3. **Enter decline reason** (minimum 10 characters)
@@ -126,6 +136,7 @@ Content-Type: application/json
 ### 🐛 **Error Scenarios to Test:**
 
 #### **Common Errors:**
+
 - **401 Unauthorized**: Token expired or invalid
 - **403 Forbidden**: Insufficient permissions
 - **404 Not Found**: Applicant doesn't exist
@@ -133,11 +144,13 @@ Content-Type: application/json
 - **500 Server Error**: Backend database issues
 
 #### **Username Collision:**
+
 - **Test**: Try to approve with existing username
 - **Expected**: Error message "Username already exists. Please generate a new username."
 - **Frontend Handling**: Generate new username automatically
 
 #### **Decline Reason Validation:**
+
 - **Test**: Enter decline reason with less than 10 characters
 - **Expected**: Error message "A detailed decline reason (at least 10 characters) is required"
 - **Frontend Validation**: Already handled by form validation
@@ -147,11 +160,13 @@ Content-Type: application/json
 ### 🔒 **Security Features:**
 
 #### **Password Security:**
+
 - ✅ **Backend Hashing**: Passwords hashed with bcrypt (salt rounds: 10)
 - ✅ **No Plain Text Storage**: Only hashed passwords in database
 - ✅ **Frontend Generation**: Secure random password generation
 
 #### **Authentication:**
+
 - ✅ **Bearer Token**: All requests include authentication
 - ✅ **Token Validation**: Backend validates tokens on protected routes
 - ✅ **Permission Checks**: Only authorized users can approve/decline
@@ -161,6 +176,7 @@ Content-Type: application/json
 ### 📱 **Mobile App Integration:**
 
 #### **Credential Table Structure:**
+
 ```sql
 credential {
   registrationid (PRIMARY KEY)
@@ -174,6 +190,7 @@ credential {
 ```
 
 #### **Mobile App Login Flow:**
+
 1. **User enters username/password** in mobile app
 2. **Mobile app calls** your backend login endpoint
 3. **Backend verifies** against `credential` table
@@ -185,12 +202,14 @@ credential {
 ### 🎉 **Success Indicators:**
 
 #### **Approve Success:**
+
 - ✅ **Console**: "✅ Applicant approved and credentials stored in database"
 - ✅ **Toast**: "✅ [Name] approved and credentials sent to [email]"
 - ✅ **Database**: New record in `credential` table
 - ✅ **Email**: Approval notification with login credentials
 
 #### **Decline Success:**
+
 - ✅ **Console**: "✅ Applicant declined and all data deleted successfully"
 - ✅ **Loading Animation**: Professional spinner with progress messages
 - ✅ **Success Animation**: Green checkmark confirmation
