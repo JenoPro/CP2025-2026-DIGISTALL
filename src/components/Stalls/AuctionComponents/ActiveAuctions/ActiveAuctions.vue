@@ -10,33 +10,14 @@
         <!-- Search and Filters -->
         <v-row class="mb-4">
           <v-col cols="12" md="6">
-            <v-text-field
-              v-model="search"
-              label="Search auctions..."
-              prepend-inner-icon="mdi-magnify"
-              outlined
-              dense
-              clearable
-            />
+            <v-text-field v-model="search" label="Search auctions..." prepend-inner-icon="mdi-magnify" outlined dense
+              clearable />
           </v-col>
           <v-col cols="12" md="3">
-            <v-select
-              v-model="statusFilter"
-              :items="statusOptions"
-              label="Status Filter"
-              outlined
-              dense
-              clearable
-            />
+            <v-select v-model="statusFilter" :items="statusOptions" label="Status Filter" outlined dense clearable />
           </v-col>
           <v-col cols="12" md="3">
-            <v-select
-              v-model="sortBy"
-              :items="sortOptions"
-              label="Sort By"
-              outlined
-              dense
-            />
+            <v-select v-model="sortBy" :items="sortOptions" label="Sort By" outlined dense />
           </v-col>
         </v-row>
 
@@ -55,19 +36,9 @@
 
         <!-- Auctions Grid -->
         <v-row v-else>
-          <v-col
-            v-for="auction in filteredAuctions"
-            :key="auction.auction_id"
-            cols="12"
-            md="6"
-            lg="4"
-          >
-            <auction-card
-              :auction="auction"
-              @extend-timer="handleExtendTimer"
-              @view-details="handleViewDetails"
-              @select-winner="handleSelectWinner"
-            />
+          <v-col v-for="auction in filteredAuctions" :key="auction.auction_id" cols="12" md="6" lg="4">
+            <auction-card :auction="auction" @extend-timer="handleExtendTimer" @view-details="handleViewDetails"
+              @select-winner="handleSelectWinner" />
           </v-col>
         </v-row>
       </v-card-text>
@@ -81,16 +52,8 @@
           <p class="mb-4">
             Current expiry: {{ formatDateTime(selectedAuction?.expires_at) }}
           </p>
-          <v-text-field
-            v-model="extensionHours"
-            label="Additional Hours"
-            type="number"
-            min="1"
-            max="168"
-            outlined
-            dense
-            :rules="[rules.required, rules.positiveNumber, rules.maxExtension]"
-          />
+          <v-text-field v-model="extensionHours" label="Additional Hours" type="number" min="1" max="168" outlined dense
+            :rules="[rules.required, rules.positiveNumber, rules.maxExtension]" />
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -111,7 +74,7 @@
         </v-card-title>
         <v-card-text>
           <p>
-            Are you sure you want to end the auction for 
+            Are you sure you want to end the auction for
             <strong>{{ selectedAuction?.stall_number }}</strong> now?
           </p>
           <p class="mt-2">

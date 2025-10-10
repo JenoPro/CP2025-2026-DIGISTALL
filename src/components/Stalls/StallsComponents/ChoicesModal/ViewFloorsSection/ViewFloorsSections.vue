@@ -5,7 +5,7 @@
             <v-card class="view-modal-card">
                 <v-card-title class="view-modal-header">
                     <span>Floors & Sections Overview</span>
-                    <v-btn icon @click="closeModal" color="white">
+                    <v-btn icon rounded @click="closeModal" color="white">
                         <v-icon>mdi-close</v-icon>
                     </v-btn>
                 </v-card-title>

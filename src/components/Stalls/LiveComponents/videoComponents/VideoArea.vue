@@ -1,20 +1,11 @@
 <template>
-  <v-card class="mb-6" elevation="8">
-    <div class="video-area">
-      <video
-        v-if="isLive"
-        ref="videoElement"
-        id="live-video"
-        class="live-video-element"
-        autoplay
-        muted
-        playsinline
+  <v-card class="video-card" :class="{ 'mb-6': !isAuction, 'mb-3': isAuction }" elevation="8">
+    <div class="video-area" :style="videoAreaStyles">
+      <video v-if="isLive" ref="videoElement" id="live-video" class="live-video-element" autoplay muted playsinline
         :class="{
           'flip-horizontal': videoFlipHorizontal,
           'flip-vertical': videoFlipVertical,
-        }"
-        :style="videoStyles"
-      ></video>
+        }" :style="videoStyles"></video>
       <div v-else class="video-placeholder">
         <v-icon size="64" color="#1976d2">mdi-video</v-icon>
         <div class="mt-3">Live Stream Will Appear Here</div>
@@ -26,43 +17,23 @@
       <!-- Video Controls Overlay -->
       <div v-if="isLive" class="video-controls-overlay">
         <!-- Settings Button -->
-        <v-btn
-          fab
-          x-small
-          class="video-settings-btn"
-          color="rgba(0,0,0,0.6)"
-          @click="toggleSettings"
-        >
+        <v-btn fab x-small class="video-settings-btn" color="rgba(0,0,0,0.6)" @click="toggleSettings">
           <v-icon small color="white">mdi-cog</v-icon>
         </v-btn>
 
         <!-- Video Effects Panel -->
-        <VideoEffectsPanel
-          :show="showSettings"
-          :current-filter="currentFilter"
-          :video-filters="videoFilters"
-          :video-flip-horizontal="videoFlipHorizontal"
-          :video-flip-vertical="videoFlipVertical"
-          :auto-focus-enabled="autoFocus"
-          @close="showSettings = false"
-          @toggle-auto-focus="$emit('toggle-auto-focus')"
-          @change-filter="$emit('apply-effect', $event)"
-          @toggle-flip-horizontal="$emit('toggle-flip-horizontal')"
-          @toggle-flip-vertical="$emit('toggle-flip-vertical')"
-          @switch-camera="$emit('switch-camera')"
-          @reset-effects="$emit('reset-effects')"
-        />
+        <VideoEffectsPanel :show="showSettings" :current-filter="currentFilter" :video-filters="videoFilters"
+          :video-flip-horizontal="videoFlipHorizontal" :video-flip-vertical="videoFlipVertical"
+          :auto-focus-enabled="autoFocus" @close="showSettings = false" @toggle-auto-focus="$emit('toggle-auto-focus')"
+          @change-filter="$emit('apply-effect', $event)" @toggle-flip-horizontal="$emit('toggle-flip-horizontal')"
+          @toggle-flip-vertical="$emit('toggle-flip-vertical')" @switch-camera="$emit('switch-camera')"
+          @reset-effects="$emit('reset-effects')" />
       </div>
 
       <!-- Fullscreen Exit Button -->
       <div v-if="isFullscreen" class="fullscreen-controls">
-        <v-btn
-          @click="$emit('toggle-fullscreen')"
-          icon="mdi-fullscreen-exit"
-          color="white"
-          variant="elevated"
-          class="exit-fullscreen-btn"
-        ></v-btn>
+        <v-btn @click="$emit('toggle-fullscreen')" icon="mdi-fullscreen-exit" color="white" variant="elevated"
+          class="exit-fullscreen-btn"></v-btn>
       </div>
     </div>
   </v-card>
@@ -102,6 +73,14 @@ export default {
       default: "none",
     },
     isFullscreen: {
+      type: Boolean,
+      default: false,
+    },
+    customHeight: {
+      type: String,
+      default: null,
+    },
+    isAuction: {
       type: Boolean,
       default: false,
     },
@@ -151,6 +130,14 @@ export default {
 
       return {
         filter: filterStyle,
+        height: this.customHeight || '50vh',
+      };
+    },
+    videoAreaStyles() {
+      const height = this.customHeight || '50vh';
+      return {
+        minHeight: height,
+        height: height,
       };
     },
   },
@@ -183,18 +170,18 @@ export default {
   background: #000;
   border-radius: 8px;
   overflow: hidden;
-  min-height: 50vh;
   display: flex;
   align-items: center;
   justify-content: center;
+  /* min-height will be set by inline styles */
 }
 
 .live-video-element {
   width: 100%;
-  height: 50vh;
   object-fit: cover;
   border-radius: 8px;
   transition: all 0.3s ease;
+  /* height will be set by inline styles */
 }
 
 .live-video-element.flip-horizontal {

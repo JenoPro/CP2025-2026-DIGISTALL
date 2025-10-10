@@ -10,7 +10,6 @@
     <v-card-text class="pa-4">
       <!-- No Bids Yet State -->
       <div v-if="!highestBidder || currentHighestBid <= startingPrice" class="no-bids-state text-center py-4">
-        <v-icon size="48" color="primary" class="mb-2">mdi-gavel</v-icon>
         <h3 class="text-h6 text-grey-darken-1 mb-2">No bids yet</h3>
         <div class="text-body-1 mb-3">
           Starting at <span class="text-primary font-weight-bold">₱{{ formatPrice(startingPrice) }}</span>
@@ -41,7 +40,6 @@
                 {{ displayEmail }}
               </div>
               <v-chip color="primary" size="small" variant="flat">
-                <v-icon start size="16">mdi-crown</v-icon>
                 Highest Bidder
               </v-chip>
             </div>
@@ -66,13 +64,8 @@
               {{ bidProgressPercentage }}% above starting price
             </span>
           </div>
-          <v-progress-linear
-            :model-value="bidProgressPercentage"
-            color="primary"
-            height="8"
-            rounded
-            class="mb-2"
-          ></v-progress-linear>
+          <v-progress-linear :model-value="bidProgressPercentage" color="primary" height="8" rounded
+            class="mb-2"></v-progress-linear>
           <div class="progression-info d-flex justify-space-between text-caption">
             <span>Start: ₱{{ formatPrice(startingPrice) }}</span>
             <span class="text-primary">Current: ₱{{ formatPrice(currentHighestBid) }}</span>
@@ -277,12 +270,12 @@ export default {
     min-width: auto;
     margin-top: 12px;
   }
-  
+
   .highest-bidder-info .v-row {
     flex-direction: column;
     text-align: center;
   }
-  
+
   .bidder-stats .v-col {
     margin-bottom: 8px;
   }
