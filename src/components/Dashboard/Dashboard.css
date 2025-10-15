@@ -9,44 +9,282 @@
   padding: 24px;
 }
 
-.content-placeholder {
-  background-color: white;
-  border-radius: 8px;
-  padding: 32px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  min-height: 400px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+/* Page Header Styles */
+.page-header {
+  margin-bottom: 24px;
 }
 
-.content-placeholder h3 {
-  color: #333;
-  margin-bottom: 16px;
-  font-size: 28px;
-  font-weight: 300;
+.page-header h2 {
+  color: #1976d2;
+  margin-bottom: 8px;
 }
 
-.content-placeholder p {
+/* Metric Cards */
+/* Metric Cards */
+.metric-card {
+  background: white;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  min-height: 120px;
+}
+
+.metric-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.metric-content {
+  position: relative;
+  padding: 16px !important;
+  height: 100%;
+}
+
+.metric-title {
+  position: absolute;
+  top: 8px;
+  left: 16px;
+  font-size: 12px;
+  font-weight: 500;
   color: #666;
-  font-size: 16px;
-  line-height: 1.5;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-/* Custom scrollbar for main content */
-.main-content::-webkit-scrollbar {
+.metric-body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  height: 100%;
+  margin-top: 20px;
+}
+
+.metric-icon {
+  flex-shrink: 0;
+}
+
+.metric-number {
+  font-size: 28px;
+  font-weight: 700;
+  color: #2c3e50;
+  line-height: 1;
+}
+
+.metric-label {
+  font-size: 14px;
+  color: #7f8c8d;
+  font-weight: 500;
+  margin-top: 8px;
+}
+
+/* Chart Cards */
+.chart-card {
+  border-radius: 12px !important;
+  height: 400px;
+}
+
+.chart-title {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 16px 24px !important;
+  font-size: 1.1rem !important;
+  font-weight: 600 !important;
+}
+
+.chart-container {
+  height: 300px;
+  position: relative;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chart-canvas {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.chart-placeholder {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 1;
+}
+
+/* Data Table Cards */
+.data-table-card {
+  border-radius: 12px !important;
+}
+
+.table-header {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 16px 24px !important;
+  font-size: 1.1rem !important;
+  font-weight: 600 !important;
+}
+
+/* Custom Table Styles */
+.custom-table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+}
+
+.custom-table thead th {
+  background-color: #f5f5f5;
+  color: #555;
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 16px 12px;
+  border-bottom: 2px solid #e0e0e0;
+  white-space: nowrap;
+}
+
+.custom-table tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+.custom-table tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+.custom-table tbody td {
+  padding: 12px;
+  border-bottom: 1px solid #f0f0f0;
+  vertical-align: middle;
+  font-size: 0.9rem;
+}
+
+.custom-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Action Buttons */
+.d-flex.gap-1 {
+  gap: 4px;
+}
+
+.d-flex.gap-2 {
+  gap: 8px;
+}
+
+/* Status Chips */
+.v-chip.v-chip--size-small {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Responsive Design */
+@media (max-width: 960px) {
+  .main-content {
+    padding: 16px;
+  }
+
+  .metric-card {
+    height: 120px;
+    margin-bottom: 16px;
+  }
+
+  .metric-number {
+    font-size: 1.8rem;
+  }
+
+  .chart-card {
+    height: 350px;
+    margin-bottom: 16px;
+  }
+
+  .chart-container {
+    height: 250px;
+  }
+}
+
+@media (max-width: 600px) {
+  .main-content {
+    padding: 12px;
+  }
+
+  .page-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .metric-card {
+    height: 100px;
+  }
+
+  .metric-number {
+    font-size: 1.5rem;
+  }
+
+  .metric-label {
+    font-size: 0.75rem;
+  }
+
+  .chart-card {
+    height: 300px;
+  }
+
+  .chart-container {
+    height: 200px;
+  }
+
+  .custom-table {
+    font-size: 0.875rem;
+  }
+
+  .custom-table thead th,
+  .custom-table tbody td {
+    padding: 8px 6px;
+  }
+}
+
+/* Animation for loading states */
+.loading-shimmer {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Custom scrollbar for tables */
+.v-table {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.v-table::-webkit-scrollbar {
   width: 6px;
 }
 
-.main-content::-webkit-scrollbar-track {
+.v-table::-webkit-scrollbar-track {
   background: #f1f1f1;
 }
 
-.main-content::-webkit-scrollbar-thumb {
+.v-table::-webkit-scrollbar-thumb {
   background: #c1c1c1;
   border-radius: 3px;
+}
+
+.v-table::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a1;
 }
 
 .main-content::-webkit-scrollbar-thumb:hover {

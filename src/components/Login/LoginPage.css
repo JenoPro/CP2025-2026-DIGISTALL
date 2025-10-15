@@ -107,11 +107,11 @@
 
 /* Logo and Title Section */
 .city-logo {
-  width: clamp(60px, 15vw, 120px);
-  height: clamp(60px, 15vw, 120px);
+  width: clamp(60px, 15vw, 200px);
+  height: clamp(60px, 15vw, 200px);
   object-fit: contain;
   filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.25));
-  margin-bottom: clamp(1rem, 3vw, 2rem);
+  margin-bottom: clamp(1rem, 2vw, 1rem);
   transition: transform 0.3s ease;
 }
 

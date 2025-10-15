@@ -5,7 +5,7 @@
       <v-col cols="12" md="8" class="left-section d-flex align-center justify-center">
         <div class="logo-title-section text-center">
           <img
-            src="../../assets/naga-city-logo.png"
+            src="../../assets/DigiStall-Logo.png"
             alt="Naga City Logo"
             class="city-logo mb-6"
           />
