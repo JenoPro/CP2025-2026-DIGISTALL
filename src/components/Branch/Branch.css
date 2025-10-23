@@ -88,14 +88,14 @@
   position: fixed !important;
   bottom: 24px !important;
   right: 24px !important;
+  width: 64px !important;
+  height: 64px !important;
   z-index: 9999 !important;
   border-radius: 50% !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
   font-size: 28px !important;
-  width: 64px !important;
-  height: 64px !important;
   overflow: hidden !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
 }

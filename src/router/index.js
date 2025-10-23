@@ -11,6 +11,7 @@ import MainLayout from '../components/MainLayout/MainLayout.vue'
 import Collectors from '../components/Collectors/Collectors.vue'
 import Stalls from '../components/Stalls/Stalls.vue'
 import BranchManagement from '../components/Branch/Branch.vue'
+import Employees from '../components/Employees/Employees.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -43,6 +44,15 @@ const router = createRouter({
           },
         },
         {
+          path: 'employees',
+          name: 'Employees',
+          component: Employees,
+          meta: {
+            title: 'Employee Management',
+            requiresBranchManager: true,
+          },
+        },
+        {
           path: 'payment',
           name: 'Payment',
           component: Payment, // just blank placeholder
@@ -71,12 +81,6 @@ const router = createRouter({
           name: 'Stallholders',
           component: Stallholders,
           meta: { title: 'Stallholders' },
-        },
-        {
-          path: 'vendors',
-          name: 'Vendors',
-          component: Vendors,
-          meta: { title: 'Vendors' },
         },
         {
           path: 'collectors',
@@ -114,7 +118,7 @@ const router = createRouter({
   ],
 })
 
-// Navigation guard to protect admin routes
+// Navigation guard to protect admin and branch manager routes
 router.beforeEach((to, from, next) => {
   const userType = sessionStorage.getItem('userType')
   const currentUser = JSON.parse(sessionStorage.getItem('currentUser') || '{}')
@@ -125,6 +129,22 @@ router.beforeEach((to, from, next) => {
       next()
     } else {
       // Redirect non-admin users to dashboard
+      next('/dashboard')
+    }
+  }
+  // Check if route requires branch manager access
+  else if (to.meta?.requiresBranchManager) {
+    if (
+      userType === 'admin' ||
+      currentUser.userType === 'admin' ||
+      userType === 'branch_manager' ||
+      currentUser.userType === 'branch_manager' ||
+      userType === 'branch-manager' ||
+      currentUser.userType === 'branch-manager'
+    ) {
+      next()
+    } else {
+      // Redirect non-branch manager users to dashboard
       next('/dashboard')
     }
   } else {

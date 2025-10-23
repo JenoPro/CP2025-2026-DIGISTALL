@@ -34,14 +34,21 @@ export default {
       // eslint-disable-next-line no-undef
       apiBaseUrl: process.env.VUE_APP_API_URL || 'http://localhost:3001',
       moreItems: [
-        { id: 6, icon: 'mdi-account-group', name: 'Vendors', route: '/vendors' },
+        { 
+          id: 6, 
+          icon: 'mdi-account-tie', 
+          name: 'Employees', 
+          route: '/employees',
+          description: 'Manage employee accounts and permissions'
+        },
+        { id: 7, icon: 'mdi-account-group', name: 'Vendors', route: '/vendors' },
         {
-          id: 7,
+          id: 8,
           icon: 'mdi-account-multiple',
           name: 'Stallholders',
           route: '/stallholders',
         },
-        { id: 8, icon: 'mdi-account-cash', name: 'Collectors', route: '/collectors' },
+        { id: 10, icon: 'mdi-account-cash', name: 'Collectors', route: '/collectors' },
         {
           id: 9,
           icon: 'mdi-store',
@@ -75,6 +82,49 @@ export default {
       const userType = sessionStorage.getItem('userType')
       const currentUser = JSON.parse(sessionStorage.getItem('currentUser') || '{}')
       return userType === 'admin' || currentUser.userType === 'admin'
+    },
+
+    // Get current user permissions
+    userPermissions() {
+      const currentUser = JSON.parse(sessionStorage.getItem('currentUser') || '{}')
+      return currentUser.permissions || []
+    },
+
+    // Check if user is branch manager (has access to everything)
+    isBranchManager() {
+      const userType = sessionStorage.getItem('userType')
+      const currentUser = JSON.parse(sessionStorage.getItem('currentUser') || '{}')
+      return userType === 'branch_manager' || currentUser.userType === 'branch_manager' || 
+             userType === 'branch-manager' || currentUser.userType === 'branch-manager' || this.isAdmin
+    },
+
+    // Filter sidebar items based on user permissions
+    filteredMoreItems() {
+      if (this.isBranchManager) {
+        return this.moreItems // Branch managers see everything
+      }
+
+      return this.moreItems.filter(item => {
+        // Map sidebar items to their required permissions
+        const permissionMap = {
+          6: 'employees',     // Employees (only branch managers should see this)
+          7: 'vendors',       // Vendors
+          8: 'stallholders',  // Stallholders
+          9: 'stalls',        // Stalls
+          10: 'collectors'    // Collectors
+        }
+
+        const requiredPermission = permissionMap[item.id]
+        
+        // If no permission mapping, show to everyone (fallback)
+        if (!requiredPermission) return true
+        
+        // Hide employees section from non-managers (employees section is only for branch managers)
+        if (item.id === 6) return this.isBranchManager
+        
+        // Check if user has the required permission
+        return this.userPermissions.includes(requiredPermission)
+      })
     },
 
     // NEW: Get filtered submenu items based on available stall types
@@ -197,14 +247,18 @@ export default {
     },
 
     setActiveItem(itemId, route, hasSubMenu = false) {
+      console.log('🔧 Sidebar setActiveItem called:', { itemId, route, hasSubMenu })
+      
       // Handle stalls menu item with submenu
       if (itemId === 9 && hasSubMenu) {
+        console.log('🔧 Handling stalls submenu for ID 9')
         // Only toggle submenu if there are raffle/auction stalls available
         if (this.availableStallTypes.hasRaffles || this.availableStallTypes.hasAuctions) {
           this.toggleStallsSubMenu()
         }
         // Always navigate to main stalls page
         if (route && this.$route.path !== route) {
+          console.log('🔧 Navigating to stalls route:', route)
           this.$router.push(route).catch((err) => {
             console.log('Navigation handled:', err.message)
           })
@@ -214,9 +268,12 @@ export default {
 
       // Navigate to the route for regular items
       if (route && this.$route.path !== route) {
+        console.log('🔧 Navigating to route:', route, 'for item ID:', itemId)
         this.$router.push(route).catch((err) => {
           console.log('Navigation handled:', err.message)
         })
+      } else {
+        console.log('🔧 Already on route:', route)
       }
 
       // Close more items if a main item is selected
@@ -227,6 +284,7 @@ export default {
       }
 
       // Emit the navigation event to parent
+      console.log('🔧 Emitting menu-item-click:', itemId, route)
       this.$emit('menu-item-click', itemId, route)
     },
 

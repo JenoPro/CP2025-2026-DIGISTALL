@@ -50,10 +50,11 @@ export default {
         3: "/applicants", // For branch manager, will be /branch for admin
         4: "/complaints",
         5: "/compliances",
-        6: "/vendors",
-        7: "/stallholders",
-        8: "/collectors",
-        9: "/stalls",
+        6: "/employees", // Employee Management
+        7: "/vendors",   // Vendors
+        8: "/stallholders", // Stallholders
+        9: "/stalls",    // Stalls
+        10: "/collectors", // Collectors
       },
     };
   },
@@ -91,18 +92,25 @@ export default {
     handleMenuItemClick(payload) {
       // Handle both main menu items (1-5) and more items (6-10)
       const itemId = typeof payload === "object" ? payload.id : payload;
+      console.log('🔧 MainLayout handleMenuItemClick:', { payload, itemId });
 
       // First check if it's a main menu item with route property
       const mainItem = this.menuItems.find((i) => i.id === itemId);
+      console.log('🔧 Found main item:', mainItem);
+      
       if (mainItem?.route) {
+        console.log('🔧 Navigating to main item route:', mainItem.route);
         this.$router.push(mainItem.route);
         return;
       }
 
       // If not found in main items, check the allMenuRoutes for items 6-10
       const route = this.allMenuRoutes[itemId];
+      console.log('🔧 AllMenuRoutes lookup for ID', itemId, ':', route);
+      console.log('🔧 All available routes:', this.allMenuRoutes);
+      
       if (route) {
-        console.log("Navigating to:", route);
+        console.log('🔧 MainLayout navigating to:', route);
         this.$router.push(route);
       } else {
         console.warn("No route found for menu item ID:", itemId);
