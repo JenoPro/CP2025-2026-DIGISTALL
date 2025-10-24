@@ -43,6 +43,18 @@ export default {
         { id: 4, icon: "mdi-chart-line", name: "Complaints", route: "/complaints" },
         { id: 5, icon: "mdi-shield-check", name: "Compliances", route: "/compliances" },
       ],
+      // Employee menu items based on permissions
+      employeeMenuItems: {
+        dashboard: { id: 1, icon: "mdi-view-dashboard", name: "Dashboard", route: "/dashboard" },
+        payments: { id: 2, icon: "mdi-credit-card", name: "Payment", route: "/payment" },
+        applicants: { id: 3, icon: "mdi-account-group", name: "Applicants", route: "/applicants" },
+        complaints: { id: 4, icon: "mdi-chart-line", name: "Complaints", route: "/complaints" },
+        compliances: { id: 5, icon: "mdi-shield-check", name: "Compliances", route: "/compliances" },
+        vendors: { id: 6, icon: "mdi-account-multiple", name: "Vendors", route: "/vendors" },
+        stallholders: { id: 7, icon: "mdi-account-group", name: "Stallholders", route: "/stallholders" },
+        collectors: { id: 8, icon: "mdi-account-cash", name: "Collectors", route: "/collectors" },
+        stalls: { id: 9, icon: "mdi-store", name: "Stalls", route: "/stalls" },
+      },
       // Define all possible menu routes including "more items" (6-10)
       allMenuRoutes: {
         1: "/dashboard",
@@ -83,6 +95,49 @@ export default {
         this.menuItems = [...this.adminMenuItems];
         // Update routes for admin
         this.allMenuRoutes[3] = "/branch";
+      } else if (userType === "employee") {
+        // Employee: Show only features based on permissions
+        const employeePermissions = JSON.parse(sessionStorage.getItem("employeePermissions") || "[]");
+        console.log("🔧 Employee permissions:", employeePermissions);
+        
+        this.menuItems = [];
+        let menuId = 1;
+        
+        // Always show dashboard for employees
+        if (employeePermissions.includes("dashboard")) {
+          this.menuItems.push({ ...this.employeeMenuItems.dashboard, id: menuId++ });
+        }
+        
+        // Add menu items based on permissions
+        if (employeePermissions.includes("payments")) {
+          this.menuItems.push({ ...this.employeeMenuItems.payments, id: menuId++ });
+        }
+        if (employeePermissions.includes("applicants")) {
+          this.menuItems.push({ ...this.employeeMenuItems.applicants, id: menuId++ });
+        }
+        if (employeePermissions.includes("complaints")) {
+          this.menuItems.push({ ...this.employeeMenuItems.complaints, id: menuId++ });
+        }
+        if (employeePermissions.includes("compliances")) {
+          this.menuItems.push({ ...this.employeeMenuItems.compliances, id: menuId++ });
+        }
+        if (employeePermissions.includes("vendors")) {
+          this.menuItems.push({ ...this.employeeMenuItems.vendors, id: menuId++ });
+        }
+        if (employeePermissions.includes("stallholders")) {
+          this.menuItems.push({ ...this.employeeMenuItems.stallholders, id: menuId++ });
+        }
+        if (employeePermissions.includes("collectors")) {
+          this.menuItems.push({ ...this.employeeMenuItems.collectors, id: menuId++ });
+        }
+        if (employeePermissions.includes("stalls")) {
+          this.menuItems.push({ ...this.employeeMenuItems.stalls, id: menuId++ });
+        }
+        
+        // If no permissions, show only dashboard
+        if (this.menuItems.length === 0) {
+          this.menuItems.push({ ...this.employeeMenuItems.dashboard, id: 1 });
+        }
       } else {
         // Default to branch manager menu
         this.menuItems = [...this.branchManagerMenuItems];

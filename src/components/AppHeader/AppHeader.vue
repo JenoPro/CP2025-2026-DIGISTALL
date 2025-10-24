@@ -53,11 +53,17 @@
               </div>
             </div>
 
-            <!-- User profile info (Admin or Branch Manager) -->
+            <!-- User profile info (Admin, Branch Manager, or Employee) -->
             <div v-else class="profile-info" @click="handleProfileClick">
               <div class="profile-avatar-container">
-                <v-avatar class="profile-avatar" :color="isAdmin ? 'red darken-1' : 'primary'" size="44">
-                  <v-icon color="white" size="22">{{ isAdmin ? 'mdi-shield-account' : 'mdi-account' }}</v-icon>
+                <v-avatar 
+                  class="profile-avatar" 
+                  :color="isAdmin ? 'red darken-1' : isEmployee ? 'green darken-1' : 'primary'" 
+                  size="44"
+                >
+                  <v-icon color="white" size="22">
+                    {{ isAdmin ? 'mdi-shield-account' : isEmployee ? 'mdi-account-tie' : 'mdi-account' }}
+                  </v-icon>
                 </v-avatar>
               </div>
 

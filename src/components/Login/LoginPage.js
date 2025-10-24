@@ -27,11 +27,18 @@ export default {
   },
   computed: {
     loginEndpoint() {
-      // Check if username indicates admin login
-      const isAdmin = this.username.toLowerCase() === 'admin' || this.username.includes('admin')
-      return isAdmin
-        ? 'http://localhost:3001/api/auth/admin/login'
-        : 'http://localhost:3001/api/auth/branch_manager/login'
+      // Check if username indicates different user types
+      const usernameUpper = this.username.toUpperCase()
+      
+      if (usernameUpper === 'ADMIN' || usernameUpper.includes('ADMIN')) {
+        return 'http://localhost:3001/api/auth/admin/login'
+      } else if (usernameUpper.startsWith('EMP') || usernameUpper.includes('.EMPLOYEE') || this.isEmployeeUsername(this.username)) {
+        // Employee login - username starts with EMP, contains .employee, or matches employee pattern
+        return 'http://localhost:3001/api/employees/login'
+      } else {
+        // Default to branch manager login
+        return 'http://localhost:3001/api/auth/branch_manager/login'
+      }
     },
   },
   async mounted() {
@@ -39,6 +46,14 @@ export default {
     this.clearAuthData()
   },
   methods: {
+    // Helper method to detect if username is an employee format
+    isEmployeeUsername(username) {
+      // Employee usernames are typically: firstname.lastname### (e.g., test.user314)
+      // Look for pattern: word.word followed by numbers
+      const employeePattern = /^[a-zA-Z]+\.[a-zA-Z]+\d+$/
+      return employeePattern.test(username)
+    },
+    
     clearAuthData() {
       sessionStorage.removeItem('currentUser')
       sessionStorage.removeItem('authToken')
@@ -46,6 +61,9 @@ export default {
       sessionStorage.removeItem('branchManagerId')
       sessionStorage.removeItem('adminId')
       sessionStorage.removeItem('adminData')
+      sessionStorage.removeItem('employeeId')
+      sessionStorage.removeItem('employeeData')
+      sessionStorage.removeItem('employeePermissions')
       delete axios.defaults.headers.common['Authorization']
     },
 
@@ -72,6 +90,8 @@ export default {
         const loginData = {
           username: this.username.trim(),
           password: this.password,
+          ipAddress: '127.0.0.1', // Default for local testing
+          userAgent: navigator.userAgent || 'Unknown'
         }
 
         console.log('🔐 Attempting login with:', {
@@ -95,33 +115,64 @@ export default {
         this.loading = false
 
         if (response.status === 200 && response.data && response.data.success) {
-          const { token, user } = response.data.data || response.data
+          // Handle different response structures for different user types
+          let token, user, isEmployee = false
+          
+          if (this.username.toUpperCase().startsWith('EMP') || this.username.toUpperCase().includes('.EMPLOYEE') || this.isEmployeeUsername(this.username)) {
+            // Employee login response structure
+            console.log('🔍 Employee login response:', response.data)
+            token = response.data.data.token
+            user = response.data.data.employee
+            isEmployee = true
+          } else {
+            // Admin/Branch Manager login response structure  
+            const responseData = response.data.data || response.data
+            token = responseData.token
+            user = responseData.user
+          }
+
+          // Handle different user types
+          let userType = user.userType || 'branch-manager'
+          let displayName = user.lastName || user.username
+          
+          // For employee login, set proper user type
+          if (isEmployee) {
+            userType = 'employee'
+            displayName = user.first_name || user.firstName || user.username
+            
+            // Store employee-specific data
+            sessionStorage.setItem('employeeId', user.employee_id?.toString() || user.id?.toString())
+            sessionStorage.setItem('employeePermissions', JSON.stringify(user.permissions || []))
+          }
 
           console.log('✅ Login successful!', {
-            user: user.username,
-            userType: user.userType,
-            firstName: user.firstName,
-            lastName: user.lastName,
+            user: user.username || user.employee_username,
+            userType: userType,
+            firstName: user.firstName || user.first_name,
+            lastName: user.lastName || user.last_name,
             area: user.area,
             location: user.location || user.branch,
+            permissions: user.permissions,
           })
-
-          // Create display name based on user type
-          const displayName = user.lastName || user.username
 
           // Turn loading back on for success redirect
           this.loading = true
-          const userTypeTitle = user.userType === 'admin' ? 'Administrator' : 'Manager'
+          const userTypeTitle = userType === 'admin' ? 'Administrator' : 
+                               userType === 'employee' ? 'Employee' : 'Manager'
           this.loadingText = `Welcome ${displayName}!`
           this.loadingSubtext = `Setting up your ${userTypeTitle} dashboard`
 
           // Store authentication data
           sessionStorage.setItem('authToken', token)
-          sessionStorage.setItem('currentUser', JSON.stringify(user))
-          sessionStorage.setItem('userType', user.userType || 'branch-manager')
+          sessionStorage.setItem('currentUser', JSON.stringify({
+            ...user,
+            userType: userType,
+            username: user.username || user.employee_username
+          }))
+          sessionStorage.setItem('userType', userType)
 
           // For admin users, store admin ID and info
-          if (user.userType === 'admin' && user.adminId) {
+          if (userType === 'admin' && user.adminId) {
             sessionStorage.setItem('adminId', user.adminId.toString())
             // Store admin-specific info for header display
             sessionStorage.setItem(
@@ -137,6 +188,21 @@ export default {
                 role: 'System Administrator',
               }),
             )
+          } else if (userType === 'employee') {
+            // Store employee-specific info for header display
+            sessionStorage.setItem(
+              'employeeData',
+              JSON.stringify({
+                employeeId: user.employee_id || user.id,
+                username: user.employee_username || user.username,
+                firstName: user.first_name || user.firstName,
+                lastName: user.last_name || user.lastName,
+                email: user.email,
+                permissions: user.permissions || [],
+                fullName: `${user.first_name || user.firstName} ${user.last_name || user.lastName}`.trim(),
+                role: 'Employee',
+              }),
+            )
           } else if (user.branchManagerId) {
             sessionStorage.setItem('branchManagerId', user.branchManagerId.toString())
           }
@@ -147,7 +213,7 @@ export default {
             try {
               this.$store.commit('auth/setUser', user)
               this.$store.commit('auth/setToken', token)
-              this.$store.commit('auth/setUserType', user.userType || 'branch-manager')
+              this.$store.commit('auth/setUserType', userType)
             } catch (storeError) {
               console.warn('Vuex store not available or missing mutations:', storeError)
             }
@@ -156,17 +222,27 @@ export default {
           this.$emit('login-success', {
             user: user,
             token: token,
-            userType: user.userType || 'branch-manager',
+            userType: userType,
           })
 
-          // Redirect after delay
-          setTimeout(() => {
+          // Immediate redirect for employees, delayed for others
+          if (userType === 'employee') {
+            // Employee gets immediate navigation
             this.loading = false
             this.$router.push('/dashboard').catch((err) => {
               console.error('Navigation error:', err)
               window.location.href = '/dashboard'
             })
-          }, 2000)
+          } else {
+            // Admin and managers get welcome screen delay
+            setTimeout(() => {
+              this.loading = false
+              this.$router.push('/dashboard').catch((err) => {
+                console.error('Navigation error:', err)
+                window.location.href = '/dashboard'
+              })
+            }, 2000)
+          }
         } else {
           // Handle error responses
           this.handleLoginError({

@@ -3,11 +3,10 @@ import EmployeeSearch from './Components/EmployeeSearch/EmployeeSearch.vue'
 import EmployeeTable from './Components/EmployeeTable/EmployeeTable.vue'
 import AddEmployee from './Components/AddEmployee/AddEmployee.vue'
 import ManagePermissions from './Components/ManagePermissions/ManagePermissions.vue'
-import { 
-  sendEmployeeCredentialsEmailWithRetry, 
+import {
+  sendEmployeeCredentialsEmailWithRetry,
   sendEmployeePasswordResetEmail,
-  generateEmployeeUsername, 
-  generateEmployeePassword 
+  generateEmployeePassword,
 } from './Components/emailService.js'
 
 export default {
@@ -221,15 +220,6 @@ export default {
       try {
         const currentUser = JSON.parse(sessionStorage.getItem('user') || '{}')
 
-        // Generate credentials for new employees
-        let credentials = null
-        if (!this.isEditMode) {
-          credentials = {
-            username: generateEmployeeUsername(),
-            password: generateEmployeePassword()
-          }
-        }
-
         const payload = {
           firstName: employeeData.firstName,
           lastName: employeeData.lastName,
@@ -238,7 +228,6 @@ export default {
           branchId: employeeData.branchId || currentUser.branchId || 1,
           permissions: this.selectedPermissions,
           createdByManager: currentUser.id || 1,
-          ...(credentials && { credentials }) // Include credentials for new employees
         }
 
         const url = this.isEditMode
@@ -256,27 +245,28 @@ export default {
         const data = await response.json()
 
         if (data.success) {
-          if (!this.isEditMode && credentials) {
-            // Send welcome email with credentials
-            console.log('📧 Sending employee credentials email...')
+          if (!this.isEditMode) {
+            // Use backend-generated credentials
+            const backendCredentials = data.data.credentials
+            console.log('📧 Sending employee credentials email with backend credentials...')
             const emailResult = await sendEmployeeCredentialsEmailWithRetry(
               employeeData.email,
               `${employeeData.firstName} ${employeeData.lastName}`,
-              credentials.username,
-              credentials.password
+              backendCredentials.username,
+              backendCredentials.password,
             )
 
             if (emailResult.success) {
               this.$emit(
                 'show-snackbar',
-                `Employee created successfully! Username: ${credentials.username}, Password: ${credentials.password}. Welcome email sent to ${employeeData.email}`,
+                `Employee created successfully! Username: ${backendCredentials.username}, Password: ${backendCredentials.password}. Welcome email sent to ${employeeData.email}`,
                 'success',
                 10000,
               )
             } else {
               this.$emit(
                 'show-snackbar',
-                `Employee created! Username: ${credentials.username}, Password: ${credentials.password}. Warning: Email failed to send - ${emailResult.message}`,
+                `Employee created! Username: ${backendCredentials.username}, Password: ${backendCredentials.password}. Warning: Email failed to send - ${emailResult.message}`,
                 'warning',
                 12000,
               )
@@ -368,17 +358,14 @@ export default {
       try {
         const currentUser = JSON.parse(sessionStorage.getItem('user') || '{}')
 
-        const response = await fetch(
-          `${this.apiBaseUrl}/employees/${employee.employee_id}`,
-          {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              status: newStatus,
-              updatedBy: currentUser.id || 1,
-            }),
-          },
-        )
+        const response = await fetch(`${this.apiBaseUrl}/employees/${employee.employee_id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            status: newStatus,
+            updatedBy: currentUser.id || 1,
+          }),
+        })
 
         const data = await response.json()
 
@@ -417,7 +404,7 @@ export default {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               resetBy: currentUser.id || 1,
-              newPassword: newPassword
+              newPassword: newPassword,
             }),
           },
         )
@@ -430,7 +417,7 @@ export default {
           const emailResult = await sendEmployeePasswordResetEmail(
             employee.email,
             `${employee.first_name} ${employee.last_name}`,
-            newPassword
+            newPassword,
           )
 
           if (emailResult.success) {

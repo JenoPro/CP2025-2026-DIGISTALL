@@ -14,12 +14,17 @@ export default {
   },
   data() {
     return {
-      showProfilePopup: false,
-      popupPosition: {},
       branchManagerData: null,
       adminData: null,
+      employeeData: null,
       loading: false,
       error: null,
+      // Popup state
+      showProfilePopup: false,
+      popupPosition: {
+        top: '0px',
+        right: '0px',
+      },
     }
   },
   computed: {
@@ -29,8 +34,13 @@ export default {
     isAdmin() {
       return this.userType === 'admin'
     },
+    isEmployee() {
+      return this.userType === 'employee'
+    },
     currentUserData() {
-      return this.isAdmin ? this.adminData : this.branchManagerData
+      if (this.isAdmin) return this.adminData
+      if (this.isEmployee) return this.employeeData
+      return this.branchManagerData
     },
     displayUsername() {
       // Show the actual username from database
@@ -62,6 +72,8 @@ export default {
     async fetchUserData() {
       if (this.isAdmin) {
         await this.fetchAdminData()
+      } else if (this.isEmployee) {
+        await this.fetchEmployeeData()
       } else {
         await this.fetchBranchManagerData()
       }
@@ -145,6 +157,55 @@ export default {
             console.error('Error parsing stored admin data:', parseError)
           }
         }
+      } finally {
+        this.loading = false
+      }
+    },
+
+    // Method to fetch employee data
+    async fetchEmployeeData() {
+      try {
+        this.loading = true
+        this.error = null
+
+        console.log('🔍 Loading employee data...')
+
+        // Get employee data from session storage (stored during login)
+        const storedCurrentUser = sessionStorage.getItem('currentUser')
+        if (storedCurrentUser) {
+          try {
+            const userData = JSON.parse(storedCurrentUser)
+            if (userData.userType === 'employee') {
+              this.employeeData = {
+                username: userData.employee_username || userData.username,
+                fullName: `${userData.first_name || userData.firstName || ''} ${userData.last_name || userData.lastName || ''}`.trim(),
+                designation: 'Employee',
+                area: userData.branch_name || 'Branch Employee',
+                location: userData.branch_name || '',
+                permissions: userData.permissions || []
+              }
+              console.log('✅ Employee data loaded from storage:', this.employeeData)
+              this.loading = false
+              return
+            }
+          } catch (parseError) {
+            console.warn('Error parsing stored employee data:', parseError)
+          }
+        }
+
+        // If no stored data, create default employee data
+        this.employeeData = {
+          username: 'employee',
+          fullName: 'Employee User',
+          designation: 'Employee',
+          area: 'System Employee',
+          location: '',
+          permissions: []
+        }
+        console.log('📦 Using default employee data')
+      } catch (error) {
+        console.error('❌ Failed to fetch employee data:', error)
+        this.error = 'Failed to load employee information'
       } finally {
         this.loading = false
       }

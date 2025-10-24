@@ -7,7 +7,7 @@ export default {
       type: Array,
       default: () => [
         { id: 1, icon: 'mdi-view-dashboard', name: 'Dashboard', route: '/dashboard' },
-        { id: 2, icon: 'mdi-credit-card', name: 'Payments', route: '/payments' },
+        { id: 2, icon: 'mdi-credit-card', name: 'Payments', route: '/payment' },
         { id: 3, icon: 'mdi-account-plus', name: 'Applicants', route: '/applicants' },
         { id: 4, icon: 'mdi-chart-line', name: 'Complaints', route: '/complaints' },
         {
@@ -86,8 +86,17 @@ export default {
 
     // Get current user permissions
     userPermissions() {
-      const currentUser = JSON.parse(sessionStorage.getItem('currentUser') || '{}')
-      return currentUser.permissions || []
+      const userType = sessionStorage.getItem('userType')
+      
+      if (userType === 'employee') {
+        // For employees, get permissions from employeePermissions
+        const employeePermissions = sessionStorage.getItem('employeePermissions')
+        return employeePermissions ? JSON.parse(employeePermissions) : []
+      } else {
+        // For other users, get from currentUser
+        const currentUser = JSON.parse(sessionStorage.getItem('currentUser') || '{}')
+        return currentUser.permissions || []
+      }
     },
 
     // Check if user is branch manager (has access to everything)
@@ -100,11 +109,17 @@ export default {
 
     // Filter sidebar items based on user permissions
     filteredMoreItems() {
+      console.log('🔍 Filtering sidebar items...')
+      console.log('User type:', sessionStorage.getItem('userType'))
+      console.log('Is branch manager:', this.isBranchManager)
+      console.log('User permissions:', this.userPermissions)
+      
       if (this.isBranchManager) {
+        console.log('✅ Branch manager - showing all items')
         return this.moreItems // Branch managers see everything
       }
 
-      return this.moreItems.filter(item => {
+      const filteredItems = this.moreItems.filter(item => {
         // Map sidebar items to their required permissions
         const permissionMap = {
           6: 'employees',     // Employees (only branch managers should see this)
@@ -123,8 +138,13 @@ export default {
         if (item.id === 6) return this.isBranchManager
         
         // Check if user has the required permission
-        return this.userPermissions.includes(requiredPermission)
+        const hasPermission = this.userPermissions.includes(requiredPermission)
+        console.log(`Item ${item.name} (ID: ${item.id}) - Required: ${requiredPermission}, Has permission: ${hasPermission}`)
+        return hasPermission
       })
+      
+      console.log('✅ Filtered items:', filteredItems.map(item => item.name))
+      return filteredItems
     },
 
     // NEW: Get filtered submenu items based on available stall types
@@ -184,11 +204,24 @@ export default {
     // NEW: Check what stall types are available in the current branch
     async checkAvailableStallTypes() {
       try {
+        console.log('🔍 Checking stall types permissions...')
+        console.log('User permissions:', this.userPermissions)
+        console.log('Is branch manager:', this.isBranchManager)
+        console.log('Has stalls permission:', this.userPermissions.includes('stalls'))
+        
+        // Only check stall types if user has stalls permission or is a manager
+        if (!this.isBranchManager && !this.userPermissions.includes('stalls')) {
+          console.log('❌ User does not have stalls permission, skipping stall type check')
+          return
+        }
+
         const token = sessionStorage.getItem('authToken')
         if (!token) {
           console.log('No auth token, skipping stall type check')
           return
         }
+
+        console.log('✅ User has stalls permission, fetching stall types...')
 
         const response = await fetch(`${this.apiBaseUrl}/api/stalls`, {
           method: 'GET',
@@ -248,6 +281,9 @@ export default {
 
     setActiveItem(itemId, route, hasSubMenu = false) {
       console.log('🔧 Sidebar setActiveItem called:', { itemId, route, hasSubMenu })
+      console.log('🔧 Current route:', this.$route.path)
+      console.log('🔧 User type:', sessionStorage.getItem('userType'))
+      console.log('🔧 Employee permissions:', sessionStorage.getItem('employeePermissions'))
       
       // Handle stalls menu item with submenu
       if (itemId === 9 && hasSubMenu) {
@@ -270,7 +306,8 @@ export default {
       if (route && this.$route.path !== route) {
         console.log('🔧 Navigating to route:', route, 'for item ID:', itemId)
         this.$router.push(route).catch((err) => {
-          console.log('Navigation handled:', err.message)
+          console.log('Navigation handled or failed:', err.message)
+          console.error('Navigation error details:', err)
         })
       } else {
         console.log('🔧 Already on route:', route)

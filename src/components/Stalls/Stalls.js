@@ -53,6 +53,13 @@ export default {
           return
         }
 
+        // Check if user has permission to access stalls
+        if (!this.checkStallsPermission()) {
+          this.showMessage('Access denied. You do not have permission to view stalls.', 'error')
+          this.$router.push('/dashboard')
+          return
+        }
+
         this.currentUser = JSON.parse(user)
         console.log('Current user:', this.currentUser)
 
@@ -210,6 +217,24 @@ export default {
 
       console.log(`Getting image for section: "${section}"`)
       return defaultImages[section] || defaultImages['default']
+    },
+
+    // Check if user has permission to access stalls
+    checkStallsPermission() {
+      const userType = sessionStorage.getItem('userType')
+      
+      // Admins and branch managers always have access
+      if (userType === 'admin' || userType === 'branch-manager') {
+        return true
+      }
+      
+      // For employees, check specific permissions
+      if (userType === 'employee') {
+        const employeePermissions = JSON.parse(sessionStorage.getItem('employeePermissions') || '[]')
+        return employeePermissions.includes('stalls')
+      }
+      
+      return false
     },
 
     // Clear authentication and redirect to login

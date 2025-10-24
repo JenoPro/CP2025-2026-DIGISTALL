@@ -233,6 +233,17 @@ export default {
     },
   },
   async mounted() {
+    // Check if user has permission to access stalls data
+    // eslint-disable-next-line no-unused-vars
+    const userType = sessionStorage.getItem('userType')
+    const hasPermission = this.checkStallsPermission()
+    
+    if (!hasPermission) {
+      console.log('❌ User does not have stalls permission, skipping filter options load')
+      this.setFallbackOptions()
+      return
+    }
+    
     document.addEventListener('click', this.handleOutsideClick)
     document.addEventListener('keydown', this.handleKeyDown)
     if (this.stallsData.length > 0) {
@@ -245,6 +256,24 @@ export default {
     document.removeEventListener('keydown', this.handleKeyDown)
   },
   methods: {
+    // Check if user has permission to access stalls
+    checkStallsPermission() {
+      const userType = sessionStorage.getItem('userType')
+      
+      // Admins and branch managers always have access
+      if (userType === 'admin' || userType === 'branch-manager') {
+        return true
+      }
+      
+      // For employees, check specific permissions
+      if (userType === 'employee') {
+        const employeePermissions = JSON.parse(sessionStorage.getItem('employeePermissions') || '[]')
+        return employeePermissions.includes('stalls')
+      }
+      
+      return false
+    },
+    
     async loadFilterOptions() {
       try {
         const token = sessionStorage.getItem('authToken')
