@@ -9,18 +9,19 @@
    - Added debugging logs to track permission checking
 
 2. **SearchAndFilter Unauthorized API Calls**
-   - Added permission check in `mounted()` 
+   - Added permission check in `mounted()`
    - Added `checkStallsPermission()` method
    - Prevents unauthorized `/api/floors` calls
 
 3. **Stalls Component Unauthorized API Calls**
    - Added permission check in `initializeComponent()`
-   - Added `checkStallsPermission()` method  
+   - Added `checkStallsPermission()` method
    - Prevents unauthorized `/api/stalls` calls
 
 ### 🧪 **Debug Steps to Follow:**
 
 1. **Test Employee Login:**
+
    ```
    Username: demo.employee461
    Password: FD73pujn
@@ -65,4 +66,5 @@
    - Should contain: `["dashboard","payments"]`
 
 ## 🚀 **Expected Final Result:**
+
 Clean employee login with only authorized features accessible and no API errors!

@@ -1,4 +1,3 @@
-// Employee Management Main Component Logic
 import EmployeeSearch from './Components/EmployeeSearch/EmployeeSearch.vue'
 import EmployeeTable from './Components/EmployeeTable/EmployeeTable.vue'
 import AddEmployee from './Components/AddEmployee/AddEmployee.vue'
@@ -19,7 +18,6 @@ export default {
   },
   data() {
     return {
-      loading: false,
       saving: false,
       searchQuery: '',
       statusFilter: null,
@@ -173,8 +171,6 @@ export default {
   methods: {
     // API Methods
     async fetchEmployees() {
-      this.loading = true
-
       try {
         const response = await fetch(`${this.apiBaseUrl}/employees`)
         const data = await response.json()
@@ -187,8 +183,6 @@ export default {
       } catch (error) {
         console.error('Error fetching employees:', error)
         this.$emit('show-snackbar', `Failed to load employees: ${error.message}`, 'error')
-      } finally {
-        this.loading = false
       }
     },
 

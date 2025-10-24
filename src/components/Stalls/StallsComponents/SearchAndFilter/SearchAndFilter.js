@@ -237,13 +237,13 @@ export default {
     // eslint-disable-next-line no-unused-vars
     const userType = sessionStorage.getItem('userType')
     const hasPermission = this.checkStallsPermission()
-    
+
     if (!hasPermission) {
       console.log('❌ User does not have stalls permission, skipping filter options load')
       this.setFallbackOptions()
       return
     }
-    
+
     document.addEventListener('click', this.handleOutsideClick)
     document.addEventListener('keydown', this.handleKeyDown)
     if (this.stallsData.length > 0) {
@@ -259,21 +259,30 @@ export default {
     // Check if user has permission to access stalls
     checkStallsPermission() {
       const userType = sessionStorage.getItem('userType')
-      
+
       // Admins and branch managers always have access (check both formats)
       if (userType === 'admin' || userType === 'branch-manager' || userType === 'branch_manager') {
         return true
       }
-      
-      // For employees, check specific permissions
+
+      // For employees, check specific permissions - Handle both new and old formats
       if (userType === 'employee') {
-        const employeePermissions = JSON.parse(sessionStorage.getItem('employeePermissions') || '[]')
-        return employeePermissions.includes('stalls')
+        // Try new format first (object)
+        const permissions = JSON.parse(sessionStorage.getItem('permissions') || '{}')
+        if (permissions.stalls === true) {
+          return true
+        }
+
+        // Fallback to old format (array)
+        const employeePermissions = JSON.parse(
+          sessionStorage.getItem('employeePermissions') || '[]',
+        )
+        return employeePermissions.includes('stalls') || employeePermissions.stalls === true
       }
-      
+
       return false
     },
-    
+
     async loadFilterOptions() {
       try {
         const token = sessionStorage.getItem('authToken')
@@ -283,17 +292,42 @@ export default {
           return
         }
 
+        // Validate JWT token format
+        if (!token.includes('.') || token.split('.').length !== 3) {
+          console.warn(
+            '⚠️ Invalid JWT token format detected in SearchAndFilter - but continuing for debugging',
+          )
+          console.warn('   - Token:', token)
+          console.warn('   - Token length:', token?.length)
+          // Temporarily allow non-JWT tokens for debugging
+          // this.setFallbackOptions()
+          // return
+        }
+
         console.log('🔄 Loading filter options (floors & sections)...')
         console.log('API Base URL:', this.apiBaseUrl)
+        console.log(
+          '🔑 Token being used for API calls:',
+          token ? `${token.substring(0, 30)}...` : 'null',
+        )
+        console.log('🔑 Token length:', token?.length)
+        console.log('🔑 Is JWT format?', token?.includes('.') && token?.split('.').length === 3)
 
         // Load floors
         try {
+          console.log('📡 Making floors API call with Authorization header...')
           const floorsResponse = await fetch(`${this.apiBaseUrl}/api/floors`, {
             headers: {
               Authorization: `Bearer ${token}`,
               'Content-Type': 'application/json',
             },
           })
+
+          console.log('📡 Floors API response status:', floorsResponse.status)
+          if (!floorsResponse.ok) {
+            console.error('❌ Floors API failed with status:', floorsResponse.status)
+            console.error('❌ Response headers:', [...floorsResponse.headers.entries()])
+          }
 
           if (floorsResponse.ok) {
             const floorsResult = await floorsResponse.json()

@@ -62,7 +62,7 @@ export default {
         return 'System Administration'
       }
       if (this.currentUserData?.area && this.currentUserData?.location) {
-        return `${this.currentUserData.area} - ${this.currentUserData.location}`
+        return `${this.currentUserData.area}`
       }
       return ''
     },
@@ -178,11 +178,12 @@ export default {
             if (userData.userType === 'employee') {
               this.employeeData = {
                 username: userData.employee_username || userData.username,
-                fullName: `${userData.first_name || userData.firstName || ''} ${userData.last_name || userData.lastName || ''}`.trim(),
+                fullName:
+                  `${userData.first_name || userData.firstName || ''} ${userData.last_name || userData.lastName || ''}`.trim(),
                 designation: 'Employee',
                 area: userData.branch_name || 'Branch Employee',
                 location: userData.branch_name || '',
-                permissions: userData.permissions || []
+                permissions: userData.permissions || [],
               }
               console.log('✅ Employee data loaded from storage:', this.employeeData)
               this.loading = false
@@ -200,7 +201,7 @@ export default {
           designation: 'Employee',
           area: 'System Employee',
           location: '',
-          permissions: []
+          permissions: [],
         }
         console.log('📦 Using default employee data')
       } catch (error) {

@@ -56,7 +56,6 @@
               <!-- Employee Table -->
               <EmployeeTable
                 :employees="filteredEmployees"
-                :loading="loading"
                 @edit-employee="editEmployee"
                 @manage-permissions="managePermissions"
                 @toggle-status="toggleEmployeeStatus"
@@ -104,15 +103,6 @@
               @close="closePermissionsDialog"
               @toggle-permission="togglePermission"
             />
-
-            <!-- Loading Overlay -->
-            <v-overlay v-model="loading" class="loading-overlay">
-              <v-progress-circular
-                indeterminate
-                size="64"
-                color="primary"
-              ></v-progress-circular>
-            </v-overlay>
           </v-col>
         </v-row>
       </v-container>

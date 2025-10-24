@@ -34,12 +34,12 @@ export default {
       // eslint-disable-next-line no-undef
       apiBaseUrl: process.env.VUE_APP_API_URL || 'http://localhost:3001',
       moreItems: [
-        { 
-          id: 6, 
-          icon: 'mdi-account-tie', 
-          name: 'Employees', 
+        {
+          id: 6,
+          icon: 'mdi-account-tie',
+          name: 'Employees',
           route: '/employees',
-          description: 'Manage employee accounts and permissions'
+          description: 'Manage employee accounts and permissions',
         },
         { id: 7, icon: 'mdi-account-group', name: 'Vendors', route: '/vendors' },
         {
@@ -83,18 +83,49 @@ export default {
       return userType === 'admin' || currentUser.userType === 'admin'
     },
 
-    // Get current user permissions
+    // Get current user permissions - Handle both object and array formats
     userPermissions() {
       const userType = sessionStorage.getItem('userType')
-      
+
       if (userType === 'employee') {
-        // For employees, get permissions from employeePermissions
+        // For employees, check both new and old permission formats
+
+        // Try new format first (object)
+        const permissions = sessionStorage.getItem('permissions')
+        if (permissions) {
+          try {
+            const permObj = JSON.parse(permissions)
+            // Convert object to array for compatibility
+            const permArray = Object.keys(permObj).filter((key) => permObj[key] === true)
+            console.log('🆕 Using NEW permissions format (object):', permObj, '→', permArray)
+            return permArray
+          } catch (error) {
+            console.error('Error parsing new permissions format:', error)
+          }
+        }
+
+        // Fallback to old format (array)
         const employeePermissions = sessionStorage.getItem('employeePermissions')
-        return employeePermissions ? JSON.parse(employeePermissions) : []
+        try {
+          const empPerms = employeePermissions ? JSON.parse(employeePermissions) : []
+          console.log('🔄 Using OLD permissions format (array):', empPerms)
+          return Array.isArray(empPerms)
+            ? empPerms
+            : Object.keys(empPerms).filter((key) => empPerms[key] === true)
+        } catch (error) {
+          console.error('Error parsing employee permissions:', error)
+          return []
+        }
       } else {
         // For other users, get from currentUser
-        const currentUser = JSON.parse(sessionStorage.getItem('currentUser') || '{}')
-        return currentUser.permissions || []
+        const currentUser = sessionStorage.getItem('currentUser')
+        try {
+          const user = currentUser ? JSON.parse(currentUser) : {}
+          return user.permissions || []
+        } catch (error) {
+          console.error('Error parsing current user:', error)
+          return []
+        }
       }
     },
 
@@ -102,8 +133,13 @@ export default {
     isBranchManager() {
       const userType = sessionStorage.getItem('userType')
       const currentUser = JSON.parse(sessionStorage.getItem('currentUser') || '{}')
-      return userType === 'branch_manager' || currentUser.userType === 'branch_manager' || 
-             userType === 'branch-manager' || currentUser.userType === 'branch-manager' || this.isAdmin
+      return (
+        userType === 'branch_manager' ||
+        currentUser.userType === 'branch_manager' ||
+        userType === 'branch-manager' ||
+        currentUser.userType === 'branch-manager' ||
+        this.isAdmin
+      )
     },
 
     // Filter sidebar items based on user permissions
@@ -112,37 +148,42 @@ export default {
       console.log('User type:', sessionStorage.getItem('userType'))
       console.log('Is branch manager:', this.isBranchManager)
       console.log('User permissions:', this.userPermissions)
-      
+
       if (this.isBranchManager) {
         console.log('✅ Branch manager - showing all items')
         return this.moreItems // Branch managers see everything
       }
 
-      const filteredItems = this.moreItems.filter(item => {
+      const filteredItems = this.moreItems.filter((item) => {
         // Map sidebar items to their required permissions
         const permissionMap = {
-          6: 'employees',     // Employees (only branch managers should see this)
-          7: 'vendors',       // Vendors
-          8: 'stallholders',  // Stallholders
-          9: 'stalls',        // Stalls
-          10: 'collectors'    // Collectors
+          6: 'employees', // Employees (only branch managers should see this)
+          7: 'vendors', // Vendors
+          8: 'stallholders', // Stallholders
+          9: 'stalls', // Stalls
+          10: 'collectors', // Collectors
         }
 
         const requiredPermission = permissionMap[item.id]
-        
+
         // If no permission mapping, show to everyone (fallback)
         if (!requiredPermission) return true
-        
+
         // Hide employees section from non-managers (employees section is only for branch managers)
         if (item.id === 6) return this.isBranchManager
-        
+
         // Check if user has the required permission
         const hasPermission = this.userPermissions.includes(requiredPermission)
-        console.log(`Item ${item.name} (ID: ${item.id}) - Required: ${requiredPermission}, Has permission: ${hasPermission}`)
+        console.log(
+          `Item ${item.name} (ID: ${item.id}) - Required: ${requiredPermission}, Has permission: ${hasPermission}`,
+        )
         return hasPermission
       })
-      
-      console.log('✅ Filtered items:', filteredItems.map(item => item.name))
+
+      console.log(
+        '✅ Filtered items:',
+        filteredItems.map((item) => item.name),
+      )
       return filteredItems
     },
 
@@ -175,7 +216,10 @@ export default {
         this.updateActiveStates()
         // Refresh stall types when navigating to/from stalls pages
         if (this.$route.path.includes('/stalls')) {
-          this.checkAvailableStallTypes()
+          // Only check if user has permission
+          if (this.isBranchManager || this.userPermissions.includes('stalls')) {
+            this.checkAvailableStallTypes()
+          }
         }
       },
       immediate: true,
@@ -184,7 +228,26 @@ export default {
 
   // Lifecycle hook to check stall types when component mounts
   async mounted() {
-    await this.checkAvailableStallTypes()
+    // Add a delay and proper authentication check before making API calls
+    setTimeout(async () => {
+      // Only proceed if user is authenticated and has necessary permissions
+      const token = sessionStorage.getItem('authToken')
+      const userType = sessionStorage.getItem('userType')
+
+      if (!token || !userType) {
+        console.log('⏭️ Skipping stall types check - no authentication data')
+        return
+      }
+
+      // Additional validation for JWT token format
+      if (!token.includes('.') || token.split('.').length !== 3) {
+        console.log('⏭️ Skipping stall types check - invalid token format')
+        return
+      }
+
+      console.log('✅ Authentication validated, proceeding with stall types check')
+      await this.checkAvailableStallTypes()
+    }, 500) // Increased delay to ensure login process completes
 
     // Listen for stall events to update sidebar in real-time
     eventBus.on(EVENTS.STALL_ADDED, this.handleStallEvent)
@@ -204,13 +267,84 @@ export default {
     async checkAvailableStallTypes() {
       try {
         console.log('🔍 Checking stall types permissions...')
+
+        // Wait a bit to ensure sessionStorage is populated
+        const userType = sessionStorage.getItem('userType')
+        const employeePermissions = sessionStorage.getItem('employeePermissions')
+        const authToken = sessionStorage.getItem('authToken')
+
+        console.log('🔍 Debug sessionStorage:')
+        console.log('  - userType:', userType)
+        console.log('  - employeePermissions:', employeePermissions)
+        console.log('  - authToken exists:', !!authToken)
+        console.log(
+          '  - authToken preview:',
+          authToken ? authToken.substring(0, 20) + '...' : 'null',
+        )
+
+        // Early exit if no authentication data
+        if (!userType || !authToken) {
+          console.log('❌ No authentication data found, skipping stall type check')
+          console.log('   - userType:', userType)
+          console.log('   - authToken exists:', !!authToken)
+          this.logAuthState()
+          return
+        }
+
+        // Validate JWT token format
+        if (!authToken.includes('.') || authToken.split('.').length !== 3) {
+          console.log('❌ Invalid JWT token format, skipping stall type check')
+          console.log('   - Token:', authToken)
+          this.logAuthState()
+          return
+        }
+
         console.log('User permissions:', this.userPermissions)
         console.log('Is branch manager:', this.isBranchManager)
         console.log('Has stalls permission:', this.userPermissions.includes('stalls'))
-        
+
+        // EXTRA DEFENSIVE CHECK: If this is an employee, double-check permissions
+        if (userType === 'employee') {
+          // Check new format first
+          const permissions = sessionStorage.getItem('permissions')
+          if (permissions) {
+            try {
+              const permObj = JSON.parse(permissions)
+              if (permObj.stalls !== true) {
+                console.log(
+                  '❌ EMPLOYEE BLOCK: Employee does not have stalls permission (new format)',
+                )
+                this.availableStallTypes.hasRaffles = false
+                this.availableStallTypes.hasAuctions = false
+                return
+              }
+            } catch (error) {
+              console.error('Error parsing new permissions:', error)
+            }
+          } else {
+            // Fallback to old format
+            const empPerms = JSON.parse(employeePermissions || '[]')
+            console.log('🛡️ EMPLOYEE DEFENSIVE CHECK - Parsed permissions:', empPerms)
+            const hasStallsPermission = Array.isArray(empPerms)
+              ? empPerms.includes('stalls')
+              : empPerms.stalls === true
+            if (!hasStallsPermission) {
+              console.log(
+                '❌ EMPLOYEE BLOCK: Employee does not have stalls permission (old format)',
+              )
+              this.availableStallTypes.hasRaffles = false
+              this.availableStallTypes.hasAuctions = false
+              return
+            }
+          }
+        }
+
         // Only check stall types if user has stalls permission or is a manager
         if (!this.isBranchManager && !this.userPermissions.includes('stalls')) {
           console.log('❌ User does not have stalls permission, skipping stall type check')
+          // Make sure we don't proceed with any API calls
+          this.availableStallTypes.hasRaffles = false
+          this.availableStallTypes.hasAuctions = false
           return
         }
 
@@ -221,6 +355,7 @@ export default {
         }
 
         console.log('✅ User has stalls permission, fetching stall types...')
+        console.log('🔑 About to make API call with token:', token.substring(0, 30) + '...')
 
         const response = await fetch(`${this.apiBaseUrl}/api/stalls`, {
           method: 'GET',
@@ -280,7 +415,7 @@ export default {
 
     setActiveItem(itemId, route, hasSubMenu = false) {
       console.log('🔧 Sidebar setActiveItem called:', { itemId, route, hasSubMenu })
-      
+
       // Handle stalls menu item with submenu
       if (itemId === 9 && hasSubMenu) {
         console.log('🔧 Handling stalls submenu for ID 9')
@@ -342,6 +477,20 @@ export default {
       console.log('Sidebar received stall event:', eventData)
       // Refresh stall types when any stall is added, deleted, or updated
       await this.checkAvailableStallTypes()
+    },
+
+    // Debug helper to log current authentication state
+    logAuthState() {
+      console.log('🔍 Current Authentication State:')
+      console.log('   - userType:', sessionStorage.getItem('userType'))
+      console.log('   - authToken exists:', !!sessionStorage.getItem('authToken'))
+      console.log(
+        '   - authToken preview:',
+        sessionStorage.getItem('authToken')?.substring(0, 30) + '...',
+      )
+      console.log('   - permissions (new):', sessionStorage.getItem('permissions'))
+      console.log('   - employeePermissions (old):', sessionStorage.getItem('employeePermissions'))
+      console.log('   - currentUser exists:', !!sessionStorage.getItem('currentUser'))
     },
   },
 }

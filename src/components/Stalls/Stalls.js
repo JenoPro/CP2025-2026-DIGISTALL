@@ -53,6 +53,18 @@ export default {
           return
         }
 
+        // Validate token format - JWT tokens have 3 parts separated by dots
+        if (token && !this.isValidJWTFormat(token)) {
+          console.warn('⚠️ Invalid token format detected - but continuing for debugging')
+          console.warn('   - Token:', token)
+          console.warn('   - Token length:', token?.length)
+          console.warn('   - Expected JWT format with 3 parts separated by dots')
+          // Temporarily allow non-JWT tokens for debugging
+          // this.clearAuthAndRedirect()
+          // this.showMessage('Session expired. Please login again.', 'warning')
+          // return
+        }
+
         // Check if user has permission to access stalls
         if (!this.checkStallsPermission()) {
           this.showMessage('Access denied. You do not have permission to view stalls.', 'error')
@@ -85,6 +97,26 @@ export default {
           throw new Error('Authentication token not found. Please login again.')
         }
 
+        // Validate token format before making API call
+        if (!this.isValidJWTFormat(token)) {
+          console.warn(
+            '⚠️ Invalid JWT token format detected in fetchStalls - but continuing for debugging',
+          )
+          console.warn('   - Token:', token)
+          console.warn('   - Token length:', token?.length)
+          // Temporarily allow non-JWT tokens for debugging
+          // this.clearAuthAndRedirect()
+          // throw new Error('Invalid session token. Please login again.')
+        }
+
+        console.log(
+          '🔑 Making stalls API call with token:',
+          token ? `${token.substring(0, 30)}...` : 'null',
+        )
+        console.log('🔑 Token length:', token?.length)
+        console.log('🔑 Full token for debugging:', token)
+        console.log('🔑 Is JWT format?', token?.includes('.') && token?.split('.').length === 3)
+
         const response = await fetch(`${this.apiBaseUrl}/api/stalls`, {
           method: 'GET',
           headers: {
@@ -93,13 +125,47 @@ export default {
           },
         })
 
+        console.log('📡 Stalls API response status:', response.status)
+        console.log('📡 Stalls API response headers:', [...response.headers.entries()])
+
         if (!response.ok) {
+          console.error('❌ Stalls API failed with status:', response.status)
           if (response.status === 401) {
+            console.error('❌ 401 Unauthorized - Backend rejected the token')
+            console.error('❌ This means either:')
+            console.error('   1. Backend is still expecting old session token format')
+            console.error('   2. Backend JWT verification is failing')
+            console.error('   3. Backend auth middleware has issues')
             // Token expired or invalid - redirect to login
             this.clearAuthAndRedirect()
             throw new Error('Session expired. Please login again.')
           } else if (response.status === 403) {
-            throw new Error('Access denied. Branch manager access required.')
+            // Enhanced 403 error handling for employee permissions
+            const errorData = await response.json().catch(() => ({}))
+            const errorMessage = errorData.message || 'Access denied'
+
+            console.error('❌ 403 Forbidden - Permission denied')
+            console.error('❌ Error details:', errorMessage)
+            console.error('❌ This means:')
+            console.error('   1. Employee lacks required "stalls" permission')
+            console.error('   2. Backend middleware is incorrectly configured')
+            console.error('   3. Role-based access needs to be updated to permission-based')
+
+            // Check if user has stalls permission
+            const userPermissions = JSON.parse(
+              sessionStorage.getItem('employeePermissions') || '[]',
+            )
+            console.error('👤 Current user permissions:', userPermissions)
+
+            if (userPermissions.includes('stalls')) {
+              console.error('⚠️  User HAS stalls permission - backend middleware issue!')
+              throw new Error(
+                'Permission error: You have stalls permission but backend is rejecting access. Contact administrator.',
+              )
+            } else {
+              console.error('❌ User lacks stalls permission')
+              throw new Error('Access denied: You do not have permission to view stalls.')
+            }
           } else if (response.status === 400) {
             throw new Error('Invalid request. Please check your authentication.')
           }
@@ -222,31 +288,60 @@ export default {
     // Check if user has permission to access stalls
     checkStallsPermission() {
       const userType = sessionStorage.getItem('userType')
-      
+
       // Admins and branch managers always have access (check both formats)
       if (userType === 'admin' || userType === 'branch-manager' || userType === 'branch_manager') {
         return true
       }
-      
-      // For employees, check specific permissions
+
+      // For employees, check specific permissions - NEW FORMAT (object)
       if (userType === 'employee') {
-        const employeePermissions = JSON.parse(sessionStorage.getItem('employeePermissions') || '[]')
-        return employeePermissions.includes('stalls')
+        // Try new format first (object with permissions)
+        const permissions = JSON.parse(sessionStorage.getItem('permissions') || '{}')
+        if (permissions.stalls === true) {
+          return true
+        }
+
+        // Fallback to old format (array)
+        const employeePermissions = JSON.parse(
+          sessionStorage.getItem('employeePermissions') || '[]',
+        )
+        return employeePermissions.includes('stalls') || employeePermissions.stalls === true
       }
-      
+
       return false
     },
 
     // Clear authentication and redirect to login
     clearAuthAndRedirect() {
+      // Clear all authentication data - COMPREHENSIVE CLEANUP
       sessionStorage.removeItem('authToken')
       sessionStorage.removeItem('currentUser')
       sessionStorage.removeItem('userType')
       sessionStorage.removeItem('branchManagerId')
+      sessionStorage.removeItem('employeeId')
+      sessionStorage.removeItem('employeeData')
+      sessionStorage.removeItem('employeePermissions')
+      sessionStorage.removeItem('permissions')
+      sessionStorage.removeItem('userRole')
+      sessionStorage.removeItem('branchId')
+      sessionStorage.removeItem('fullName')
+      sessionStorage.removeItem('adminId')
+      sessionStorage.removeItem('adminData')
+
+      console.log('🧹 Session cleared due to authentication error')
 
       setTimeout(() => {
         this.$router.push('/login')
       }, 2000)
+    },
+
+    // Validate JWT token format (should have 3 parts separated by dots)
+    isValidJWTFormat(token) {
+      if (!token || typeof token !== 'string') return false
+
+      const parts = token.split('.')
+      return parts.length === 3 && parts.every((part) => part.length > 0)
     },
 
     // Refresh stalls data

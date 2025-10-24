@@ -15,39 +15,41 @@
 
       <!-- Table Body -->
       <div class="table-body">
-        <div v-if="loading" class="loading-container">
-          <v-progress-circular indeterminate size="48" color="primary"></v-progress-circular>
-          <p class="loading-text">Loading employees...</p>
-        </div>
-        
-        <div v-else-if="employees.length === 0" class="no-data-container">
+        <div v-if="employees.length === 0" class="no-data-container">
           <v-icon size="64" color="grey-lighten-2">mdi-account-off</v-icon>
           <p class="no-data-text">No employees found</p>
         </div>
-        
+
         <div v-else>
-          <div v-for="employee in employees" :key="employee.employee_id" class="table-row">
+          <div
+            v-for="employee in employees"
+            :key="employee.employee_id"
+            class="table-row"
+          >
             <div class="table-cell employee-col">
               <div class="employee-info">
                 <v-avatar size="32" color="primary">
                   <v-img v-if="employee.avatar" :src="employee.avatar" />
                   <span v-else class="text-white text-caption">
-                    {{ employee.first_name?.charAt(0) }}{{ employee.last_name?.charAt(0) }}
+                    {{ employee.first_name?.charAt(0)
+                    }}{{ employee.last_name?.charAt(0) }}
                   </span>
                 </v-avatar>
                 <div class="employee-details">
-                  <div class="employee-name">{{ employee.first_name }} {{ employee.last_name }}</div>
+                  <div class="employee-name">
+                    {{ employee.first_name }} {{ employee.last_name }}
+                  </div>
                   <div class="employee-email">{{ employee.email }}</div>
                 </div>
               </div>
             </div>
-            
+
             <div class="table-cell username-col">
               <v-chip size="small" color="primary" variant="outlined">
                 {{ employee.employee_username }}
               </v-chip>
             </div>
-            
+
             <div class="table-cell status-col">
               <v-chip
                 :color="getStatusColor(employee.status)"
@@ -57,7 +59,7 @@
                 {{ employee.status }}
               </v-chip>
             </div>
-            
+
             <div class="table-cell permissions-col">
               <div class="permissions-list">
                 <v-chip
@@ -81,7 +83,7 @@
                 </v-chip>
               </div>
             </div>
-            
+
             <div class="table-cell login-col">
               <div v-if="employee.last_login">
                 <div class="login-date">{{ formatDate(employee.last_login) }}</div>
@@ -89,7 +91,7 @@
               </div>
               <span v-else class="text-grey">Never</span>
             </div>
-            
+
             <div class="table-cell actions-col">
               <div class="action-buttons">
                 <v-tooltip text="Edit Employee">
@@ -106,7 +108,7 @@
                     </v-btn>
                   </template>
                 </v-tooltip>
-                
+
                 <v-tooltip text="Manage Permissions">
                   <template v-slot:activator="{ props }">
                     <v-btn
@@ -121,8 +123,10 @@
                     </v-btn>
                   </template>
                 </v-tooltip>
-                
-                <v-tooltip :text="employee.status === 'active' ? 'Deactivate' : 'Activate'">
+
+                <v-tooltip
+                  :text="employee.status === 'active' ? 'Deactivate' : 'Activate'"
+                >
                   <template v-slot:activator="{ props }">
                     <v-btn
                       v-bind="props"
@@ -132,11 +136,15 @@
                       variant="text"
                       @click="$emit('toggle-status', employee)"
                     >
-                      <v-icon>{{ employee.status === 'active' ? 'mdi-account-off' : 'mdi-account-check' }}</v-icon>
+                      <v-icon>{{
+                        employee.status === "active"
+                          ? "mdi-account-off"
+                          : "mdi-account-check"
+                      }}</v-icon>
                     </v-btn>
                   </template>
                 </v-tooltip>
-                
+
                 <v-tooltip text="Reset Password">
                   <template v-slot:activator="{ props }">
                     <v-btn
@@ -156,11 +164,16 @@
           </div>
         </div>
       </div>
-      
+
       <!-- Pagination Section (if needed) -->
       <div v-if="employees.length > 0" class="table-footer">
         <div class="pagination-info">
-          <span class="text-caption">{{ employees.length }} employee{{ employees.length !== 1 ? 's' : '' }} total</span>
+          <span class="text-caption"
+            >{{ employees.length }} employee{{
+              employees.length !== 1 ? "s" : ""
+            }}
+            total</span
+          >
         </div>
       </div>
     </v-card>
@@ -169,44 +182,43 @@
 
 <script>
 export default {
-  name: 'EmployeeTable',
+  name: "EmployeeTable",
   props: {
     employees: Array,
-    loading: Boolean
   },
-  emits: ['edit-employee', 'manage-permissions', 'toggle-status', 'reset-password'],
+  emits: ["edit-employee", "manage-permissions", "toggle-status", "reset-password"],
 
   methods: {
     getStatusColor(status) {
-      return status === 'active' ? 'success' : 'warning'
+      return status === "active" ? "success" : "warning";
     },
-    
+
     getPermissionText(permission) {
       const permissionLabels = {
-        dashboard: 'Dashboard',
-        payments: 'Payments',
-        applicants: 'Applicants',
-        complaints: 'Complaints',
-        compliances: 'Compliances',
-        vendors: 'Vendors',
-        stallholders: 'Stallholders',
-        collectors: 'Collectors',
-        stalls: 'Stalls'
-      }
-      return permissionLabels[permission] || permission
+        dashboard: "Dashboard",
+        payments: "Payments",
+        applicants: "Applicants",
+        complaints: "Complaints",
+        compliances: "Compliances",
+        vendors: "Vendors",
+        stallholders: "Stallholders",
+        collectors: "Collectors",
+        stalls: "Stalls",
+      };
+      return permissionLabels[permission] || permission;
     },
-    
+
     formatDate(date) {
-      if (!date) return 'Never'
-      return new Date(date).toLocaleDateString()
+      if (!date) return "Never";
+      return new Date(date).toLocaleDateString();
     },
-    
+
     formatTime(date) {
-      if (!date) return 'Never'
-      return new Date(date).toLocaleTimeString()
-    }
-  }
-}
+      if (!date) return "Never";
+      return new Date(date).toLocaleTimeString();
+    },
+  },
+};
 </script>
 
 <style scoped>
@@ -358,20 +370,6 @@ export default {
   color: #6c757d;
 }
 
-.loading-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 3rem;
-  gap: 1rem;
-  grid-column: 1 / -1;
-}
-
-.loading-text {
-  color: #6c757d;
-  margin: 0;
-}
-
 .no-data-container {
   display: flex;
   flex-direction: column;
@@ -418,11 +416,11 @@ export default {
     gap: 6px;
     padding: 0 12px;
   }
-  
+
   .employee-name {
     font-size: 13px;
   }
-  
+
   .employee-email {
     font-size: 11px;
   }
@@ -435,13 +433,13 @@ export default {
     gap: 4px;
     padding: 0 8px;
   }
-  
+
   .header-cell,
   .table-cell {
     padding: 8px 4px;
     font-size: 12px;
   }
-  
+
   .permission-chip {
     font-size: 9px !important;
   }
@@ -451,7 +449,7 @@ export default {
   .employee-table {
     overflow-x: auto;
   }
-  
+
   .header-row,
   .table-row {
     min-width: 900px;
@@ -459,21 +457,21 @@ export default {
     gap: 4px;
     padding: 0 8px;
   }
-  
+
   .header-cell,
   .table-cell {
     padding: 6px 3px;
     font-size: 11px;
   }
-  
+
   .employee-info {
     gap: 6px;
   }
-  
+
   .employee-name {
     font-size: 12px;
   }
-  
+
   .employee-email {
     font-size: 10px;
   }

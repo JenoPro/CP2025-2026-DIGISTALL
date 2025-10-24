@@ -42,12 +42,7 @@
               <v-icon color="error" class="mr-2">mdi-alert</v-icon>
               <div class="error-content">
                 <div class="error-message">{{ error }}</div>
-                <v-btn
-                  small
-                  color="primary"
-                  @click="refreshUserData"
-                  class="mt-2"
-                >
+                <v-btn small color="primary" @click="refreshUserData" class="mt-2">
                   Retry
                 </v-btn>
               </div>
@@ -56,13 +51,21 @@
             <!-- User profile info (Admin, Branch Manager, or Employee) -->
             <div v-else class="profile-info" @click="handleProfileClick">
               <div class="profile-avatar-container">
-                <v-avatar 
-                  class="profile-avatar" 
-                  :color="isAdmin ? 'red darken-1' : isEmployee ? 'green darken-1' : 'primary'" 
+                <v-avatar
+                  class="profile-avatar"
+                  :color="
+                    isAdmin ? 'red darken-1' : isEmployee ? 'green darken-1' : 'primary'
+                  "
                   size="44"
                 >
                   <v-icon color="white" size="22">
-                    {{ isAdmin ? 'mdi-shield-account' : isEmployee ? 'mdi-account-tie' : 'mdi-account' }}
+                    {{
+                      isAdmin
+                        ? "mdi-shield-account"
+                        : isEmployee
+                        ? "mdi-account-tie"
+                        : "mdi-account"
+                    }}
                   </v-icon>
                 </v-avatar>
               </div>
@@ -91,7 +94,10 @@
                 </div>
 
                 <!-- Contact number for admin -->
-                <div class="profile-contact" v-if="isAdmin && currentUserData?.contactNumber">
+                <div
+                  class="profile-contact"
+                  v-if="isAdmin && currentUserData?.contactNumber"
+                >
                   {{ currentUserData.contactNumber }}
                 </div>
               </div>

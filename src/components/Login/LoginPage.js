@@ -29,10 +29,14 @@ export default {
     loginEndpoint() {
       // Check if username indicates different user types
       const usernameUpper = this.username.toUpperCase()
-      
+
       if (usernameUpper === 'ADMIN' || usernameUpper.includes('ADMIN')) {
         return 'http://localhost:3001/api/auth/admin/login'
-      } else if (usernameUpper.startsWith('EMP') || usernameUpper.includes('.EMPLOYEE') || this.isEmployeeUsername(this.username)) {
+      } else if (
+        usernameUpper.startsWith('EMP') ||
+        usernameUpper.includes('.EMPLOYEE') ||
+        this.isEmployeeUsername(this.username)
+      ) {
         // Employee login - username starts with EMP, contains .employee, or matches employee pattern
         return 'http://localhost:3001/api/employees/login'
       } else {
@@ -53,8 +57,9 @@ export default {
       const employeePattern = /^[a-zA-Z]+\.[a-zA-Z]+\d+$/
       return employeePattern.test(username)
     },
-    
+
     clearAuthData() {
+      // Clear all authentication data - COMPREHENSIVE CLEANUP
       sessionStorage.removeItem('currentUser')
       sessionStorage.removeItem('authToken')
       sessionStorage.removeItem('userType')
@@ -64,7 +69,13 @@ export default {
       sessionStorage.removeItem('employeeId')
       sessionStorage.removeItem('employeeData')
       sessionStorage.removeItem('employeePermissions')
+      sessionStorage.removeItem('permissions')
+      sessionStorage.removeItem('userRole')
+      sessionStorage.removeItem('branchId')
+      sessionStorage.removeItem('fullName')
       delete axios.defaults.headers.common['Authorization']
+
+      console.log('🧹 All session data cleared')
     },
 
     async handleLogin() {
@@ -91,7 +102,7 @@ export default {
           username: this.username.trim(),
           password: this.password,
           ipAddress: '127.0.0.1', // Default for local testing
-          userAgent: navigator.userAgent || 'Unknown'
+          userAgent: navigator.userAgent || 'Unknown',
         }
 
         console.log('🔐 Attempting login with:', {
@@ -116,33 +127,107 @@ export default {
 
         if (response.status === 200 && response.data && response.data.success) {
           // Handle different response structures for different user types
-          let token, user, isEmployee = false
-          
-          if (this.username.toUpperCase().startsWith('EMP') || this.username.toUpperCase().includes('.EMPLOYEE') || this.isEmployeeUsername(this.username)) {
-            // Employee login response structure
+          let token,
+            user,
+            isEmployee = false
+
+          if (
+            this.username.toUpperCase().startsWith('EMP') ||
+            this.username.toUpperCase().includes('.EMPLOYEE') ||
+            this.isEmployeeUsername(this.username)
+          ) {
+            // Employee login response structure - Handle both old and new formats
             console.log('🔍 Employee login response:', response.data)
-            token = response.data.data.token
-            user = response.data.data.employee
+            console.log('🔍 Full response structure:', JSON.stringify(response.data, null, 2))
+
+            // Try new format first, then fall back to old format
+            if (response.data.token) {
+              // ✅ NEW FORMAT: JWT token directly in response.data.token
+              token = response.data.token
+              user = response.data.user
+              console.log('🆕 Using NEW employee response format')
+              console.log('🆕 Token from response.data.token:', token)
+              console.log('🆕 Token length:', token?.length)
+            } else if (response.data.data && response.data.data.token) {
+              // ✅ OLD FORMAT: JWT token in response.data.data.token
+              token = response.data.data.token
+              user = response.data.data.employee
+              console.log('🔄 Using OLD employee response format')
+              console.log('🔄 Token from response.data.data.token:', token)
+              console.log('🔄 Token length:', token?.length)
+            } else {
+              console.error('❌ No token found in employee response')
+              console.error('❌ Available keys in response.data:', Object.keys(response.data))
+              if (response.data.data) {
+                console.error(
+                  '❌ Available keys in response.data.data:',
+                  Object.keys(response.data.data),
+                )
+              }
+              throw new Error('Invalid employee login response format')
+            }
+
             isEmployee = true
+            console.log('🔑 Final Employee token preview:', token?.substring(0, 30) + '...')
+            console.log('🔑 Final Employee token length:', token?.length)
+
+            // 🔍 ENHANCED JWT VALIDATION
+            const isJWT = token?.includes('.') && token?.split('.').length === 3
+            const isSessionToken =
+              token?.length >= 32 && token?.length <= 40 && !token?.includes('.')
+
+            console.log('🔑 Is valid JWT format?', isJWT)
+            console.log('🔑 Is old session token?', isSessionToken)
+
+            if (isJWT) {
+              console.log('✅ SUCCESS: New JWT token detected - API calls should work!')
+              console.log('✅ Token starts with:', token?.substring(0, 10))
+            } else if (isSessionToken) {
+              console.warn('⚠️  WARNING: Old session token detected - may cause 401 errors')
+              console.warn('⚠️  Consider clearing browser storage and re-login')
+            } else {
+              console.warn('⚠️  WARNING: Unknown token format')
+            }
           } else {
-            // Admin/Branch Manager login response structure  
+            // Admin/Branch Manager login response structure
             const responseData = response.data.data || response.data
             token = responseData.token
             user = responseData.user
           }
 
-          // Handle different user types
-          let userType = user.userType || 'branch-manager'
+          // Handle different user types - Ensure user object exists
+          if (!user) {
+            console.error('❌ No user data found in response')
+            throw new Error('Invalid login response: missing user data')
+          }
+
+          let userType = user.userType || user.type || 'branch-manager'
           let displayName = user.lastName || user.username
-          
+
           // For employee login, set proper user type
           if (isEmployee) {
             userType = 'employee'
-            displayName = user.first_name || user.firstName || user.username
-            
-            // Store employee-specific data
-            sessionStorage.setItem('employeeId', user.employee_id?.toString() || user.id?.toString())
-            sessionStorage.setItem('employeePermissions', JSON.stringify(user.permissions || []))
+            // Handle both old and new user data formats
+            displayName =
+              user.firstName || user.first_name || user.employee_first_name || user.username
+
+            // Store employee-specific data - Handle both formats
+            const employeeId = user.id || user.employee_id
+            const permissions = user.permissions || {}
+            const branchId = user.branchId || user.branch_id
+            const firstName = user.firstName || user.first_name || user.employee_first_name
+            const lastName = user.lastName || user.last_name || user.employee_last_name
+            const username = user.username || user.employee_username
+
+            sessionStorage.setItem('employeeId', employeeId?.toString() || '')
+            sessionStorage.setItem('employeePermissions', JSON.stringify(permissions))
+            sessionStorage.setItem('branchId', branchId?.toString() || '')
+            sessionStorage.setItem('permissions', JSON.stringify(permissions))
+            sessionStorage.setItem('userRole', user.role || 'employee')
+
+            console.log('🎯 Employee permissions:', permissions)
+            console.log('🏢 Employee branch ID:', branchId)
+            console.log('👤 Employee details:', { firstName, lastName, username, employeeId })
           }
 
           console.log('✅ Login successful!', {
@@ -157,19 +242,53 @@ export default {
 
           // Turn loading back on for success redirect
           this.loading = true
-          const userTypeTitle = userType === 'admin' ? 'Administrator' : 
-                               userType === 'employee' ? 'Employee' : 'Manager'
+          const userTypeTitle =
+            userType === 'admin'
+              ? 'Administrator'
+              : userType === 'employee'
+                ? 'Employee'
+                : 'Manager'
           this.loadingText = `Welcome ${displayName}!`
           this.loadingSubtext = `Setting up your ${userTypeTitle} dashboard`
 
           // Store authentication data
+          console.log('🔒 About to store authentication data:')
+          console.log('   - Token:', token ? `${token.substring(0, 30)}...` : 'undefined')
+          console.log('   - Token length:', token?.length)
+          console.log('   - Is JWT format?', token?.includes('.') && token?.split('.').length === 3)
+          console.log('   - User type:', userType)
+          console.log('   - Username:', user.username || user.employee_username)
+
+          // Validate token exists
+          if (!token) {
+            throw new Error('No authentication token received from server')
+          }
+
+          // Log token format info (keeping validation but not blocking)
+          if (!token.includes('.') || token.split('.').length !== 3) {
+            console.warn('⚠️ Warning: Token does not appear to be JWT format')
+            console.warn('   - Token received:', token)
+            console.warn('   - If this is expected, you can ignore this warning')
+          } else {
+            console.log('✅ Valid JWT token received from backend')
+          }
+
           sessionStorage.setItem('authToken', token)
-          sessionStorage.setItem('currentUser', JSON.stringify({
-            ...user,
-            userType: userType,
-            username: user.username || user.employee_username
-          }))
+          sessionStorage.setItem(
+            'currentUser',
+            JSON.stringify({
+              ...user,
+              userType: userType,
+              username: user.username || user.employee_username,
+            }),
+          )
           sessionStorage.setItem('userType', userType)
+
+          console.log('💾 Stored session data:', {
+            authToken: token ? `${token.substring(0, 20)}...` : 'undefined',
+            userType: userType,
+            username: user.username || user.employee_username,
+          })
 
           // For admin users, store admin ID and info
           if (userType === 'admin' && user.adminId) {
@@ -189,18 +308,29 @@ export default {
               }),
             )
           } else if (userType === 'employee') {
-            // Store employee-specific info for header display
+            // Store employee-specific info for header display - Handle both formats
+            const employeeId = user.id || user.employee_id
+            const username = user.username || user.employee_username
+            const firstName = user.firstName || user.first_name || user.employee_first_name
+            const lastName = user.lastName || user.last_name || user.employee_last_name
+            const permissions = user.permissions || {}
+            const branchId = user.branchId || user.branch_id
+            const branchName = user.branchName || user.branch_name
+            const fullName = user.fullName || `${firstName} ${lastName}`.trim()
+
             sessionStorage.setItem(
               'employeeData',
               JSON.stringify({
-                employeeId: user.employee_id || user.id,
-                username: user.employee_username || user.username,
-                firstName: user.first_name || user.firstName,
-                lastName: user.last_name || user.lastName,
+                employeeId: employeeId,
+                username: username,
+                firstName: firstName,
+                lastName: lastName,
                 email: user.email,
-                permissions: user.permissions || [],
-                fullName: `${user.first_name || user.firstName} ${user.last_name || user.lastName}`.trim(),
-                role: 'Employee',
+                permissions: permissions,
+                branchId: branchId,
+                branchName: branchName,
+                fullName: fullName,
+                role: user.role || 'Employee',
               }),
             )
           } else if (user.branchManagerId) {
