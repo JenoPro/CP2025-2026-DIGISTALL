@@ -7,7 +7,7 @@ export default {
       type: Array,
       default: () => [
         { id: 1, icon: 'mdi-view-dashboard', name: 'Dashboard', route: '/dashboard' },
-        { id: 2, icon: 'mdi-credit-card', name: 'Payments', route: '/payment' },
+        { id: 2, icon: 'mdi-credit-card', name: 'Payments', route: '/payments' },
         { id: 3, icon: 'mdi-account-plus', name: 'Applicants', route: '/applicants' },
         { id: 4, icon: 'mdi-chart-line', name: 'Complaints', route: '/complaints' },
         {
@@ -24,8 +24,8 @@ export default {
       menuItems: [...this.items],
       isExpanded: false,
       showMoreItems: false,
-      showStallsSubMenu: false, // NEW: Track stalls submenu state
-      // NEW: Track available stall types in current branch
+      showStallsSubMenu: false,
+      // Track available stall types in current branch
       availableStallTypes: {
         hasRaffles: false,
         hasAuctions: false,
@@ -48,15 +48,13 @@ export default {
           name: 'Stallholders',
           route: '/stallholders',
         },
-        { id: 10, icon: 'mdi-account-cash', name: 'Collectors', route: '/collectors' },
         {
           id: 9,
           icon: 'mdi-store',
           name: 'Stalls',
           route: '/stalls',
-          hasSubMenu: true, // NEW: Indicate this item has submenu
+          hasSubMenu: true,
           subItems: [
-            // NEW: Sub-menu items for Stalls - will be dynamically filtered
             {
               id: 91,
               icon: 'mdi-ticket-percent',
@@ -73,6 +71,7 @@ export default {
             },
           ],
         },
+        { id: 10, icon: 'mdi-account-cash', name: 'Collectors', route: '/collectors' },
       ],
     }
   },
@@ -147,7 +146,7 @@ export default {
       return filteredItems
     },
 
-    // NEW: Get filtered submenu items based on available stall types
+    // Get filtered submenu items based on available stall types
     filteredStallSubItems() {
       const stallsItem = this.moreItems.find((item) => item.id === 9)
       if (!stallsItem || !stallsItem.subItems) return []
@@ -174,7 +173,7 @@ export default {
     $route: {
       handler() {
         this.updateActiveStates()
-        // NEW: Refresh stall types when navigating to/from stalls pages
+        // Refresh stall types when navigating to/from stalls pages
         if (this.$route.path.includes('/stalls')) {
           this.checkAvailableStallTypes()
         }
@@ -183,17 +182,17 @@ export default {
     },
   },
 
-  // NEW: Lifecycle hook to check stall types when component mounts
+  // Lifecycle hook to check stall types when component mounts
   async mounted() {
     await this.checkAvailableStallTypes()
 
-    // NEW: Listen for stall events to update sidebar in real-time
+    // Listen for stall events to update sidebar in real-time
     eventBus.on(EVENTS.STALL_ADDED, this.handleStallEvent)
     eventBus.on(EVENTS.STALL_DELETED, this.handleStallEvent)
     eventBus.on(EVENTS.STALL_UPDATED, this.handleStallEvent)
   },
 
-  // NEW: Cleanup event listeners when component is destroyed
+  // Cleanup event listeners when component is destroyed
   beforeUnmount() {
     eventBus.off(EVENTS.STALL_ADDED, this.handleStallEvent)
     eventBus.off(EVENTS.STALL_DELETED, this.handleStallEvent)
@@ -201,7 +200,7 @@ export default {
   },
 
   methods: {
-    // NEW: Check what stall types are available in the current branch
+    // Check what stall types are available in the current branch
     async checkAvailableStallTypes() {
       try {
         console.log('🔍 Checking stall types permissions...')
@@ -274,16 +273,13 @@ export default {
       }
     },
 
-    // NEW: Toggle stalls submenu
+    // Toggle stalls submenu
     toggleStallsSubMenu() {
       this.showStallsSubMenu = !this.showStallsSubMenu
     },
 
     setActiveItem(itemId, route, hasSubMenu = false) {
       console.log('🔧 Sidebar setActiveItem called:', { itemId, route, hasSubMenu })
-      console.log('🔧 Current route:', this.$route.path)
-      console.log('🔧 User type:', sessionStorage.getItem('userType'))
-      console.log('🔧 Employee permissions:', sessionStorage.getItem('employeePermissions'))
       
       // Handle stalls menu item with submenu
       if (itemId === 9 && hasSubMenu) {
@@ -306,8 +302,7 @@ export default {
       if (route && this.$route.path !== route) {
         console.log('🔧 Navigating to route:', route, 'for item ID:', itemId)
         this.$router.push(route).catch((err) => {
-          console.log('Navigation handled or failed:', err.message)
-          console.error('Navigation error details:', err)
+          console.log('Navigation handled:', err.message)
         })
       } else {
         console.log('🔧 Already on route:', route)
@@ -337,12 +332,12 @@ export default {
       // which compares current route with item route
     },
 
-    // NEW: Method to refresh stall types (can be called from parent components)
+    // Method to refresh stall types (can be called from parent components)
     async refreshStallTypes() {
       await this.checkAvailableStallTypes()
     },
 
-    // NEW: Handle stall events from event bus for real-time updates
+    // Handle stall events from event bus for real-time updates
     async handleStallEvent(eventData) {
       console.log('Sidebar received stall event:', eventData)
       // Refresh stall types when any stall is added, deleted, or updated

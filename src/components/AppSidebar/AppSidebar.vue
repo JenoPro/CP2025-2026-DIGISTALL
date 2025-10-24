@@ -13,9 +13,9 @@
       <!-- Logo Section -->
       <div class="logo-section" @click="toggleSidebar">
         <div class="logo-container">
-          <img src="../../assets/food-stand.png" alt="Logo" class="logo-icon" />
+          <img src="../../assets/DigiStall-Logo.png" alt="Logo" class="logo-icon" />
           <div v-if="isExpanded" class="logo-text">
-            <h3>Naga Stall</h3>
+            <h3>Digi Stall</h3>
           </div>
         </div>
       </div>
@@ -83,10 +83,10 @@
             <!-- Regular menu item or item with submenu -->
             <v-list-item
               class="sidebar-item sub-item"
-              :class="{ 
+              :class="{
                 active: isActiveRoute(item.route),
                 'has-submenu': item.hasSubMenu && item.id === 9,
-                'submenu-expanded': item.hasSubMenu && item.id === 9 && showStallsSubMenu
+                'submenu-expanded': item.hasSubMenu && item.id === 9 && showStallsSubMenu,
               }"
               @click="setActiveItem(item.id, item.route, item.hasSubMenu)"
             >
@@ -102,12 +102,16 @@
                   }}</v-list-item-title>
                 </v-list-item-content>
                 <!-- Submenu indicator for Stalls - Only show if there are raffle/auction stalls -->
-                <v-list-item-icon 
-                  v-if="item.hasSubMenu && item.id === 9 && (availableStallTypes.hasRaffles || availableStallTypes.hasAuctions)" 
+                <v-list-item-icon
+                  v-if="
+                    item.hasSubMenu &&
+                    item.id === 9 &&
+                    (availableStallTypes.hasRaffles || availableStallTypes.hasAuctions)
+                  "
                   class="submenu-arrow"
                 >
-                  <v-icon 
-                    small 
+                  <v-icon
+                    small
                     :class="{ 'rotate-180': showStallsSubMenu }"
                     :color="isActiveRoute(item.route) ? 'white' : 'dark'"
                   >
@@ -118,8 +122,8 @@
             </v-list-item>
 
             <!-- Submenu items for Stalls -->
-            <div 
-              v-if="item.hasSubMenu && item.id === 9 && showStallsSubMenu" 
+            <div
+              v-if="item.hasSubMenu && item.id === 9 && showStallsSubMenu"
               class="stalls-submenu"
             >
               <v-list-item
@@ -131,12 +135,11 @@
               >
                 <div class="item-container">
                   <v-list-item-icon class="sidebar-icon submenu-icon">
-                    <v-icon 
-                      small 
+                    <v-icon
+                      small
                       :color="isActiveRoute(subItem.route) ? 'white' : 'dark'"
-                    >{{
-                      subItem.icon
-                    }}</v-icon>
+                      >{{ subItem.icon }}</v-icon
+                    >
                   </v-list-item-icon>
                   <v-list-item-content>
                     <v-list-item-title class="sidebar-text submenu-text">{{

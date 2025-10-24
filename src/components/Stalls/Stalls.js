@@ -223,8 +223,8 @@ export default {
     checkStallsPermission() {
       const userType = sessionStorage.getItem('userType')
       
-      // Admins and branch managers always have access
-      if (userType === 'admin' || userType === 'branch-manager') {
+      // Admins and branch managers always have access (check both formats)
+      if (userType === 'admin' || userType === 'branch-manager' || userType === 'branch_manager') {
         return true
       }
       

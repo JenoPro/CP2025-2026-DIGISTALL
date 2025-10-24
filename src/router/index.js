@@ -18,8 +18,8 @@ const hasPermission = (requiredPermission) => {
   const userType = sessionStorage.getItem('userType')
   console.log('🔍 Permission check:', { userType, requiredPermission })
   
-  // Admin and branch managers have access to everything
-  if (userType === 'admin' || userType === 'branch-manager') {
+  // Admin and branch managers have access to everything (check both formats)
+  if (userType === 'admin' || userType === 'branch-manager' || userType === 'branch_manager') {
     console.log('✅ Admin/Branch Manager - Access granted')
     return true
   }
