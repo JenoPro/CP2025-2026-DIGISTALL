@@ -1,7 +1,7 @@
 /* eslint-disable no-dupe-keys */
-import AddVendorDialog from './Components/AddVendorDialog.vue'
-import VendorDetailsDialog from './Components/VendorDetailsDialog.vue'
-import EditVendorDialog from './Components/EditVendorDialog.vue'
+import AddVendorDialog from './Components/AddVendorDialog/AddVendorDialog.vue'
+import VendorDetailsDialog from './Components/VendorDetailsDialog/VendorDetailsDialog.vue'
+import EditVendorDialog from './Components/EditVendorDialog/EditVendorDialog.vue'
 
 export default {
   name: 'Vendors',

@@ -1,0 +1,147 @@
+﻿.employee-dialog {
+  border-radius: 16px;
+}
+
+.dialog-header {
+  background: #1976d2;
+  color: white;
+  padding: 1.5rem 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.dialog-icon {
+  font-size: 1.5rem;
+}
+
+.dialog-content {
+  padding: 2rem;
+}
+
+.form-row {
+  display: flex;
+  gap: 1rem;
+}
+
+.permissions-section {
+  margin: 2rem 0;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  color: #2c3e50;
+  font-size: 1.1rem;
+}
+
+.section-icon {
+  color: #667eea;
+}
+
+.permissions-grid {
+  display: grid;
+  gap: 1rem;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.permission-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.permission-item:hover {
+  border-color: #667eea;
+  background-color: #f8f9ff;
+}
+
+.permission-item.active {
+  border-color: #667eea;
+  background-color: #f0f2ff;
+}
+
+.permission-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+}
+
+.permission-icon {
+  font-size: 1.5rem;
+}
+
+.permission-text {
+  flex: 1;
+}
+
+.permission-title {
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 0.25rem;
+}
+
+.permission-description {
+  font-size: 0.875rem;
+  color: #6c757d;
+}
+
+.credentials-info {
+  margin-top: 2rem;
+}
+
+.alert-title {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.alert-text {
+  font-size: 0.875rem;
+  opacity: 0.9;
+}
+
+.credentials-list {
+  margin: 0.75rem 0;
+  padding-left: 1rem;
+}
+
+.credentials-list li {
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.credentials-note {
+  margin-top: 0.75rem;
+  padding: 0.5rem;
+  background: rgba(25, 118, 210, 0.1);
+  border-radius: 4px;
+  font-size: 0.875rem;
+}
+
+.dialog-actions {
+  padding: 1rem 2rem 2rem;
+}
+
+@media (max-width: 600px) {
+  .form-row {
+    flex-direction: column;
+  }
+
+  .permissions-grid {
+    max-height: 200px;
+  }
+
+  .permission-item {
+    flex-direction: column;
+    text-align: center;
+  }
+}

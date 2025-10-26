@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="auctions-page">
     <div class="page-header">
       <h1 class="page-title">
@@ -72,104 +72,6 @@
   </div>
 </template>
 
-<script>
-import ActiveAuctions from '../AuctionComponents/ActiveAuctions/ActiveAuctions.vue'
+<script src="./AuctionsPage.js"></script>
 
-export default {
-  name: 'AuctionsPage',
-  components: {
-    ActiveAuctions
-  },
-  data() {
-    return {
-      showMessage: false,
-      message: '',
-      messageType: 'info',
-      messageTimeout: 5000,
-      showDetailsModal: false,
-      selectedAuction: null
-    }
-  },
-  methods: {
-    handleMessage(message, type = 'info') {
-      this.message = message
-      this.messageType = type
-      this.showMessage = true
-    },
-
-    handleViewDetails(auction) {
-      this.selectedAuction = auction
-      this.showDetailsModal = true
-      console.log('View auction details:', auction)
-    },
-
-    closeDetailsModal() {
-      this.showDetailsModal = false
-      this.selectedAuction = null
-    },
-
-    formatPrice(price) {
-      if (!price) return '0'
-      return parseFloat(price).toLocaleString()
-    },
-
-    formatDateTime(dateString) {
-      if (!dateString) return ''
-      const date = new Date(dateString)
-      return date.toLocaleString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-      })
-    }
-  }
-}
-</script>
-
-<style scoped>
-.auctions-page {
-  padding: 0;
-  height: 100%;
-}
-
-.page-header {
-  background: white;
-  color: black;
-  padding: 32px 24px;
-  margin-bottom: 24px;
-  border-bottom: 1px solid #e0e0e0;
-}
-
-.page-title {
-  font-size: 2rem;
-  font-weight: 700;
-  margin: 0 0 8px 0;
-  display: flex;
-  align-items: center;
-  color: #1565c0;
-}
-
-.page-subtitle {
-  font-size: 1rem;
-  margin: 0;
-  font-weight: 400;
-  color: #424242;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .page-header {
-    padding: 24px 16px;
-  }
-
-  .page-title {
-    font-size: 1.5rem;
-  }
-
-  .page-subtitle {
-    font-size: 0.9rem;
-  }
-}
-</style>
+<style scoped src="./AuctionsPage.css"></style>

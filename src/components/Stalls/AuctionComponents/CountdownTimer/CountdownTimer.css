@@ -1,0 +1,158 @@
+﻿.countdown-timer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px;
+  position: relative;
+}
+
+.timer-display {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.time-value {
+  font-family: 'Roboto Mono', monospace;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1976d2;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.timer-display.urgent .time-value {
+  color: #ff9800;
+  animation: pulse 1s infinite;
+}
+
+.timer-display.expired .time-value {
+  color: #f44336;
+}
+
+.separator {
+  opacity: 0.7;
+  animation: blink 1s infinite;
+}
+
+.timer-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  font-weight: 500;
+  color: #666;
+  margin-top: 4px;
+}
+
+.timer-progress {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.progress-ring {
+  transform: rotate(-90deg);
+}
+
+.progress-ring-fill {
+  transition: stroke-dashoffset 0.3s ease;
+}
+
+.progress-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.timer-status {
+  text-align: center;
+}
+
+/* Urgent state styling */
+.countdown-timer.urgent .timer-display {
+  animation: shake 0.5s ease-in-out;
+}
+
+.countdown-timer.expired .timer-display .time-value {
+  color: #f44336 !important;
+}
+
+/* Animations */
+@keyframes pulse {
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes blink {
+
+  0%,
+  50% {
+    opacity: 1;
+  }
+
+  51%,
+  100% {
+    opacity: 0.3;
+  }
+}
+
+@keyframes shake {
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  25% {
+    transform: translateX(-2px);
+  }
+
+  75% {
+    transform: translateX(2px);
+  }
+}
+
+.pulse {
+  animation: pulse 2s infinite;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .time-value {
+    font-size: 1.5rem;
+  }
+
+  .timer-progress svg {
+    width: 60px;
+    height: 60px;
+  }
+
+  .timer-progress .progress-ring-background,
+  .timer-progress .progress-ring-fill {
+    r: 26;
+    cx: 30;
+    cy: 30;
+  }
+
+  .countdown-timer {
+    padding: 12px;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+
+  .time-value,
+  .countdown-timer.urgent .timer-display,
+  .pulse,
+  .separator,
+  .progress-ring-fill {
+    animation: none !important;
+  }
+}

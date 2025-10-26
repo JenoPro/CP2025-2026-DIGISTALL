@@ -69,7 +69,7 @@
                 color="primary"
               >
                 <v-icon left class="mr-2">mdi-login</v-icon>
-                {{ loading ? "Authenticating..." : "Login to Dashboard" }}
+                {{ loading ? "Authenticating..." : "Login" }}
               </v-btn>
 
               <!-- Error Message Display -->
@@ -131,20 +131,11 @@
             <!-- Animated Logo -->
             <div class="loading-logo-container mb-4">
               <img
-                src="../../assets/naga-city-logo.png"
+                src="../../assets/DigiStall-Logo.png"
                 alt="Loading..."
                 class="loading-logo pulse-animation"
               />
             </div>
-
-            <!-- Loading Spinner -->
-            <v-progress-circular
-              indeterminate
-              size="48"
-              width="4"
-              color="primary"
-              class="mb-4"
-            />
 
             <!-- Loading Text -->
             <h3 class="loading-title mb-2">{{ loadingText }}</h3>

@@ -1,0 +1,89 @@
+﻿/* Professional styling with primary colors */
+.highest-bidder-panel {
+  border-radius: 12px !important;
+  overflow: hidden;
+  border: 1px solid rgba(0, 33, 129, 0.1);
+}
+
+.primary-header {
+  background: #002181 !important;
+  color: white !important;
+}
+
+.privacy-notice {
+  background: rgba(0, 33, 129, 0.05);
+  border: 1px solid rgba(0, 33, 129, 0.1);
+  border-radius: 6px;
+  color: rgba(0, 33, 129, 0.8);
+}
+
+.no-bids-state {
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.highest-bidder-info {
+  position: relative;
+}
+
+.bidder-details {
+  flex: 1;
+}
+
+.bid-amount {
+  min-width: 120px;
+}
+
+.bid-progression {
+  padding: 16px;
+  background: rgba(0, 33, 129, 0.02);
+  border-radius: 8px;
+  border: 1px solid rgba(0, 33, 129, 0.1);
+}
+
+.next-bid-info {
+  border: 1px solid rgba(0, 33, 129, 0.1);
+  background: rgba(0, 33, 129, 0.02);
+}
+
+.bidder-stats .stat-value {
+  font-weight: 700 !important;
+  color: #002181;
+}
+
+.bidder-stats .stat-label {
+  color: rgba(0, 33, 129, 0.7);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+}
+
+/* Override Vuetify colors */
+.text-primary {
+  color: #002181 !important;
+}
+
+.v-chip.bg-primary {
+  background: #002181 !important;
+}
+
+.v-progress-linear .v-progress-linear__background {
+  background: rgba(0, 33, 129, 0.1) !important;
+}
+
+@media (max-width: 768px) {
+  .bid-amount {
+    min-width: auto;
+    margin-top: 12px;
+  }
+
+  .highest-bidder-info .v-row {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .bidder-stats .v-col {
+    margin-bottom: 8px;
+  }
+}

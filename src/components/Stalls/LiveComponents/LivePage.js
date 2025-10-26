@@ -1,8 +1,8 @@
 // Import components
-import VideoArea from './videoComponents/VideoArea.vue'
-import ChatBox from './chatBoxComponents/ChatBox.vue'
-import ParticipantsList from './controlPanelComponents/ParticipantsList.vue'
-import AuctionLivePanel from '../AuctionComponents/AuctionLivePanel.vue'
+import VideoArea from './videoComponents/VideoArea/VideoArea.vue'
+import ChatBox from './chatBoxComponents/ChatBox/ChatBox.vue'
+import ParticipantsList from './controlPanelComponents/ParticipantsList/ParticipantsList.vue'
+import AuctionLivePanel from '../AuctionComponents/AuctionLivePanel/AuctionLivePanel.vue'
 
 export default {
   name: 'LivePage',

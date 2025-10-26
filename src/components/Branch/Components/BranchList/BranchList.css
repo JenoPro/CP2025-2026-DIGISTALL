@@ -1,0 +1,15 @@
+﻿.v-data-table {
+  border-radius: 0 0 12px 12px;
+}
+
+.gap-1 {
+  gap: 4px;
+}
+
+.text-success {
+  color: #4caf50;
+}
+
+.text-warning {
+  color: #ff9800;
+}

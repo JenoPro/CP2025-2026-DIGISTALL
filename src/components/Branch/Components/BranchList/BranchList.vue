@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <v-card elevation="2">
     <v-card-title>
       <div class="d-flex justify-between align-center w-100">
@@ -81,95 +81,7 @@
   </v-card>
 </template>
 
-<script>
-export default {
-  name: "BranchList",
-  props: {
-    branches: {
-      type: Array,
-      default: () => [],
-    },
-    loading: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  emits: ["refresh", "assign-manager", "edit-branch", "delete-branch"],
-  data() {
-    return {
-      headers: [
-        {
-          title: "Branch Name",
-          key: "branch_name",
-          sortable: true,
-        },
-        {
-          title: "Area",
-          key: "area",
-          sortable: true,
-        },
-        {
-          title: "Location",
-          key: "location",
-          sortable: true,
-        },
-        {
-          title: "Status",
-          key: "status",
-          sortable: true,
-        },
-        {
-          title: "Manager",
-          key: "manager_status",
-          sortable: false,
-        },
-        {
-          title: "Contact",
-          key: "contact_number",
-          sortable: false,
-        },
-        {
-          title: "Actions",
-          key: "actions",
-          sortable: false,
-          align: "center",
-        },
-      ],
-    };
-  },
-  methods: {
-    getStatusColor(status) {
-      switch (status) {
-        case "Active":
-          return "success";
-        case "Inactive":
-          return "error";
-        case "Under Construction":
-          return "warning";
-        case "Maintenance":
-          return "info";
-        default:
-          return "grey";
-      }
-    },
-  },
-};
-</script>
+<script src="./BranchList.js"></script>
 
-<style scoped>
-.v-data-table {
-  border-radius: 0 0 12px 12px;
-}
+<style scoped src="./BranchList.css"></style>
 
-.gap-1 {
-  gap: 4px;
-}
-
-.text-success {
-  color: #4caf50;
-}
-
-.text-warning {
-  color: #ff9800;
-}
-</style>

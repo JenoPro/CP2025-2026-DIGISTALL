@@ -1,0 +1,20 @@
+.label {
+  font-size: 0.85rem;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.value {
+  font-weight: 600;
+}
+
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+}
+
+.pair {
+  display: grid;
+  grid-template-columns: 1fr;
+  margin: 0.4rem 0;
+}
