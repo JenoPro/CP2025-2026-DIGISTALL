@@ -185,33 +185,64 @@ export default {
       this.stopVideoStream()
     },
     async fetchStallData() {
-      try {
-        const response = await fetch(this.apiBaseUrl + '/stalls/' + this.stallId)
-        if (response.ok) {
-          this.stallData = await response.json()
-          this.itemType = this.stallData.type
-        }
-        // eslint-disable-next-line no-unused-vars
-      } catch (error) {
-        this.stallData = {
-          name: 'Sample Stall',
-          location: 'Market Area A',
-          branch_name: 'Main Branch',
-          status: 'Active',
-          type: this.type,
-          starting_price: 100,
-        }
-        this.itemType = this.type
+      // Using mock data (backend not implemented yet)
+      this.stallData = {
+        name: 'Sample Stall',
+        location: 'Market Area A',
+        branch_name: 'Main Branch',
+        status: 'Active',
+        type: this.type,
+        starting_price: 100,
       }
+      this.itemType = this.type
+
       // Fetch participants/bidders after stall data
       if (this.isRaffle) {
         this.fetchRaffleParticipants()
       } else if (this.isAuction) {
         this.fetchAuctionBidders()
       }
+
+      /* Backend API implementation (currently disabled):
+      try {
+        const response = await fetch(this.apiBaseUrl + '/stalls/' + this.stallId)
+        if (response.ok) {
+          this.stallData = await response.json()
+          this.itemType = this.stallData.type
+        }
+      } catch (error) {
+        // Fallback to mock data
+      }
+      */
     },
     async fetchRaffleParticipants() {
       if (this.isRaffle) {
+        // Using mock data (backend not implemented yet)
+        this.participants = [
+          {
+            id: 1,
+            name: 'John Doe',
+            email: 'john@example.com',
+            entry_date: new Date().toISOString(),
+            status: 'Active',
+          },
+          {
+            id: 2,
+            name: 'Jane Smith',
+            email: 'jane@example.com',
+            entry_date: new Date().toISOString(),
+            status: 'Active',
+          },
+          {
+            id: 3,
+            name: 'Mike Johnson',
+            email: 'mike@example.com',
+            entry_date: new Date().toISOString(),
+            status: 'Active',
+          },
+        ]
+
+        /* Backend API implementation (currently disabled):
         try {
           const response = await fetch(
             this.apiBaseUrl + '/raffle/' + this.stallId + '/participants',
@@ -220,67 +251,47 @@ export default {
             const data = await response.json()
             this.participants = data.participants || []
           }
-          // eslint-disable-next-line no-unused-vars
         } catch (error) {
-          // Mock data
-          this.participants = [
-            {
-              id: 1,
-              name: 'John Doe',
-              email: 'john@example.com',
-              entry_date: new Date().toISOString(),
-              status: 'Active',
-            },
-            {
-              id: 2,
-              name: 'Jane Smith',
-              email: 'jane@example.com',
-              entry_date: new Date().toISOString(),
-              status: 'Active',
-            },
-            {
-              id: 3,
-              name: 'Mike Johnson',
-              email: 'mike@example.com',
-              entry_date: new Date().toISOString(),
-              status: 'Active',
-            },
-          ]
+          // Fallback to mock data
         }
+        */
       }
     },
     async fetchAuctionBidders() {
       if (this.isAuction) {
+        // Using mock data (backend not implemented yet)
+        this.bidders = [
+          {
+            id: 1,
+            name: 'Sample Bidder',
+            email: 'bidder@example.com',
+            lastBid: 100,
+            bid_amount: 100,
+            bid_date: new Date().toISOString(),
+            status: 'Bidding',
+          },
+          {
+            id: 2,
+            name: 'High Bidder',
+            email: 'high@example.com',
+            lastBid: 250,
+            bid_amount: 250,
+            bid_date: new Date().toISOString(),
+            status: 'Bidding',
+          },
+        ]
+
+        /* Backend API implementation (currently disabled):
         try {
           const response = await fetch(this.apiBaseUrl + '/auction/' + this.stallId + '/bidders')
           if (response.ok) {
             const data = await response.json()
             this.bidders = data.bidders || []
           }
-          // eslint-disable-next-line no-unused-vars
         } catch (error) {
-          // Mock data
-          this.bidders = [
-            {
-              id: 1,
-              name: 'Sample Bidder',
-              email: 'bidder@example.com',
-              lastBid: 100,
-              bid_amount: 100,
-              bid_date: new Date().toISOString(),
-              status: 'Bidding',
-            },
-            {
-              id: 2,
-              name: 'High Bidder',
-              email: 'high@example.com',
-              lastBid: 250,
-              bid_amount: 250,
-              bid_date: new Date().toISOString(),
-              status: 'Bidding',
-            },
-          ]
+          // Fallback to mock data
         }
+        */
       }
     },
     async initializeVideoStream() {

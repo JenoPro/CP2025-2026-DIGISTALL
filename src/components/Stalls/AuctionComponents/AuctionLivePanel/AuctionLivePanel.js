@@ -1,4 +1,4 @@
-import HighestBidderPanel from './HighestBidder/HighestBidderPanel.vue'
+import HighestBidderPanel from '../HighestBidder/HighestBidderPanel.vue'
 
 export default {
   name: 'AuctionLivePanel',
