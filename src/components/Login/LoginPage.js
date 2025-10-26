@@ -59,23 +59,22 @@ export default {
     },
 
     clearAuthData() {
-      // Clear all authentication data - COMPREHENSIVE CLEANUP
-      sessionStorage.removeItem('currentUser')
+      // Clear all authentication and user-related session data
       sessionStorage.removeItem('authToken')
+      sessionStorage.removeItem('currentUser')
+      sessionStorage.removeItem('user')
       sessionStorage.removeItem('userType')
       sessionStorage.removeItem('branchManagerId')
-      sessionStorage.removeItem('adminId')
-      sessionStorage.removeItem('adminData')
-      sessionStorage.removeItem('employeeId')
+      sessionStorage.removeItem('branchId')
+      sessionStorage.removeItem('branchName')
+      sessionStorage.removeItem('branchManagerData')
       sessionStorage.removeItem('employeeData')
+      sessionStorage.removeItem('adminData')
+      sessionStorage.removeItem('userRole')
+      sessionStorage.removeItem('adminId')
+      sessionStorage.removeItem('employeeId')
       sessionStorage.removeItem('employeePermissions')
       sessionStorage.removeItem('permissions')
-      sessionStorage.removeItem('userRole')
-      sessionStorage.removeItem('branchId')
-      sessionStorage.removeItem('fullName')
-      delete axios.defaults.headers.common['Authorization']
-
-      console.log('🧹 All session data cleared')
     },
 
     async handleLogin() {
@@ -274,14 +273,25 @@ export default {
           }
 
           sessionStorage.setItem('authToken', token)
-          sessionStorage.setItem(
-            'currentUser',
-            JSON.stringify({
-              ...user,
-              userType: userType,
-              username: user.username || user.employee_username,
-            }),
-          )
+
+          // Create enhanced user object with proper branch data
+          let enhancedUser = {
+            ...user,
+            userType: userType,
+            username: user.username || user.employee_username,
+          }
+
+          // Add branch data for branch managers
+          if (userType === 'branch-manager' || user.branchManagerId) {
+            enhancedUser.branchManagerId = user.branchManagerId || user.id
+            enhancedUser.branchId = user.branchId || user.branch_id || user.branchID
+            enhancedUser.branchName = user.branchName || user.branch_name
+
+            console.log('🔍 Debug - Enhanced user object for branch manager:', enhancedUser)
+          }
+
+          sessionStorage.setItem('currentUser', JSON.stringify(enhancedUser))
+          sessionStorage.setItem('user', JSON.stringify(enhancedUser))
           sessionStorage.setItem('userType', userType)
 
           console.log('💾 Stored session data:', {
@@ -333,8 +343,47 @@ export default {
                 role: user.role || 'Employee',
               }),
             )
-          } else if (user.branchManagerId) {
-            sessionStorage.setItem('branchManagerId', user.branchManagerId.toString())
+          } else if (userType === 'branch-manager' || user.branchManagerId) {
+            // Store branch manager specific info
+            const branchManagerId = user.branchManagerId || user.id
+            const branchId = user.branchId || user.branch_id || user.branchID
+            const branchName = user.branchName || user.branch_name || user.branchName
+            const firstName = user.firstName || user.first_name
+            const lastName = user.lastName || user.last_name
+            const fullName = `${firstName} ${lastName}`.trim()
+
+            console.log('🔍 Debug - Branch Manager Login Data:')
+            console.log('  - user object:', user)
+            console.log('  - extracted branchManagerId:', branchManagerId)
+            console.log('  - extracted branchId:', branchId)
+            console.log('  - extracted branchName:', branchName)
+
+            sessionStorage.setItem('branchManagerId', branchManagerId?.toString() || '')
+            sessionStorage.setItem('branchId', branchId?.toString() || '')
+            sessionStorage.setItem('branchName', branchName || '')
+
+            // Store complete branch manager data
+            sessionStorage.setItem(
+              'branchManagerData',
+              JSON.stringify({
+                branchManagerId: branchManagerId,
+                branchId: branchId,
+                branchName: branchName,
+                username: user.username,
+                firstName: firstName,
+                lastName: lastName,
+                email: user.email,
+                fullName: fullName,
+                role: 'Branch Manager',
+              }),
+            )
+
+            console.log('🏪 Stored branch manager data:', {
+              branchManagerId: branchManagerId,
+              branchId: branchId,
+              branchName: branchName,
+              fullName: fullName,
+            })
           }
 
           axios.defaults.headers.common['Authorization'] = `Bearer ${token}`

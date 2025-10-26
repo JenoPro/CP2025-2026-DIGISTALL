@@ -83,6 +83,13 @@ export default {
       return userType === 'admin' || currentUser.userType === 'admin'
     },
 
+    // Check if current user is employee
+    isEmployee() {
+      const userType = sessionStorage.getItem('userType')
+      const currentUser = JSON.parse(sessionStorage.getItem('currentUser') || '{}')
+      return userType === 'employee' || currentUser.userType === 'employee'
+    },
+
     // Get current user permissions - Handle both object and array formats
     userPermissions() {
       const userType = sessionStorage.getItem('userType')

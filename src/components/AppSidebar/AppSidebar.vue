@@ -52,9 +52,9 @@
           </v-tooltip>
         </v-list-item>
 
-        <!-- More Section - Show for branch managers and employees -->
+        <!-- More Section - Show only for branch managers -->
         <v-list-item
-          v-if="isExpanded && !isAdmin"
+          v-if="isExpanded && !isAdmin && !isEmployee"
           class="sidebar-item more-item"
           :class="{ active: showMoreItems }"
           @click="toggleMoreItems"
@@ -73,8 +73,8 @@
           </div>
         </v-list-item>
 
-        <!-- Additional Items (when More is expanded) - Show for branch managers and employees -->
-        <div v-if="isExpanded && showMoreItems && !isAdmin" class="more-items">
+        <!-- Additional Items (when More is expanded) - Show only for branch managers -->
+        <div v-if="isExpanded && showMoreItems && !isAdmin && !isEmployee" class="more-items">
           <div v-for="item in filteredMoreItems" :key="item.id">
             <!-- Regular menu item or item with submenu -->
             <v-list-item
