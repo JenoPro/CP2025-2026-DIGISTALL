@@ -182,9 +182,9 @@ export default {
         const response = await fetch(`${this.apiBaseUrl}/employees`, {
           method: 'GET',
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
         })
 
         console.log('📡 Employees API response status:', response.status)
@@ -206,18 +206,22 @@ export default {
         if (data.success) {
           this.employees = data.data || data.employees || []
           console.log(`✅ Loaded ${this.employees.length} employees`)
-          
+
           // Provide user feedback based on role
           const currentUser = JSON.parse(sessionStorage.getItem('user') || '{}')
           if (this.employees.length === 0) {
             if (currentUser.userType === 'branch-manager') {
-              console.log('ℹ️  No employees found - Branch manager has not created any employees yet')
+              console.log(
+                'ℹ️  No employees found - Branch manager has not created any employees yet',
+              )
             } else {
               console.log('ℹ️  No employees found')
             }
           } else {
             if (currentUser.userType === 'branch-manager') {
-              console.log(`ℹ️  Showing ${this.employees.length} employees created by this branch manager`)
+              console.log(
+                `ℹ️  Showing ${this.employees.length} employees created by this branch manager`,
+              )
             }
           }
         } else {
@@ -281,9 +285,9 @@ export default {
 
         const response = await fetch(url, {
           method,
-          headers: { 
+          headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(payload),
         })
@@ -367,7 +371,7 @@ export default {
 
       try {
         const currentUser = JSON.parse(sessionStorage.getItem('user') || '{}')
-        
+
         // Get authentication token
         const token = sessionStorage.getItem('authToken')
         if (!token) {
@@ -378,9 +382,9 @@ export default {
           `${this.apiBaseUrl}/employees/${this.selectedEmployee.employee_id}`,
           {
             method: 'PUT',
-            headers: { 
+            headers: {
               'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`
+              Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify({
               permissions: this.selectedPermissions,
@@ -412,7 +416,7 @@ export default {
 
       try {
         const currentUser = JSON.parse(sessionStorage.getItem('user') || '{}')
-        
+
         // Get authentication token
         const token = sessionStorage.getItem('authToken')
         if (!token) {
@@ -421,9 +425,9 @@ export default {
 
         const response = await fetch(`${this.apiBaseUrl}/employees/${employee.employee_id}`, {
           method: 'PUT',
-          headers: { 
+          headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
             status: newStatus,
@@ -471,9 +475,9 @@ export default {
           `${this.apiBaseUrl}/employees/${employee.employee_id}/reset-password`,
           {
             method: 'POST',
-            headers: { 
+            headers: {
               'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`
+              Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify({
               resetBy: currentUser.id || 1,

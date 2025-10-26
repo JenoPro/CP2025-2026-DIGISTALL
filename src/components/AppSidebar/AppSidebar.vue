@@ -36,17 +36,16 @@
         >
           <v-tooltip right :disabled="isExpanded">
             <template v-slot:activator="{ on, attrs }">
-              <div class="item-container" v-bind="attrs" v-on="on">
-                <v-list-item-icon class="sidebar-icon">
-                  <v-icon :color="isActiveRoute(item.route) ? 'white' : 'dark'">{{
-                    item.icon
-                  }}</v-icon>
-                </v-list-item-icon>
-                <v-list-item-content v-if="isExpanded">
-                  <v-list-item-title class="sidebar-text">{{
-                    item.name
-                  }}</v-list-item-title>
-                </v-list-item-content>
+              <div class="item-container" v-bind="attrs" v-on="on || {}">
+                <v-icon 
+                  class="sidebar-icon mr-3"
+                  :color="isActiveRoute(item.route) ? 'white' : 'dark'"
+                >
+                  {{ item.icon }}
+                </v-icon>
+                <span v-if="isExpanded" class="sidebar-text">
+                  {{ item.name }}
+                </span>
               </div>
             </template>
             <span>{{ item.name }}</span>
@@ -61,19 +60,16 @@
           @click="toggleMoreItems"
         >
           <div class="item-container">
-            <v-list-item-icon class="sidebar-icon">
-              <v-icon
-                :class="{ 'rotate-180': showMoreItems }"
-                :color="showMoreItems ? 'white' : 'dark'"
-              >
-                mdi-chevron-down
-              </v-icon>
-            </v-list-item-icon>
-            <v-list-item-content>
-              <v-list-item-title class="sidebar-text">{{
-                showMoreItems ? "Less" : "More"
-              }}</v-list-item-title>
-            </v-list-item-content>
+            <v-icon
+              class="sidebar-icon mr-3"
+              :class="{ 'rotate-180': showMoreItems }"
+              :color="showMoreItems ? 'white' : 'dark'"
+            >
+              mdi-chevron-down
+            </v-icon>
+            <span class="sidebar-text">{{
+              showMoreItems ? "Less" : "More"
+            }}</span>
           </div>
         </v-list-item>
 
@@ -91,33 +87,29 @@
               @click="setActiveItem(item.id, item.route, item.hasSubMenu)"
             >
               <div class="item-container">
-                <v-list-item-icon class="sidebar-icon">
-                  <v-icon :color="isActiveRoute(item.route) ? 'white' : 'dark'">{{
-                    item.icon
-                  }}</v-icon>
-                </v-list-item-icon>
-                <v-list-item-content>
-                  <v-list-item-title class="sidebar-text">{{
-                    item.name
-                  }}</v-list-item-title>
-                </v-list-item-content>
+                <v-icon 
+                  class="sidebar-icon mr-3" 
+                  :color="isActiveRoute(item.route) ? 'white' : 'dark'"
+                >
+                  {{ item.icon }}
+                </v-icon>
+                <span class="sidebar-text">
+                  {{ item.name }}
+                </span>
                 <!-- Submenu indicator for Stalls - Only show if there are raffle/auction stalls -->
-                <v-list-item-icon
+                <v-icon
                   v-if="
                     item.hasSubMenu &&
                     item.id === 9 &&
                     (availableStallTypes.hasRaffles || availableStallTypes.hasAuctions)
                   "
-                  class="submenu-arrow"
+                  class="submenu-arrow ml-auto"
+                  small
+                  :class="{ 'rotate-180': showStallsSubMenu }"
+                  :color="isActiveRoute(item.route) ? 'white' : 'dark'"
                 >
-                  <v-icon
-                    small
-                    :class="{ 'rotate-180': showStallsSubMenu }"
-                    :color="isActiveRoute(item.route) ? 'white' : 'dark'"
-                  >
-                    mdi-chevron-down
-                  </v-icon>
-                </v-list-item-icon>
+                  mdi-chevron-down
+                </v-icon>
               </div>
             </v-list-item>
 
@@ -134,18 +126,16 @@
                 @click="setActiveItem(subItem.id, subItem.route)"
               >
                 <div class="item-container">
-                  <v-list-item-icon class="sidebar-icon submenu-icon">
-                    <v-icon
-                      small
-                      :color="isActiveRoute(subItem.route) ? 'white' : 'dark'"
-                      >{{ subItem.icon }}</v-icon
-                    >
-                  </v-list-item-icon>
-                  <v-list-item-content>
-                    <v-list-item-title class="sidebar-text submenu-text">{{
-                      subItem.name
-                    }}</v-list-item-title>
-                  </v-list-item-content>
+                  <v-icon
+                    class="sidebar-icon submenu-icon mr-3"
+                    small
+                    :color="isActiveRoute(subItem.route) ? 'white' : 'dark'"
+                  >
+                    {{ subItem.icon }}
+                  </v-icon>
+                  <span class="sidebar-text submenu-text">
+                    {{ subItem.name }}
+                  </span>
                 </div>
               </v-list-item>
             </div>
