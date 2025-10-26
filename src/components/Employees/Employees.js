@@ -172,11 +172,54 @@ export default {
     // API Methods
     async fetchEmployees() {
       try {
-        const response = await fetch(`${this.apiBaseUrl}/employees`)
+        // Get authentication token
+        const token = sessionStorage.getItem('authToken')
+        if (!token) {
+          throw new Error('Authentication required. Please login again.')
+        }
+
+        console.log('🔑 Fetching employees with authentication...')
+        const response = await fetch(`${this.apiBaseUrl}/employees`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        })
+
+        console.log('📡 Employees API response status:', response.status)
+
+        if (!response.ok) {
+          if (response.status === 401) {
+            // Clear session and redirect to login
+            sessionStorage.clear()
+            this.$router.push('/login')
+            throw new Error('Session expired. Please login again.')
+          } else if (response.status === 403) {
+            throw new Error('Access denied. You do not have permission to view employees.')
+          }
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
+
         const data = await response.json()
 
         if (data.success) {
           this.employees = data.data || data.employees || []
+          console.log(`✅ Loaded ${this.employees.length} employees`)
+          
+          // Provide user feedback based on role
+          const currentUser = JSON.parse(sessionStorage.getItem('user') || '{}')
+          if (this.employees.length === 0) {
+            if (currentUser.userType === 'branch-manager') {
+              console.log('ℹ️  No employees found - Branch manager has not created any employees yet')
+            } else {
+              console.log('ℹ️  No employees found')
+            }
+          } else {
+            if (currentUser.userType === 'branch-manager') {
+              console.log(`ℹ️  Showing ${this.employees.length} employees created by this branch manager`)
+            }
+          }
         } else {
           throw new Error(data.message)
         }
@@ -230,9 +273,18 @@ export default {
 
         const method = this.isEditMode ? 'PUT' : 'POST'
 
+        // Get authentication token
+        const token = sessionStorage.getItem('authToken')
+        if (!token) {
+          throw new Error('Authentication required. Please login again.')
+        }
+
         const response = await fetch(url, {
           method,
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
           body: JSON.stringify(payload),
         })
 
@@ -315,12 +367,21 @@ export default {
 
       try {
         const currentUser = JSON.parse(sessionStorage.getItem('user') || '{}')
+        
+        // Get authentication token
+        const token = sessionStorage.getItem('authToken')
+        if (!token) {
+          throw new Error('Authentication required. Please login again.')
+        }
 
         const response = await fetch(
           `${this.apiBaseUrl}/employees/${this.selectedEmployee.employee_id}`,
           {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
             body: JSON.stringify({
               permissions: this.selectedPermissions,
               updatedBy: currentUser.id || 1,
@@ -351,10 +412,19 @@ export default {
 
       try {
         const currentUser = JSON.parse(sessionStorage.getItem('user') || '{}')
+        
+        // Get authentication token
+        const token = sessionStorage.getItem('authToken')
+        if (!token) {
+          throw new Error('Authentication required. Please login again.')
+        }
 
         const response = await fetch(`${this.apiBaseUrl}/employees/${employee.employee_id}`, {
           method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
           body: JSON.stringify({
             status: newStatus,
             updatedBy: currentUser.id || 1,
@@ -388,6 +458,12 @@ export default {
       try {
         const currentUser = JSON.parse(sessionStorage.getItem('user') || '{}')
 
+        // Get authentication token
+        const token = sessionStorage.getItem('authToken')
+        if (!token) {
+          throw new Error('Authentication required. Please login again.')
+        }
+
         // Generate new password
         const newPassword = generateEmployeePassword()
 
@@ -395,7 +471,10 @@ export default {
           `${this.apiBaseUrl}/employees/${employee.employee_id}/reset-password`,
           {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
             body: JSON.stringify({
               resetBy: currentUser.id || 1,
               newPassword: newPassword,
