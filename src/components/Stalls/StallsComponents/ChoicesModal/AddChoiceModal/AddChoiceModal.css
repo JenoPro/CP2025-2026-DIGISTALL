@@ -83,7 +83,7 @@
 }
 
 .view-icon {
-  background: #1976d2 !important;
+  background: rgb(0, 33, 129) !important;
 }
 
 /* Ensure perfect circles for all icon containers */
@@ -137,7 +137,7 @@
 }
 
 .view-card:hover .choice-title {
-  color: #1976d2 !important;
+  color: rgb(0, 33, 129) !important;
 }
 
 .choice-description {
@@ -238,17 +238,17 @@
 }
 
 .view-card:hover {
-  border-color: #1976d2 !important;
+  border-color: rgb(0, 33, 129) !important;
   box-shadow: 0 8px 20px rgba(25, 118, 210, 0.15) !important;
 }
 
 .view-card .choice-btn {
-  background: #1976d2 !important;
+  background: rgb(0, 33, 129) !important;
   color: white !important;
 }
 
 .view-icon {
-  background: #1976d2 !important;
+  background: rgb(0, 33, 129) !important;
 }
 
 /* Helper Alert */

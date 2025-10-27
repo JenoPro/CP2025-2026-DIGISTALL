@@ -104,11 +104,6 @@ export default {
       // Can select winner if raffle is expired and has participants
       return this.statusType === 'expired' && (this.raffle.participant_count || 0) > 0
     },
-
-    canGoLive() {
-      // Can go live if raffle is active and has participants
-      return this.statusType === 'active' && (this.raffle.participant_count || 0) > 0
-    },
   },
 
   methods: {
@@ -128,9 +123,9 @@ export default {
       })
     },
 
-    goLive() {
-      // Navigate to live page
-      this.$router.push(`/stalls/live/${this.raffle.id}/raffle`)
+    selectWinner() {
+      // Emit event to parent component to handle winner selection
+      this.$emit('select-winner', this.raffle)
     },
   },
 }

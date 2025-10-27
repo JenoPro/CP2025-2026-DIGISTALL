@@ -41,9 +41,9 @@
 }
 
 .filter-btn.filter-active {
-  background-color: #1976d2 !important;
+  background-color: rgb(0, 33, 129) !important;
   color: white !important;
-  border-color: #1976d2 !important;
+  border-color: rgb(0, 33, 129) !important;
 }
 
 /* Filter dropdown */
@@ -136,9 +136,9 @@
 }
 
 .status-btn.v-btn--variant-flat {
-  background-color: #1976d2 !important;
+  background-color: rgb(0, 33, 129) !important;
   color: white !important;
-  border-color: #1976d2;
+  border-color: rgb(0, 33, 129);
 }
 
 .status-btn:hover:not(.v-btn--variant-flat) {
@@ -177,7 +177,7 @@
 }
 
 .apply-btn {
-  background-color: #1976d2 !important;
+  background-color: rgb(0, 33, 129) !important;
   color: white !important;
   box-shadow: none;
 }
@@ -272,6 +272,6 @@
 .close-btn:focus-visible,
 .status-btn:focus-visible,
 .action-btn:focus-visible {
-  outline: 2px solid #1976d2;
+  outline: 2px solid rgb(0, 33, 129);
   outline-offset: 2px;
 }

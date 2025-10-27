@@ -37,7 +37,6 @@
               v-if="hasStalls"
               :stalls="displayStalls"
               @stall-edit="handleStallEdit"
-              @stall-live="handleStallLive"
               @stall-raffle-management="handleRaffleManagement"
               @stall-auction-management="handleAuctionManagement"
             />
@@ -110,7 +109,6 @@
         @stall-deleted="handleStallDeleted"
         @error="handleEditError"
       />
-
     </v-main>
 
     <!-- Success/Error Snackbar -->

@@ -1,6 +1,6 @@
 <template>
     <div class="stalls-grid">
-        <v-card v-for="stall in stalls" :key="stall.id" class="stall-card" elevation="2">
+        <v-card v-for="stall in stalls" :key="stall.id" class="stall-card clickable-card" elevation="2" @click="handleCardClick(stall)">
             <!-- Stall Image with floating price type badge -->
             <div class="image-container">
                 <v-img :src="stall.image" height="200" cover class="stall-image">
@@ -64,36 +64,21 @@
                 </div>
             </v-card-text>
 
-            <!-- Action Buttons -->
-            <v-card-actions class="button-actions">
+            <!-- Special Manage Buttons for Raffle and Auction -->
+            <v-card-actions v-if="stall.priceType === 'Raffle' || stall.priceType === 'Auction'" class="button-actions">
                 <div class="buttons-container">
-                    <!-- Standard Edit Button for all stall types -->
-                    <v-btn color="primary" variant="elevated" size="small" @click="handleModify(stall)"
-                        class="action-btn">
-                        <v-icon left size="small" class="me-2">mdi-pencil</v-icon>
-                        MODIFY
-                    </v-btn>
-
                     <!-- Raffle Management Button -->
                     <v-btn v-if="stall.priceType === 'Raffle'" color="success" variant="elevated" size="small"
-                        @click="handleRaffleManagement(stall)" class="action-btn">
+                        @click.stop="handleRaffleManagement(stall)" class="action-btn">
                         <v-icon left size="small" class="me-2">mdi-ticket-percent</v-icon>
                         MANAGE RAFFLE
                     </v-btn>
 
                     <!-- Auction Management Button -->
                     <v-btn v-if="stall.priceType === 'Auction'" color="error" variant="elevated" size="small"
-                        @click="handleAuctionManagement(stall)" class="action-btn">
+                        @click.stop="handleAuctionManagement(stall)" class="action-btn">
                         <v-icon left size="small" class="me-2">mdi-gavel</v-icon>
                         MANAGE AUCTION
-                    </v-btn>
-
-                    <!-- Live button for other managers/locations -->
-                    <v-btn
-                        v-if="stall.location === `Naga City People's Mall` && stall.priceType !== 'Auction' && stall.priceType !== 'Raffle'"
-                        color="success" variant="elevated" size="small" @click="handleLive(stall)" class="action-btn">
-                        <v-icon left size="small" class="me-2">mdi-broadcast</v-icon>
-                        LIVE
                     </v-btn>
                 </div>
             </v-card-actions>

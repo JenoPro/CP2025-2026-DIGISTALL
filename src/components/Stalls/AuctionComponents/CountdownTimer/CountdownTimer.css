@@ -1,4 +1,4 @@
-﻿.countdown-timer {
+.countdown-timer {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -15,7 +15,7 @@
   font-family: 'Roboto Mono', monospace;
   font-size: 2rem;
   font-weight: 700;
-  color: #1976d2;
+  color: rgb(0, 33, 129);
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 

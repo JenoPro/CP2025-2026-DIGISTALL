@@ -78,20 +78,14 @@
 
       <v-spacer></v-spacer>
 
-      <!-- Go Live Button -->
-      <v-btn v-if="canGoLive" small color="#1976d2" @click="goLive" class="go-live-btn">
-        <v-icon small left>mdi-broadcast</v-icon>
-        Go Live
-      </v-btn>
-
       <!-- Extend Timer Button -->
-      <v-btn v-if="canExtendTimer && !canGoLive" small outlined color="warning" @click="$emit('extend-timer', auction)">
+      <v-btn v-if="canExtendTimer" small outlined color="warning" @click="$emit('extend-timer', auction)">
         <v-icon small left>mdi-timer-plus</v-icon>
         Extend
       </v-btn>
 
       <!-- End Auction Button -->
-      <v-btn v-if="canSelectWinner && !canGoLive" small color="error" @click="$emit('select-winner', auction)">
+      <v-btn v-if="canSelectWinner" small color="error" @click="$emit('select-winner', auction)">
         <v-icon small left>mdi-gavel</v-icon>
         End Auction
       </v-btn>

@@ -9,7 +9,6 @@
           <div class="header-cell status-col">Status</div>
           <div class="header-cell permissions-col">Permissions</div>
           <div class="header-cell login-col">Last Login</div>
-          <div class="header-cell actions-col">Actions</div>
         </div>
       </div>
 
@@ -24,7 +23,8 @@
           <div
             v-for="employee in employees"
             :key="employee.employee_id"
-            class="table-row"
+            class="table-row clickable-row"
+            @click="openActionsPopup(employee)"
           >
             <div class="table-cell employee-col">
               <div class="employee-info">
@@ -91,79 +91,75 @@
               </div>
               <span v-else class="text-grey">Never</span>
             </div>
-
-            <div class="table-cell actions-col">
-              <div class="action-buttons">
-                <v-tooltip text="Edit Employee">
-                  <template v-slot:activator="{ props }">
-                    <v-btn
-                      v-bind="props"
-                      icon
-                      size="small"
-                      color="primary"
-                      variant="text"
-                      @click="$emit('edit-employee', employee)"
-                    >
-                      <v-icon>mdi-pencil</v-icon>
-                    </v-btn>
-                  </template>
-                </v-tooltip>
-
-                <v-tooltip text="Manage Permissions">
-                  <template v-slot:activator="{ props }">
-                    <v-btn
-                      v-bind="props"
-                      icon
-                      size="small"
-                      color="info"
-                      variant="text"
-                      @click="$emit('manage-permissions', employee)"
-                    >
-                      <v-icon>mdi-shield-account</v-icon>
-                    </v-btn>
-                  </template>
-                </v-tooltip>
-
-                <v-tooltip
-                  :text="employee.status === 'active' ? 'Deactivate' : 'Activate'"
-                >
-                  <template v-slot:activator="{ props }">
-                    <v-btn
-                      v-bind="props"
-                      icon
-                      size="small"
-                      :color="employee.status === 'active' ? 'warning' : 'success'"
-                      variant="text"
-                      @click="$emit('toggle-status', employee)"
-                    >
-                      <v-icon>{{
-                        employee.status === "active"
-                          ? "mdi-account-off"
-                          : "mdi-account-check"
-                      }}</v-icon>
-                    </v-btn>
-                  </template>
-                </v-tooltip>
-
-                <v-tooltip text="Reset Password">
-                  <template v-slot:activator="{ props }">
-                    <v-btn
-                      v-bind="props"
-                      icon
-                      size="small"
-                      color="error"
-                      variant="text"
-                      @click="$emit('reset-password', employee)"
-                    >
-                      <v-icon>mdi-key-variant</v-icon>
-                    </v-btn>
-                  </template>
-                </v-tooltip>
-              </div>
-            </div>
           </div>
         </div>
       </div>
+
+      <!-- Actions Popup Dialog -->
+      <v-dialog v-model="showActionsDialog" max-width="400">
+        <v-card class="simple-popup">
+          <v-card-title class="simple-popup-header">
+            <div class="text-h6">{{ selectedEmployee?.first_name }} {{ selectedEmployee?.last_name }}</div>
+            <div class="text-caption text-medium-emphasis">{{ selectedEmployee?.email }}</div>
+          </v-card-title>
+
+          <v-card-text class="simple-popup-content">
+            <v-btn
+              block
+              color="rgb(0, 33, 129)"
+              variant="flat"
+              class="simple-action-btn mb-3"
+              @click="handleEdit"
+            >
+              <v-icon class="me-2">mdi-pencil</v-icon>
+              Edit Employee
+            </v-btn>
+
+            <v-btn
+              block
+              color="rgb(0, 33, 129)"
+              variant="flat"
+              class="simple-action-btn mb-3"
+              @click="handleManagePermissions"
+            >
+              <v-icon class="me-2">mdi-shield-account</v-icon>
+              Manage Permissions
+            </v-btn>
+
+            <v-btn
+              block
+              :color="selectedEmployee?.status === 'active' ? 'orange' : 'green'"
+              variant="flat"
+              class="simple-action-btn mb-3"
+              @click="handleToggleStatus"
+            >
+              <v-icon class="me-2">
+                {{ selectedEmployee?.status === 'active' ? 'mdi-account-off' : 'mdi-account-check' }}
+              </v-icon>
+              {{ selectedEmployee?.status === 'active' ? 'Deactivate' : 'Activate' }} Employee
+            </v-btn>
+
+            <v-btn
+              block
+              color="red"
+              variant="flat"
+              class="simple-action-btn mb-4"
+              @click="handleResetPassword"
+            >
+              <v-icon class="me-2">mdi-key-variant</v-icon>
+              Reset Password
+            </v-btn>
+
+            <v-btn
+              block
+              variant="outlined"
+              @click="closeActionsDialog"
+            >
+              Close
+            </v-btn>
+          </v-card-text>
+        </v-card>
+      </v-dialog>
 
       <!-- Pagination Section (if needed) -->
       <div v-if="employees.length > 0" class="table-footer">

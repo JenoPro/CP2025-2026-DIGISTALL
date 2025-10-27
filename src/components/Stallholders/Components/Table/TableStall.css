@@ -16,7 +16,7 @@
 }
 
 .stall-table thead {
-  background: #1976d2;
+  background: rgb(0, 33, 129);
   color: white;
 }
 
@@ -125,7 +125,7 @@
 }
 
 .view-btn:hover svg {
-  color: #1976d2;
+  color: rgb(0, 33, 129);
 }
 
 .edit-btn:hover {
@@ -193,9 +193,9 @@
 }
 
 .page-btn:hover:not(:disabled) {
-  background: #1976d2;
+  background: rgb(0, 33, 129);
   color: white;
-  border-color: #1976d2;
+  border-color: rgb(0, 33, 129);
 }
 
 .page-btn:disabled {
@@ -216,7 +216,7 @@
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  background: #1976d2;
+  background: rgb(0, 33, 129);
   color: white;
   border: none;
   cursor: pointer;

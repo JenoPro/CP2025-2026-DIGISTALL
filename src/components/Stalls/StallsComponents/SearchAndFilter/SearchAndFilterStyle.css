@@ -33,7 +33,7 @@
 }
 
 .search-field .v-field--focused {
-  border-color: #1976d2;
+  border-color: rgb(0, 33, 129);
   background: white;
   box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
 }
@@ -62,15 +62,15 @@
 }
 
 .filter-btn:hover {
-  border-color: #1976d2;
-  color: #1976d2;
+  border-color: rgb(0, 33, 129);
+  color: rgb(0, 33, 129);
   background: #f8f9ff;
 }
 
 .filter-btn.filter-active {
-  background: #1976d2;
+  background: rgb(0, 33, 129);
   color: white;
-  border-color: #1976d2;
+  border-color: rgb(0, 33, 129);
 }
 
 .filter-icon,
@@ -192,15 +192,15 @@
 }
 
 .status-btn:hover {
-  border-color: #1976d2;
-  color: #1976d2;
+  border-color: rgb(0, 33, 129);
+  color: rgb(0, 33, 129);
   background: #f8f9ff;
 }
 
 .status-btn.active {
-  background: #1976d2;
+  background: rgb(0, 33, 129);
   color: white;
-  border-color: #1976d2;
+  border-color: rgb(0, 33, 129);
 }
 
 /* Select fields styling */
@@ -216,7 +216,7 @@
 }
 
 .filter-group .v-field--focused {
-  border-color: #1976d2;
+  border-color: rgb(0, 33, 129);
   box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
 }
 
@@ -270,9 +270,9 @@
 }
 
 .apply-btn {
-  background: #1976d2;
+  background: rgb(0, 33, 129);
   color: white;
-  border: 1px solid #1976d2;
+  border: 1px solid rgb(0, 33, 129);
 }
 
 .apply-btn:hover {

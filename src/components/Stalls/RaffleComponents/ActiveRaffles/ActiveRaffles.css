@@ -19,7 +19,7 @@
 
 .active-raffles .v-card-title .v-icon {
   margin-right: 12px;
-  color: #1976d2;
+  color: rgb(0, 33, 129);
 }
 
 .active-raffles .v-card-text {
@@ -35,7 +35,7 @@
 
 .active-raffles .v-text-field .v-icon,
 .active-raffles .v-select .v-icon {
-  color: #1976d2;
+  color: rgb(0, 33, 129);
 }
 
 /* Loading States */
@@ -113,12 +113,12 @@
 
 .active-raffles .v-btn--outlined {
   border-width: 1px;
-  color: #1976d2;
-  border-color: #1976d2;
+  color: rgb(0, 33, 129);
+  border-color: rgb(0, 33, 129);
 }
 
 .active-raffles .v-btn.primary {
-  background: #1976d2 !important;
+  background: rgb(0, 33, 129) !important;
   color: white !important;
 }
 

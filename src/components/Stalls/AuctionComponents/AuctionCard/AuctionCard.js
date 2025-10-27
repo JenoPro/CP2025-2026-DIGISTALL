@@ -104,11 +104,6 @@ export default {
       // Can select winner if auction is expired and has bidders
       return this.statusType === 'expired' && (this.auction.bidder_count || 0) > 0
     },
-
-    canGoLive() {
-      // Can go live if auction is active
-      return this.statusType === 'active'
-    },
   },
 
   methods: {
@@ -128,9 +123,9 @@ export default {
       })
     },
 
-    goLive() {
-      // Navigate to live page
-      this.$router.push(`/stalls/live/${this.auction.id}/auction`)
+    selectWinner() {
+      // Emit event to parent component to handle winner selection
+      this.$emit('select-winner', this.auction)
     },
   },
 }

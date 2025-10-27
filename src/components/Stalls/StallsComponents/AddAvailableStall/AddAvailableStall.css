@@ -321,7 +321,7 @@
 }
 
 .deadline-fields .v-input__prepend-outer {
-  color: #1976d2;
+  color: rgb(0, 33, 129);
 }
 
 /* Smart Deadline Card Styles */
@@ -338,7 +338,7 @@
 }
 
 .deadline-card .v-card-subtitle {
-  color: #1976d2 !important;
+  color: rgb(0, 33, 129) !important;
   font-weight: 600 !important;
   font-size: 0.875rem !important;
 }
@@ -354,5 +354,5 @@
 }
 
 .deadline-card .v-chip .v-icon {
-  color: #1976d2 !important;
+  color: rgb(0, 33, 129) !important;
 }

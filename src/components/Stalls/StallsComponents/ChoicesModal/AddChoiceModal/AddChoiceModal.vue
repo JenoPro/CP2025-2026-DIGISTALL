@@ -37,15 +37,15 @@
                   </p>
                   <div class="choice-features">
                     <div class="feature-item">
-                      <v-icon size="16" color="#1976d2">mdi-check-circle</v-icon>
+                      <v-icon size="16" color="rgb(0, 33, 129)">mdi-check-circle</v-icon>
                       <span>Stall Configuration</span>
                     </div>
                     <div class="feature-item">
-                      <v-icon size="16" color="#1976d2">mdi-check-circle</v-icon>
+                      <v-icon size="16" color="rgb(0, 33, 129)">mdi-check-circle</v-icon>
                       <span>Price & Size Setup</span>
                     </div>
                     <div class="feature-item">
-                      <v-icon size="16" color="#1976d2">mdi-check-circle</v-icon>
+                      <v-icon size="16" color="rgb(0, 33, 129)">mdi-check-circle</v-icon>
                       <span>Location Assignment</span>
                     </div>
                   </div>
@@ -141,15 +141,15 @@
                   </p>
                   <div class="choice-features">
                     <div class="feature-item">
-                      <v-icon size="16" color="#1976d2">mdi-check-circle</v-icon>
+                      <v-icon size="16" color="rgb(0, 33, 129)">mdi-check-circle</v-icon>
                       <span>Browse Structure</span>
                     </div>
                     <div class="feature-item">
-                      <v-icon size="16" color="#1976d2">mdi-check-circle</v-icon>
+                      <v-icon size="16" color="rgb(0, 33, 129)">mdi-check-circle</v-icon>
                       <span>View Details</span>
                     </div>
                     <div class="feature-item">
-                      <v-icon size="16" color="#1976d2">mdi-check-circle</v-icon>
+                      <v-icon size="16" color="rgb(0, 33, 129)">mdi-check-circle</v-icon>
                       <span>Manage Layout</span>
                     </div>
                   </div>

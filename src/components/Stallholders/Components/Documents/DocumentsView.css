@@ -23,7 +23,7 @@
 }
 
 .modal-header {
-  background: #1976d2;
+  background: rgb(0, 33, 129);
   color: white;
   padding: 20px 30px;
   border-radius: 12px 12px 0 0;
@@ -99,7 +99,7 @@
 }
 
 .document-card:hover {
-  border-color: #1976d2;
+  border-color: rgb(0, 33, 129);
   box-shadow: 0 4px 12px rgba(25, 118, 210, 0.15);
   transform: translateY(-2px);
 }

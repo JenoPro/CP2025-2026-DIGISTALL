@@ -14,14 +14,14 @@
 }
 
 .table-header {
-  background: #1976d2;
+  background: rgb(0, 33, 129);
   color: white;
 }
 
 .header-row,
 .table-row {
   display: grid;
-  grid-template-columns: 3fr 1.5fr 1fr 2fr 1.5fr 1.5fr;
+  grid-template-columns: 3fr 1.5fr 1fr 2fr 1.5fr;
   min-height: 60px;
   align-items: center;
   gap: 8px;
@@ -34,8 +34,14 @@
   transition: background-color 0.2s;
 }
 
-.table-row:hover {
-  background-color: #f5f5f5;
+.clickable-row {
+  cursor: pointer;
+}
+
+.clickable-row:hover {
+  background-color: #f0f4ff;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.1);
 }
 
 .table-row:last-child {
@@ -188,7 +194,7 @@
 @media (max-width: 1200px) {
   .header-row,
   .table-row {
-    grid-template-columns: 2.5fr 1.3fr 0.9fr 1.8fr 1.3fr 1.4fr;
+    grid-template-columns: 2.5fr 1.3fr 0.9fr 1.8fr 1.3fr;
     gap: 6px;
     padding: 0 12px;
   }
@@ -205,7 +211,7 @@
 @media (max-width: 992px) {
   .header-row,
   .table-row {
-    grid-template-columns: 2fr 1.1fr 0.8fr 1.5fr 1.1fr 1.2fr;
+    grid-template-columns: 2fr 1.1fr 0.8fr 1.5fr 1.1fr;
     gap: 4px;
     padding: 0 8px;
   }
@@ -229,7 +235,7 @@
   .header-row,
   .table-row {
     min-width: 900px;
-    grid-template-columns: 250px 140px 100px 180px 120px 140px;
+    grid-template-columns: 250px 140px 100px 180px 120px;
     gap: 4px;
     padding: 0 8px;
   }
@@ -251,4 +257,45 @@
   .employee-email {
     font-size: 10px;
   }
+}
+
+/* Simple Actions Popup Styles */
+.simple-popup {
+  border-radius: 12px !important;
+}
+
+.simple-popup-header {
+  padding: 20px 24px 16px 24px !important;
+  background: #f8f9fa !important;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.simple-popup-content {
+  padding: 20px 24px !important;
+}
+
+.simple-action-btn {
+  height: 48px !important;
+  text-transform: none !important;
+  font-weight: 500 !important;
+  border-radius: 8px !important;
+  justify-content: flex-start !important;
+}
+
+.simple-action-btn .v-icon {
+  font-size: 18px;
+}
+
+.action-buttons-popup {
+  padding: 8px 0;
+}
+
+.action-buttons-popup .v-btn {
+  justify-content: flex-start;
+  text-transform: none;
+  font-weight: 500;
+}
+
+.action-buttons-popup .v-btn .v-icon {
+  margin-right: 12px;
 }

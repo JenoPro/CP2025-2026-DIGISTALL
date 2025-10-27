@@ -167,13 +167,6 @@ const router = createRouter({
             import('../components/Stalls/AuctionComponents/AuctionsPage/AuctionsPage.vue'),
           meta: { title: 'Active Auctions' },
         },
-        {
-          path: 'stalls/live/:stallId/:type',
-          name: 'LivePage',
-          component: () => import('../components/Stalls/LiveComponents/LivePage.vue'),
-          props: true,
-          meta: { title: 'Live Management' },
-        },
       ],
     },
   ],

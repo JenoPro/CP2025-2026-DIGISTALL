@@ -2,7 +2,7 @@
   <div class="active-raffles">
     <v-card>
       <v-card-title class="d-flex align-center">
-        <v-icon left color="#1976d2">mdi-ticket-percent</v-icon>
+        <v-icon left color="rgb(0, 33, 129)">mdi-ticket-percent</v-icon>
         Active Raffles
       </v-card-title>
 

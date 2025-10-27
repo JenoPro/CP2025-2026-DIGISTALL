@@ -43,9 +43,9 @@
 }
 
 .filter-btn.filter-active {
-  background-color: #1976d2 !important;
+  background-color: rgb(0, 33, 129) !important;
   color: white !important;
-  border-color: #1976d2 !important;
+  border-color: rgb(0, 33, 129) !important;
 }
 
 /* Filter dropdown */

@@ -18,6 +18,15 @@
   height: 100% !important;
 }
 
+.clickable-card {
+  cursor: pointer;
+}
+
+.clickable-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(25, 118, 210, 0.2) !important;
+}
+
 .stall-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
@@ -72,7 +81,7 @@
 .price {
   font-size: 1.5rem;
   font-weight: bold;
-  color: #1976d2;
+  color: rgb(0, 33, 129);
   text-align: right;
   flex: 1;
 }
@@ -123,7 +132,7 @@
 }
 
 .show-more-text:hover {
-  color: #1976d2;
+  color: rgb(0, 33, 129);
 }
 
 .transition-transform {

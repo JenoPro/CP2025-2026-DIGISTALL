@@ -521,31 +521,6 @@ export default {
       this.showMessage(text, type)
     },
 
-    // Auction handlers (if using auction functionality)
-    handleStallLive(stall) {
-      console.log('Navigate to live page for stall:', stall)
-      // Determine the type based on stall properties
-      let liveType = 'live'
-      if (stall.priceType === 'Auction') {
-        liveType = 'auction'
-      } else if (stall.priceType === 'Raffle') {
-        liveType = 'raffle'
-      }
-
-      // Navigate to the live page with path parameters as expected by router
-      this.$router.push({
-        name: 'LivePage',
-        params: {
-          stallId: stall.id || stall.stallId,
-          type: liveType,
-        },
-        query: {
-          stallNumber: stall.stallNumber,
-          stallName: stall.stallName || stall.name,
-        },
-      })
-    },
-
     // NEW: Handle raffle management
     handleRaffleManagement(stall) {
       console.log('Navigate to raffle management for stall:', stall)
@@ -558,18 +533,11 @@ export default {
 
     // NEW: Handle auction management
     handleAuctionManagement(stall) {
-      console.log('Navigate to live auction management for stall:', stall)
-      // Navigate to the live page with auction type to show bidding interface
+      console.log('Navigate to auction management for stall:', stall)
+      // Navigate to the auctions page with a specific stall focus
       this.$router.push({
-        name: 'LivePage',
-        params: {
-          stallId: stall.id || stall.stallId,
-          type: 'auction',
-        },
-        query: {
-          stallNumber: stall.stallNumber,
-          stallName: stall.stallName || stall.name,
-        },
+        path: '/stalls/auctions',
+        query: { stallId: stall.id, stallNumber: stall.stallNumber },
       })
     },
 

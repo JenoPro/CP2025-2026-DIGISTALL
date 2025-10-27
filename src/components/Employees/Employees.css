@@ -37,7 +37,7 @@
 }
 
 .stat-card.primary {
-  border-left: 4px solid #1976d2;
+  border-left: 4px solid rgb(0, 33, 129);
 }
 
 .stat-card.success {
@@ -81,7 +81,7 @@
 }
 
 .primary--text {
-  color: #1976d2 !important;
+  color: rgb(0, 33, 129) !important;
 }
 
 .text--secondary {
@@ -104,7 +104,7 @@
   width: 64px;
   height: 64px;
   border-radius: 50% !important;
-  background: #1976d2 !important;
+  background: rgb(0, 33, 129) !important;
   color: white !important;
   border: none !important;
   display: flex !important;

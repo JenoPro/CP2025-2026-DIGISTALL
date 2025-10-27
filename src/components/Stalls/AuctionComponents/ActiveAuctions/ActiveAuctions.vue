@@ -2,7 +2,7 @@
   <div class="active-auctions">
     <v-card>
       <v-card-title class="d-flex align-center">
-        <v-icon left color="#1976d2">mdi-gavel</v-icon>
+        <v-icon left color="rgb(0, 33, 129)">mdi-gavel</v-icon>
         Active Auctions
       </v-card-title>
 

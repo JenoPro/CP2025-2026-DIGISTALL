@@ -1,5 +1,5 @@
-﻿.v-card-title {
-  background: linear-gradient(45deg, #1976d2, #1565c0);
+.v-card-title {
+  background: linear-gradient(45deg, rgb(0, 33, 129), #1565c0);
 }
 
 .white--text {

@@ -82,21 +82,11 @@
 
       <v-spacer></v-spacer>
 
-      <!-- Go Live Button -->
-      <v-btn
-        v-if="canGoLive"
-        small
-        color="#1976d2"
-        @click="goLive"
-        class="go-live-btn"
-      >
-        <v-icon small left>mdi-broadcast</v-icon>
-        Go Live
-      </v-btn>
+
 
       <!-- Extend Timer Button -->
       <v-btn
-        v-if="canExtendTimer && !canGoLive"
+        v-if="canExtendTimer"
         small
         outlined
         color="warning"
@@ -108,7 +98,7 @@
 
       <!-- Select Winner Button -->
       <v-btn
-        v-if="canSelectWinner && !canGoLive"
+        v-if="canSelectWinner"
         small
         color="success"
         @click="$emit('select-winner', raffle)"

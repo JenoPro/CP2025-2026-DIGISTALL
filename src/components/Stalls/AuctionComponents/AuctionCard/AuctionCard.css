@@ -13,7 +13,7 @@
 
 /* Status-based card styling */
 .auction-card.status-active {
-  border-color: #1976d2;
+  border-color: rgb(0, 33, 129);
   background: linear-gradient(145deg, #f3f7ff 0%, #ffffff 100%);
 }
 
@@ -44,7 +44,7 @@
 }
 
 .status-banner.status-active {
-  background: linear-gradient(135deg, #1976d2, #1565c0);
+  background: linear-gradient(135deg, rgb(0, 33, 129), #1565c0);
   color: white;
 }
 
@@ -105,7 +105,7 @@
   display: block;
   font-size: 1.1rem;
   font-weight: 700;
-  color: #1976d2;
+  color: rgb(0, 33, 129);
   margin-top: 2px;
 }
 
@@ -265,7 +265,7 @@
 .starting-amount {
   font-size: 1rem;
   font-weight: 700;
-  color: #1976d2;
+  color: rgb(0, 33, 129);
   margin: 0;
 }
 
@@ -286,7 +286,7 @@
 }
 
 .go-live-btn {
-  background: linear-gradient(45deg, #1976d2, #1565c0) !important;
+  background: linear-gradient(45deg, rgb(0, 33, 129), #1565c0) !important;
   color: white !important;
   box-shadow: 0 3px 8px rgba(25, 118, 210, 0.3) !important;
   border: none !important;

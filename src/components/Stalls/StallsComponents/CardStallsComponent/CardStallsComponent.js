@@ -22,14 +22,14 @@ export default {
     }
   },
   methods: {
-    handleModify(stall) {
-      console.log('Edit stall:', stall)
+    handleCardClick(stall) {
+      console.log('Card clicked for stall:', stall)
       this.$emit('stall-edit', stall)
     },
 
-    handleLive(stall) {
-      console.log('Go live with stall:', stall)
-      this.$emit('stall-live', stall)
+    handleModify(stall) {
+      console.log('Edit stall:', stall)
+      this.$emit('stall-edit', stall)
     },
 
     // NEW: Handle raffle management
