@@ -45,27 +45,29 @@
       </div>
 
       <!-- Bid History Preview -->
-      <div v-if="auction.recent_bids && auction.recent_bids.length" class="recent-bids">
-        <p class="recent-label">Recent bids:</p>
-        <div class="bid-items">
-          <div v-for="bid in auction.recent_bids.slice(0, 2)" :key="bid.bid_id" class="bid-item">
-            <v-avatar size="20" class="bid-avatar">
-              <span class="avatar-text">{{ bid.bidder_name.charAt(0) }}</span>
-            </v-avatar>
-            <span class="bid-details">
-              {{ bid.bidder_name }} - ₱{{ formatPrice(bid.bid_amount) }}
+      <div class="recent-bids-container">
+        <div v-if="auction.recent_bids && auction.recent_bids.length" class="recent-bids">
+          <p class="recent-label">Recent bids:</p>
+          <div class="bid-items">
+            <div v-for="bid in auction.recent_bids.slice(0, 2)" :key="bid.bid_id" class="bid-item">
+              <v-avatar size="20" class="bid-avatar">
+                <span class="avatar-text">{{ bid.bidder_name.charAt(0) }}</span>
+              </v-avatar>
+              <span class="bid-details">
+                {{ bid.bidder_name }} - ₱{{ formatPrice(bid.bid_amount) }}
+              </span>
+            </div>
+            <span v-if="auction.recent_bids.length > 2" class="more-bids">
+              +{{ auction.recent_bids.length - 2 }} more bids
             </span>
           </div>
-          <span v-if="auction.recent_bids.length > 2" class="more-bids">
-            +{{ auction.recent_bids.length - 2 }} more bids
-          </span>
         </div>
-      </div>
 
-      <!-- Starting Bid Info (if no bids yet) -->
-      <div v-else class="starting-bid-info">
-        <p class="starting-label">Starting bid:</p>
-        <p class="starting-amount">₱{{ formatPrice(auction.starting_bid) }}</p>
+        <!-- Starting Bid Info (if no bids yet) -->
+        <div v-else class="starting-bid-info">
+          <p class="starting-label">Starting bid:</p>
+          <p class="starting-amount">₱{{ formatPrice(auction.starting_bid) }}</p>
+        </div>
       </div>
     </v-card-text>
 
@@ -74,6 +76,11 @@
       <v-btn small text color="primary" @click="$emit('view-details', auction)">
         <v-icon small left>mdi-eye</v-icon>
         View Details
+      </v-btn>
+
+      <v-btn small text color="info" @click="$emit('view-participants', auction)">
+        <v-icon small left>mdi-account-group</v-icon>
+        Participants
       </v-btn>
 
       <v-spacer></v-spacer>

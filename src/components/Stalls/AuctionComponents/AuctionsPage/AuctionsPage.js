@@ -1,9 +1,11 @@
 ﻿import ActiveAuctions from '../ActiveAuctions/ActiveAuctions.vue'
+import StallParticipants from '../../StallsComponents/StallParticipants/StallParticipants.vue'
 
 export default {
   name: 'AuctionsPage',
   components: {
     ActiveAuctions,
+    StallParticipants,
   },
   data() {
     return {
@@ -13,6 +15,8 @@ export default {
       messageTimeout: 5000,
       showDetailsModal: false,
       selectedAuction: null,
+      showParticipantsModal: false,
+      selectedAuctionForParticipants: null,
     }
   },
   methods: {
@@ -31,6 +35,17 @@ export default {
     closeDetailsModal() {
       this.showDetailsModal = false
       this.selectedAuction = null
+    },
+
+    handleViewParticipants(auction) {
+      this.selectedAuctionForParticipants = auction
+      this.showParticipantsModal = true
+      console.log('View auction participants:', auction)
+    },
+
+    closeParticipantsModal() {
+      this.showParticipantsModal = false
+      this.selectedAuctionForParticipants = null
     },
 
     formatPrice(price) {

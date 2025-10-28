@@ -66,6 +66,7 @@
               :raffle="raffle"
               @extend-timer="handleExtendTimer"
               @view-details="handleViewDetails"
+              @view-participants="handleViewParticipants"
               @select-winner="handleSelectWinner"
             />
           </v-col>

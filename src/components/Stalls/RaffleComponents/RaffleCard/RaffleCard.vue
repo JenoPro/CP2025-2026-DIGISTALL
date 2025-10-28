@@ -49,21 +49,26 @@
         </div>
       </div>
 
-      <!-- Recent Participants (if any) -->
-      <div v-if="raffle.recent_participants && raffle.recent_participants.length" class="recent-participants">
-        <p class="recent-label">Recent entries:</p>
-        <div class="participant-avatars">
-          <v-avatar
-            v-for="participant in raffle.recent_participants.slice(0, 3)"
-            :key="participant.user_id"
-            size="24"
-            class="participant-avatar"
-          >
-            <span class="avatar-text">{{ participant.name.charAt(0) }}</span>
-          </v-avatar>
-          <span v-if="raffle.recent_participants.length > 3" class="more-participants">
-            +{{ raffle.recent_participants.length - 3 }} more
-          </span>
+      <!-- Fixed height container for consistency -->
+      <div class="recent-participants-container">
+        <div v-if="raffle.recent_participants && raffle.recent_participants.length" class="recent-participants">
+          <p class="recent-label">Recent entries:</p>
+          <div class="participant-avatars">
+            <v-avatar
+              v-for="participant in raffle.recent_participants.slice(0, 3)"
+              :key="participant.user_id"
+              size="24"
+              class="participant-avatar"
+            >
+              <span class="avatar-text">{{ participant.name.charAt(0) }}</span>
+            </v-avatar>
+            <span v-if="raffle.recent_participants.length > 3" class="more-participants">
+              +{{ raffle.recent_participants.length - 3 }} more
+            </span>
+          </div>
+        </div>
+        <div v-else class="no-participants">
+          <p class="recent-label">No entries yet</p>
         </div>
       </div>
     </v-card-text>
@@ -81,8 +86,6 @@
       </v-btn>
 
       <v-spacer></v-spacer>
-
-
 
       <!-- Extend Timer Button -->
       <v-btn

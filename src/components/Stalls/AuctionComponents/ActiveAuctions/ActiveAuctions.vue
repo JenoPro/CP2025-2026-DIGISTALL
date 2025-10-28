@@ -38,7 +38,7 @@
         <v-row v-else>
           <v-col v-for="auction in filteredAuctions" :key="auction.auction_id" cols="12" md="6" lg="4">
             <auction-card :auction="auction" @extend-timer="handleExtendTimer" @view-details="handleViewDetails"
-              @select-winner="handleSelectWinner" />
+              @view-participants="handleViewParticipants" @select-winner="handleSelectWinner" />
           </v-col>
         </v-row>
       </v-card-text>

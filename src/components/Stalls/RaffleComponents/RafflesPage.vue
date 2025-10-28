@@ -5,82 +5,52 @@
         <v-icon large color="primary" class="mr-3">mdi-ticket-percent</v-icon>
         Active Raffles
       </h1>
-      <p class="page-subtitle">
-        Manage and monitor all active raffle stalls with live countdown timers
-      </p>
+      <p class="page-subtitle">Manage and monitor all active raffle stalls</p>
     </div>
 
-    <active-raffles 
+    <active-raffles
       @show-message="handleMessage"
       @view-raffle-details="handleViewDetails"
+      @view-raffle-participants="handleViewParticipants"
     />
 
-    <!-- View Details Modal -->
-    <v-dialog v-model="showDetailsModal" max-width="600px" persistent>
-      <v-card>
-        <v-card-title class="d-flex align-center justify-space-between">
-          <span>Raffle Details</span>
-          <v-btn icon @click="closeDetailsModal">
-            <v-icon>mdi-close</v-icon>
-          </v-btn>
-        </v-card-title>
-        
-        <v-card-text v-if="selectedRaffle">
-          <v-row>
-            <v-col cols="12" md="6">
-              <h4 class="mb-2">Stall Information</h4>
-              <p><strong>Stall Number:</strong> {{ selectedRaffle.stall_number }}</p>
-              <p><strong>Location:</strong> {{ selectedRaffle.location }}</p>
-              <p><strong>Floor:</strong> {{ selectedRaffle.floor_name }}</p>
-              <p><strong>Section:</strong> {{ selectedRaffle.section_name }}</p>
-              <p><strong>Entry Fee:</strong> ₱{{ formatPrice(selectedRaffle.entry_fee) }}</p>
-            </v-col>
-            <v-col cols="12" md="6">
-              <h4 class="mb-2">Raffle Status</h4>
-              <p><strong>Status:</strong> {{ selectedRaffle.status }}</p>
-              <p><strong>Created:</strong> {{ formatDateTime(selectedRaffle.created_at) }}</p>
-              <p><strong>Expires:</strong> {{ formatDateTime(selectedRaffle.expires_at) }}</p>
-              <p><strong>Participants:</strong> {{ selectedRaffle.participant_count || 0 }}</p>
-            </v-col>
-          </v-row>
-          
-          <!-- Recent Participants -->
-          <div v-if="selectedRaffle.recent_participants && selectedRaffle.recent_participants.length" class="mt-4">
-            <h4 class="mb-2">Recent Participants</h4>
-            <v-chip 
-              v-for="participant in selectedRaffle.recent_participants" 
-              :key="participant.user_id"
-              class="mr-2 mb-2"
-              small
-            >
-              {{ participant.name }}
-            </v-chip>
-          </div>
-        </v-card-text>
-        
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn text @click="closeDetailsModal">Close</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <!-- Use the separate RaffleDetailsPopup component -->
+    <raffle-details-popup
+      :show-details-modal="showDetailsModal"
+      :selected-raffle="selectedRaffle"
+      :show-participants-modal="showParticipantsModal"
+      :selected-raffle-for-participants="selectedRaffleForParticipants"
+      @close-details-modal="closeDetailsModal"
+      @close-participants-modal="closeParticipantsModal"
+    />
 
-    <!-- Message Snackbar -->
+    <!-- Enhanced Message Snackbar -->
     <v-snackbar
       v-model="showMessage"
       :color="messageType"
       :timeout="messageTimeout"
-      top
+      location="top right"
+      variant="elevated"
+      class="enhanced-snackbar"
     >
-      {{ message }}
-      <template v-slot:action="{ attrs }">
+      <div class="snackbar-content">
+        <v-icon
+          :color="messageType === 'success' ? 'white' : 'white'"
+          class="snackbar-icon"
+        >
+          {{ messageType === "success" ? "mdi-check-circle" : "mdi-information" }}
+        </v-icon>
+        <span class="snackbar-text">{{ message }}</span>
+      </div>
+      <template v-slot:actions>
         <v-btn
           color="white"
-          text
-          v-bind="attrs"
+          variant="text"
+          size="small"
           @click="showMessage = false"
+          class="snackbar-action"
         >
-          Close
+          <v-icon>mdi-close</v-icon>
         </v-btn>
       </template>
     </v-snackbar>
@@ -88,4 +58,4 @@
 </template>
 
 <script src="./RafflesPage.js"></script>
-<style scoped src="./RafflesPage.css"></style>
+<style src="./RafflesPage.css"></style>

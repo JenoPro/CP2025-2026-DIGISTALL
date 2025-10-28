@@ -6,11 +6,11 @@
         Active Auctions
       </h1>
       <p class="page-subtitle">
-        Manage and monitor all active auction stalls with live bidding
+        Manage and monitor all active auction stalls
       </p>
     </div>
 
-    <active-auctions @show-message="handleMessage" @view-auction-details="handleViewDetails" />
+    <active-auctions @show-message="handleMessage" @view-auction-details="handleViewDetails" @view-auction-participants="handleViewParticipants" />
 
     <!-- View Details Modal -->
     <v-dialog v-model="showDetailsModal" max-width="600px" persistent>
@@ -43,20 +43,31 @@
                 selectedAuction.highest_bidder }}</p>
             </v-col>
           </v-row>
-
-          <!-- Recent Bids -->
-          <div v-if="selectedAuction.recent_bids && selectedAuction.recent_bids.length" class="mt-4">
-            <h4 class="mb-2">Recent Bids</h4>
-            <v-chip v-for="bid in selectedAuction.recent_bids" :key="bid.bid_id" class="mr-2 mb-2" small>
-              {{ bid.bidder_name }}: ₱{{ formatPrice(bid.amount) }}
-            </v-chip>
-          </div>
         </v-card-text>
 
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn text @click="closeDetailsModal">Close</v-btn>
         </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- View Participants Modal -->
+    <v-dialog v-model="showParticipantsModal" max-width="800px" persistent>
+      <v-card>
+        <v-card-title class="d-flex align-center justify-space-between">
+          <span>Auction Bidders</span>
+          <v-btn icon @click="closeParticipantsModal">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-card-title>
+        
+        <v-card-text v-if="selectedAuctionForParticipants">
+          <stall-participants 
+            :stall-id="selectedAuctionForParticipants.stall_id"
+            @close="closeParticipantsModal"
+          />
+        </v-card-text>
       </v-card>
     </v-dialog>
 

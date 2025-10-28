@@ -199,8 +199,23 @@
 }
 
 /* Recent Participants */
-.recent-participants {
+.recent-participants-container {
+  min-height: 60px;
+  display: flex;
+  align-items: center;
   margin-top: 8px;
+}
+
+.recent-participants {
+  width: 100%;
+}
+
+.no-participants {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.6;
 }
 
 .recent-label {
@@ -247,49 +262,6 @@
 
 .card-actions .v-btn .v-icon {
   margin-right: 4px;
-}
-
-.go-live-btn {
-  background: linear-gradient(45deg, rgb(0, 33, 129), #1565c0) !important;
-  color: white !important;
-  box-shadow: 0 3px 8px rgba(25, 118, 210, 0.3) !important;
-  border: none !important;
-}
-
-.go-live-btn:hover {
-  background: linear-gradient(45deg, #1565c0, #0d47a1) !important;
-  box-shadow: 0 4px 12px rgba(25, 118, 210, 0.4) !important;
-}
-
-.go-live-btn .v-icon {
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.1);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-/* Animation for live updates */
-.raffle-card {
-  animation: subtle-pulse 3s ease-in-out infinite;
-}
-
-@keyframes subtle-pulse {
-  0%,
-  100% {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  }
-  50% {
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-  }
 }
 
 /* Responsive Design */

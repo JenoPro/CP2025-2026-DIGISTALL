@@ -156,8 +156,7 @@ const router = createRouter({
         {
           path: 'stalls/raffles',
           name: 'Raffles',
-          component: () =>
-            import('../components/Stalls/RaffleComponents/RafflesPage/RafflesPage.vue'),
+          component: () => import('../components/Stalls/RaffleComponents/RafflesPage.vue'),
           meta: { title: 'Active Raffles' },
         },
         {

@@ -1,5 +1,7 @@
 import AuctionCard from '../AuctionCard/AuctionCard.vue'
 
+import participantsService from '../../../../services/participantsService.js'
+
 export default {
   name: 'ActiveAuctions',
   components: {
@@ -196,22 +198,22 @@ export default {
                 stall_number: stall.stall_no || stall.stall_number,
                 location: stall.stall_location || stall.location,
                 starting_bid: stall.rental_price,
-                current_bid: stall.current_bid || stall.rental_price,
+                current_bid: stall.rental_price, // Will be updated from bidders data
                 expires_at: expiresAt,
                 created_at: stall.created_at,
                 duration_hours: stall.duration_hours || 72,
                 status: stall.status?.toLowerCase() || 'active',
-                bid_count: stall.bid_count || Math.floor(Math.random() * 10) + 1, // Mock 1-10 bids
-                bidder_count: Math.floor(Math.random() * 8) + 1, // Mock 1-8 bidders
+                bid_count: 0, // Will be loaded from participants service
+                bidder_count: 0, // Will be loaded from participants service
                 floor_name: stall.floor_name,
                 section_name: stall.section_name,
-                recent_bids: stall.recent_bids || [
-                  { bidder_name: 'John Doe', bid_amount: stall.rental_price + 500 },
-                  { bidder_name: 'Jane Smith', bid_amount: stall.rental_price + 300 },
-                ],
-                highest_bidder: stall.highest_bidder || 'John Doe',
+                recent_bids: [], // Will be loaded from participants service
+                highest_bidder: null, // Will be loaded from participants service
               }
             })
+
+          // Load bidders for each auction
+          await this.loadBiddersForAuctions(this.auctions)
 
           console.log('Filtered auctions:', this.auctions)
         } else {
@@ -278,6 +280,11 @@ export default {
       this.$emit('view-auction-details', auction)
     },
 
+    handleViewParticipants(auction) {
+      // Emit event to parent component to show auction participants
+      this.$emit('view-auction-participants', auction)
+    },
+
     handleSelectWinner(auction) {
       this.selectedAuction = auction
       this.showWinnerDialog = true
@@ -340,6 +347,69 @@ export default {
     formatPrice(price) {
       if (!price) return '0'
       return parseFloat(price).toLocaleString()
+    },
+
+    /**
+     * Load bidders for all auctions from the database
+     * @param {Array} auctions - Array of auction objects
+     */
+    async loadBiddersForAuctions(auctions) {
+      console.log('🔍 Loading bidders for auctions...')
+
+      // Don't fail the entire process if bidders can't be loaded
+      const bidderPromises = auctions.map(async (auction) => {
+        try {
+          console.log(
+            `🔍 Loading bidders for auction ${auction.stall_number} (stall_id: ${auction.stall_id})`,
+          )
+          const response = await participantsService.getAuctionBidders(auction.stall_id)
+          if (response.success) {
+            auction.bidder_count = response.count
+            auction.bid_count = response.count // Assuming each bidder has made one bid
+            auction.current_bid = response.highest_bid || auction.starting_bid
+            auction.highest_bidder = response.highest_bidder
+            auction.recent_bids = response.data.slice(0, 2).map((bidder) => ({
+              bidder_name: bidder.bidder_name,
+              bid_amount: bidder.bid_amount,
+            }))
+            console.log(`✅ Loaded ${response.count} bidders for auction ${auction.stall_number}`)
+          } else {
+            console.warn(
+              `⚠️ Failed to load bidders for auction ${auction.stall_number}:`,
+              response.message,
+            )
+            // Set default values instead of failing
+            auction.bidder_count = 0
+            auction.bid_count = 0
+            auction.current_bid = auction.starting_bid
+            auction.highest_bidder = null
+            auction.recent_bids = []
+          }
+        } catch (error) {
+          console.error(`❌ Error loading bidders for auction ${auction.stall_number}:`, error)
+          // Set default values to prevent UI from breaking
+          auction.bidder_count = 0
+          auction.bid_count = 0
+          auction.current_bid = auction.starting_bid
+          auction.highest_bidder = null
+          auction.recent_bids = []
+
+          // Show a user-friendly message for debugging
+          if (error.status === 404) {
+            console.warn(`⚠️ No participants endpoint found for stall ${auction.stall_id}`)
+          } else if (error.status === 401) {
+            console.warn(
+              `⚠️ Authentication failed when loading bidders for stall ${auction.stall_id}`,
+            )
+          } else if (!error.status) {
+            console.warn(`⚠️ Network error when loading bidders for stall ${auction.stall_id}`)
+          }
+        }
+      })
+
+      // Wait for all bidder loading attempts to complete
+      await Promise.allSettled(bidderPromises)
+      console.log('✅ Finished loading bidders for all auctions (with fallbacks)')
     },
   },
 }

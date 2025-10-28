@@ -1,5 +1,7 @@
 import RaffleCard from '../RaffleCard/RaffleCard.vue'
 
+import participantsService from '../../../../services/participantsService.js'
+
 export default {
   name: 'ActiveRaffles',
   components: {
@@ -197,16 +199,15 @@ export default {
                 created_at: stall.created_at,
                 duration_hours: stall.duration_hours || 72,
                 status: stall.status?.toLowerCase() || 'active',
-                participant_count: stall.participant_count || Math.floor(Math.random() * 15) + 1, // Mock 1-15 participants
+                participant_count: 0, // Will be loaded from participants service
                 floor_name: stall.floor_name,
                 section_name: stall.section_name,
-                recent_participants: stall.recent_participants || [
-                  { user_id: 1, name: 'John Doe' },
-                  { user_id: 2, name: 'Jane Smith' },
-                  { user_id: 3, name: 'Mike Johnson' },
-                ],
+                recent_participants: [], // Will be loaded from participants service
               }
             })
+
+          // Load participants for each raffle
+          await this.loadParticipantsForRaffles(this.raffles)
 
           console.log('Filtered raffles:', this.raffles)
         } else {
@@ -273,6 +274,11 @@ export default {
       this.$emit('view-raffle-details', raffle)
     },
 
+    handleViewParticipants(raffle) {
+      // Emit event to parent component to show raffle participants
+      this.$emit('view-raffle-participants', raffle)
+    },
+
     handleSelectWinner(raffle) {
       this.selectedRaffle = raffle
       this.showWinnerDialog = true
@@ -330,6 +336,59 @@ export default {
         hour: '2-digit',
         minute: '2-digit',
       })
+    },
+
+    /**
+     * Load participants for all raffles from the database
+     * @param {Array} raffles - Array of raffle objects
+     */
+    async loadParticipantsForRaffles(raffles) {
+      console.log('🔍 Loading participants for raffles...')
+
+      // Don't fail the entire process if participants can't be loaded
+      const participantPromises = raffles.map(async (raffle) => {
+        try {
+          console.log(
+            `🔍 Loading participants for raffle ${raffle.stall_number} (stall_id: ${raffle.stall_id})`,
+          )
+          const response = await participantsService.getRaffleParticipants(raffle.stall_id)
+          if (response.success) {
+            raffle.participant_count = response.count
+            raffle.recent_participants = response.data.slice(0, 3) // Show only recent 3
+            console.log(
+              `✅ Loaded ${response.count} participants for raffle ${raffle.stall_number}`,
+            )
+          } else {
+            console.warn(
+              `⚠️ Failed to load participants for raffle ${raffle.stall_number}:`,
+              response.message,
+            )
+            // Set default values instead of failing
+            raffle.participant_count = 0
+            raffle.recent_participants = []
+          }
+        } catch (error) {
+          console.error(`❌ Error loading participants for raffle ${raffle.stall_number}:`, error)
+          // Set default values to prevent UI from breaking
+          raffle.participant_count = 0
+          raffle.recent_participants = []
+
+          // Show a user-friendly message for debugging
+          if (error.status === 404) {
+            console.warn(`⚠️ No participants endpoint found for stall ${raffle.stall_id}`)
+          } else if (error.status === 401) {
+            console.warn(
+              `⚠️ Authentication failed when loading participants for stall ${raffle.stall_id}`,
+            )
+          } else if (!error.status) {
+            console.warn(`⚠️ Network error when loading participants for stall ${raffle.stall_id}`)
+          }
+        }
+      })
+
+      // Wait for all participant loading attempts to complete
+      await Promise.allSettled(participantPromises)
+      console.log('✅ Finished loading participants for all raffles (with fallbacks)')
     },
   },
 }

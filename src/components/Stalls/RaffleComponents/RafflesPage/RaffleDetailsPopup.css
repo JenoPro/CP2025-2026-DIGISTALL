@@ -1,0 +1,385 @@
+/* Simple Raffles Page Styles */
+.raffles-page {
+  padding: 0;
+  height: 100%;
+}
+
+/* Simple Page Header */
+.page-header {
+  background: white;
+  color: black;
+  padding: 32px 24px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.page-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  display: flex;
+  align-items: center;
+  color: rgb(0, 33, 129);
+}
+
+.page-subtitle {
+  font-size: 1rem;
+  margin: 0;
+  font-weight: 400;
+  color: #424242;
+}
+
+/* Simple Modal */
+.raffle-details-card {
+  border-radius: 8px !important;
+  overflow: hidden !important;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Simple Modal Header - Normal size and consistent with main page */
+.raffle-details-card .simple-header {
+  background: white !important;
+  background-image: none !important;
+  color: #002181 !important;
+  padding: 12px 20px !important;
+  border-bottom: 1px solid #e0e0e0 !important;
+  font-size: 1rem !important;
+  font-weight: 500 !important;
+  min-height: 56px !important;
+  border-radius: 0 !important;
+}
+
+/* Override Vuetify card title styles */
+.raffle-details-card .v-card-title.simple-header {
+  background: white !important;
+  background-image: none !important;
+  color: #002181 !important;
+  padding: 12px 20px !important;
+  border-bottom: 1px solid #e0e0e0 !important;
+  font-size: 1rem !important;
+  font-weight: 500 !important;
+  min-height: 56px !important;
+  border-radius: 0 !important;
+}
+
+.raffle-details-card .simple-header .header-title {
+  color: #002181 !important;
+  font-size: 1rem !important;
+  font-weight: 500 !important;
+}
+
+.raffle-details-card .simple-header .close-btn {
+  background: transparent !important;
+  color: #666 !important;
+  transition: background-color 0.2s ease !important;
+}
+
+.raffle-details-card .simple-header .close-btn:hover {
+  background: rgba(0, 0, 0, 0.04) !important;
+}
+
+/* Simple Content */
+.raffle-content {
+  padding: 24px !important;
+  background: white !important;
+}
+
+/* Simple Status */
+.status-section {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.status-chip {
+  font-weight: 600 !important;
+  letter-spacing: 0.5px;
+}
+
+/* Simple Cards */
+.info-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.info-card {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 18px;
+  border: 1px solid #e9ecef;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.info-card:hover {
+  background: white;
+  border-color: rgba(0, 33, 129, 0.15);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.card-title {
+  font-size: 16px;
+  font-weight: 500;
+  color: #002181;
+  margin: 0;
+}
+
+.card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #f1f3f4;
+}
+
+.detail-item:last-child {
+  border-bottom: none;
+}
+
+.detail-item.highlight {
+  background: rgba(0, 33, 129, 0.04);
+  border-radius: 6px;
+  padding: 12px;
+  border: none;
+  margin: 4px 0;
+}
+
+.detail-label {
+  font-weight: 500;
+  color: #6c757d;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.detail-value {
+  font-weight: 600;
+  color: #212529;
+  font-size: 14px;
+  text-align: right;
+}
+
+.detail-value.price {
+  color: #002181;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.detail-value.participant-count {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #002181;
+  font-weight: 600;
+}
+
+/* Simple Participants Section */
+.recent-participants-section {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  border: 1px solid #e9ecef;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.section-title {
+  font-size: 16px;
+  font-weight: 500;
+  color: #002181;
+  margin: 0;
+}
+
+.participants-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.participant-chip {
+  font-weight: 500 !important;
+  transition: opacity 0.15s ease;
+}
+
+.participant-chip:hover {
+  opacity: 0.8;
+}
+
+.chip-avatar {
+  font-weight: 600;
+  color: white;
+}
+
+/* Simple Actions */
+.raffle-actions {
+  padding: 16px 24px !important;
+  background: #f8f9fa !important;
+  justify-content: flex-end !important;
+  border-top: 1px solid #e0e0e0 !important;
+}
+
+.action-btn {
+  font-weight: 500 !important;
+  transition: background-color 0.15s ease;
+}
+
+.action-btn:hover {
+  opacity: 0.9;
+}
+
+/* Simple Participants Modal */
+.participants-modal-card {
+  border-radius: 8px !important;
+  overflow: hidden !important;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Simple Snackbar */
+.enhanced-snackbar {
+  border-radius: 8px !important;
+}
+
+.snackbar-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.snackbar-icon {
+  font-size: 18px !important;
+}
+
+.snackbar-text {
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.snackbar-action {
+  border-radius: 6px !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .page-header {
+    padding: 20px 16px;
+  }
+
+  .page-title {
+    font-size: 1.5rem;
+  }
+
+  .page-subtitle {
+    font-size: 0.9rem;
+  }
+
+  .raffle-details-card .simple-header,
+  .raffle-details-card .v-card-title.simple-header {
+    padding: 12px 16px !important;
+    font-size: 1rem !important;
+    min-height: 56px !important;
+  }
+
+  .raffle-content {
+    padding: 16px !important;
+  }
+
+  .info-cards {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .info-card {
+    padding: 16px;
+  }
+
+  .card-title,
+  .section-title {
+    font-size: 15px;
+  }
+
+  .detail-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    padding: 6px 0;
+  }
+
+  .detail-value {
+    text-align: left;
+    font-size: 13px;
+  }
+
+  .detail-value.price {
+    font-size: 15px;
+  }
+
+  .participants-chips {
+    gap: 6px;
+  }
+
+  .raffle-actions {
+    padding: 12px 16px !important;
+  }
+
+  .action-btn {
+    width: 100%;
+    font-size: 14px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-title {
+    font-size: 1.25rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .raffle-details-card .simple-header,
+  .raffle-details-card .v-card-title.simple-header {
+    padding: 10px 12px !important;
+    font-size: 0.95rem !important;
+    min-height: 52px !important;
+  }
+
+  .raffle-content {
+    padding: 12px !important;
+  }
+
+  .info-card {
+    padding: 12px;
+  }
+
+  .detail-label,
+  .detail-value {
+    font-size: 12px;
+  }
+
+  .detail-value.price {
+    font-size: 14px;
+  }
+}

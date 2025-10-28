@@ -1,0 +1,495 @@
+/* Stall Participants Component Styles */
+.stall-participants {
+  padding: 0;
+  background: #f8f9fa;
+  min-height: 100vh;
+}
+
+/* Modern Header Styles */
+.modern-header {
+  background: linear-gradient(135deg, #002181 0%, #1976d2 100%);
+  padding: 24px;
+  color: white;
+  box-shadow: 0 4px 20px rgba(0, 33, 129, 0.25);
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.header-icon {
+  width: 56px;
+  height: 56px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+}
+
+.header-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.header-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.header-subtitle {
+  font-size: 16px;
+  margin: 4px 0 0 0;
+  opacity: 0.9;
+  font-weight: 400;
+}
+
+.close-btn {
+  background: rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(10px);
+  transition: all 0.2s ease;
+}
+
+.close-btn:hover {
+  background: rgba(255, 255, 255, 0.2) !important;
+  transform: scale(1.05);
+}
+
+/* Loading State */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+  padding: 40px;
+}
+
+.loading-content {
+  text-align: center;
+}
+
+.loading-text {
+  margin-top: 16px;
+  color: #666;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+/* Error State */
+.error-alert {
+  margin: 24px;
+  border-radius: 12px;
+}
+
+.error-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.error-title {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.error-message {
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+/* Participants Content */
+.participants-content {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.empty-icon {
+  margin-bottom: 24px;
+}
+
+.empty-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #334155;
+  margin: 0 0 8px 0;
+}
+
+.empty-subtitle {
+  font-size: 16px;
+  color: #64748b;
+  margin: 0;
+}
+
+/* Participants List */
+.participants-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.participant-item {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  border: 1px solid rgba(0, 33, 129, 0.1);
+}
+
+.participant-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(0, 33, 129, 0.15);
+  border-color: rgba(0, 33, 129, 0.2);
+}
+
+.participant-avatar {
+  flex-shrink: 0;
+}
+
+.avatar-circle {
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, #002181 0%, #1976d2 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(0, 33, 129, 0.2);
+}
+
+.avatar-text {
+  color: white;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.participant-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.participant-name {
+  font-size: 20px;
+  font-weight: 700;
+  color: #002181;
+  margin-bottom: 12px;
+  letter-spacing: -0.3px;
+}
+
+.participant-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 15px;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+.info-item span {
+  flex: 1;
+  word-break: break-word;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .header-content {
+    padding: 0 16px;
+  }
+
+  .header-title {
+    font-size: 24px;
+  }
+
+  .header-subtitle {
+    font-size: 14px;
+  }
+
+  .participants-content {
+    padding: 16px;
+  }
+
+  .participant-item {
+    padding: 20px;
+    gap: 16px;
+  }
+
+  .avatar-circle {
+    width: 48px;
+    height: 48px;
+  }
+
+  .avatar-text {
+    font-size: 20px;
+  }
+
+  .participant-name {
+    font-size: 18px;
+  }
+
+  .info-item {
+    font-size: 14px;
+  }
+}
+
+/* Animation for better UX */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.participant-item {
+  animation: fadeInUp 0.4s ease-out;
+}
+
+.participant-item:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.participant-item:nth-child(3) {
+  animation-delay: 0.2s;
+}
+
+.participant-item:nth-child(4) {
+  animation-delay: 0.3s;
+}
+
+/* Smooth scrolling for overflow */
+.participants-list {
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.participants-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.participants-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.participants-list::-webkit-scrollbar-thumb {
+  background: rgba(0, 33, 129, 0.3);
+  border-radius: 4px;
+}
+
+.participants-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 33, 129, 0.5);
+}
+
+/* Status-based styling */
+.status-approved {
+  border-left-color: #4caf50 !important;
+  background: rgba(76, 175, 80, 0.02);
+}
+
+.status-pending {
+  border-left-color: #ff9800 !important;
+  background: rgba(255, 152, 0, 0.02);
+}
+
+.status-declined {
+  border-left-color: #f44336 !important;
+  background: rgba(244, 67, 54, 0.02);
+}
+
+/* Participant Info */
+.participant-info h4 {
+  color: rgb(0, 33, 129);
+  margin-bottom: 8px;
+}
+
+.participant-info .text-body-2 {
+  margin-bottom: 2px;
+  display: flex;
+  align-items: center;
+}
+
+/* Business Info */
+.business-info .text-subtitle-2 {
+  color: rgb(0, 33, 129);
+  margin-bottom: 4px;
+}
+
+/* Mobile Access */
+.mobile-access {
+  text-align: center;
+}
+
+/* Details Dialog */
+.detail-item {
+  margin-bottom: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.detail-item:last-child {
+  border-bottom: none;
+}
+
+.detail-item strong {
+  color: rgb(0, 33, 129);
+  font-weight: 600;
+  display: inline-block;
+  min-width: 120px;
+}
+
+.detail-item h4 {
+  color: rgb(0, 33, 129);
+  font-size: 1.1rem;
+  margin: 16px 0 8px 0;
+  font-weight: 600;
+}
+
+/* Action Menu */
+.v-list-item-title {
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .stall-participants {
+    padding: 8px;
+  }
+
+  .participant-card {
+    margin: 8px !important;
+  }
+
+  .participant-info,
+  .business-info,
+  .mobile-access {
+    text-align: left;
+    margin-bottom: 16px;
+  }
+
+  .detail-item strong {
+    min-width: auto;
+    display: block;
+    margin-bottom: 4px;
+  }
+}
+
+/* Loading and Error States */
+.v-progress-circular {
+  margin: 0 auto;
+}
+
+.v-alert {
+  border-radius: 12px;
+}
+
+/* Empty State */
+.text-center.pa-8 {
+  padding: 64px 32px !important;
+}
+
+/* Chip Customization */
+.v-chip {
+  font-weight: 500;
+}
+
+/* Card Actions */
+.v-card-actions {
+  padding: 16px 24px;
+  background: #fafafa;
+}
+
+/* Snackbar Positioning */
+.v-snackbar {
+  z-index: 9999;
+}
+
+/* Background Colors */
+.bg-primary {
+  background-color: rgb(0, 33, 129) !important;
+}
+
+.bg-grey-lighten-4 {
+  background-color: #f5f5f5 !important;
+}
+
+/* Text Colors */
+.text-primary {
+  color: rgb(0, 33, 129) !important;
+}
+
+/* Smooth Transitions */
+.participant-card,
+.v-btn,
+.v-chip {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Focus and Hover States */
+.v-btn:hover {
+  transform: translateY(-1px);
+}
+
+.v-chip:hover {
+  opacity: 0.8;
+}
+
+/* Custom Scrollbar for Details Dialog */
+.v-card-text {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 33, 129, 0.3) transparent;
+}
+
+.v-card-text::-webkit-scrollbar {
+  width: 6px;
+}
+
+.v-card-text::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.v-card-text::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 33, 129, 0.3);
+  border-radius: 3px;
+}
+
+.v-card-text::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 33, 129, 0.5);
+}
