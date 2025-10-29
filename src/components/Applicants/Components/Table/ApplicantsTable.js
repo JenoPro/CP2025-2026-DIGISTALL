@@ -64,13 +64,13 @@ export default {
     getStallTypeColor(priceType) {
       switch (priceType) {
         case 'Fixed Price':
-          return 'blue'
+          return 'primary'
         case 'Raffle':
-          return 'green'
+          return 'primary'
         case 'Auction':
-          return 'orange'
+          return 'primary'
         default:
-          return 'gray'
+          return 'primary'
       }
     },
     getApplicationStatusColor(status) {

@@ -1,32 +1,17 @@
 /* Simple Raffles Page Styles */
 .raffles-page {
-  padding: 0;
+  padding: 24px;
   height: 100%;
 }
 
 /* Simple Page Header */
 .page-header {
-  background: white;
-  color: black;
-  padding: 32px 24px;
   margin-bottom: 24px;
-  border-bottom: 1px solid #e0e0e0;
 }
 
-.page-title {
-  font-size: 2rem;
-  font-weight: 700;
-  margin: 0 0 8px 0;
-  display: flex;
-  align-items: center;
-  color: rgb(0, 33, 129);
-}
-
-.page-subtitle {
-  font-size: 1rem;
+.page-header h2 {
+  color: #1976d2;
   margin: 0;
-  font-weight: 400;
-  color: #424242;
 }
 
 /* Simple Modal */

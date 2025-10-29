@@ -95,7 +95,7 @@
 
               <!-- Availability Status -->
               <v-col cols="12">
-                <v-switch v-model="newStall.isAvailable" label="Available for Rent" color="success" inset
+                <v-switch v-model="newStall.isAvailable" label="Available for Rent" color="primary" inset
                   persistent-hint hint="Toggle stall availability status" />
               </v-col>
 
@@ -108,7 +108,7 @@
                       <v-chip v-if="stallNumberPreview" small class="ma-1" color="primary" text-color="white">
                         {{ stallNumberPreview }}
                       </v-chip>
-                      <v-chip v-if="formattedPrice" small class="ma-1" color="success" text-color="white">
+                      <v-chip v-if="formattedPrice" small class="ma-1" color="primary" text-color="white">
                         {{ formattedPrice }}
                       </v-chip>
                       <v-chip v-if="selectedFloorName" small class="ma-1" color="info" text-color="white">

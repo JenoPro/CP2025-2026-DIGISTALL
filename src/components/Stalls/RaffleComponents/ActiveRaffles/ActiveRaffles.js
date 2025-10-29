@@ -1,4 +1,5 @@
 import RaffleCard from '../RaffleCard/RaffleCard.vue'
+import SearchAndFilter from '../SearchAndFilter/SearchAndFilter.vue'
 
 import participantsService from '../../../../services/participantsService.js'
 
@@ -6,14 +7,17 @@ export default {
   name: 'ActiveRaffles',
   components: {
     RaffleCard,
+    SearchAndFilter,
   },
   data() {
     return {
       raffles: [],
+      filteredRaffles: [], // Will be populated by the SearchAndFilter component
       loading: false,
       search: '',
       statusFilter: null,
       sortBy: 'created_desc',
+      showFilterPanel: false,
 
       // Dialog states
       showExtendDialog: false,
@@ -53,59 +57,22 @@ export default {
   },
 
   computed: {
-    filteredRaffles() {
-      let filtered = [...this.raffles]
-
-      // Apply search filter
-      if (this.search) {
-        const searchLower = this.search.toLowerCase()
-        filtered = filtered.filter(
-          (raffle) =>
-            raffle.stall_number.toLowerCase().includes(searchLower) ||
-            raffle.location.toLowerCase().includes(searchLower) ||
-            raffle.floor_name?.toLowerCase().includes(searchLower) ||
-            raffle.section_name?.toLowerCase().includes(searchLower),
-        )
-      }
-
-      // Apply status filter
-      if (this.statusFilter) {
-        const now = new Date()
-        filtered = filtered.filter((raffle) => {
-          const expiresAt = new Date(raffle.expires_at)
-          const timeLeft = expiresAt - now
-          const hoursLeft = timeLeft / (1000 * 60 * 60)
-
-          switch (this.statusFilter) {
-            case 'active':
-              return raffle.status === 'active' && hoursLeft > 2
-            case 'expiring':
-              return raffle.status === 'active' && hoursLeft <= 2 && hoursLeft > 0
-            case 'expired':
-              return raffle.status === 'expired' || hoursLeft <= 0
-            default:
-              return true
-          }
-        })
-      }
-
-      // Apply sorting
-      filtered.sort((a, b) => {
-        switch (this.sortBy) {
-          case 'created_desc':
-            return new Date(b.created_at) - new Date(a.created_at)
-          case 'created_asc':
-            return new Date(a.created_at) - new Date(b.created_at)
-          case 'expires_asc':
-            return new Date(a.expires_at) - new Date(b.expires_at)
-          case 'participants_desc':
-            return (b.participant_count || 0) - (a.participant_count || 0)
-          default:
-            return 0
-        }
-      })
-
-      return filtered
+    activeRaffles() {
+      // Return raffles data for the SearchAndFilter component
+      return this.raffles.map((raffle) => ({
+        ...raffle,
+        stallNumber: raffle.stall_number,
+        location: raffle.location || '',
+        floor_id: raffle.floor_id,
+        floor_name: raffle.floor_name,
+        section_id: raffle.section_id,
+        section_name: raffle.section_name,
+        status: this.getRaffleStatus(raffle),
+        ticketPrice: raffle.ticket_price,
+        totalTickets: raffle.total_tickets,
+        ticketsSold: raffle.tickets_sold,
+        drawDate: raffle.draw_date,
+      }))
     },
   },
 
@@ -132,6 +99,44 @@ export default {
   },
 
   methods: {
+    // Filter methods
+    toggleFilter() {
+      this.showFilterPanel = !this.showFilterPanel
+    },
+
+    applyFilters() {
+      // Filters are applied automatically through computed property
+      this.showFilterPanel = false
+      this.$emit('show-message', 'Filters applied successfully', 'success')
+    },
+
+    clearFilters() {
+      this.statusFilter = null
+      this.search = ''
+      this.sortBy = 'created_desc'
+      this.showFilterPanel = false
+      this.$emit('show-message', 'Filters cleared', 'info')
+    },
+
+    // New method to handle filtered raffles from SearchAndFilter component
+    handleFilteredRaffles(filteredRaffles) {
+      this.filteredRaffles = filteredRaffles
+    },
+
+    // Helper method to get raffle status
+    getRaffleStatus(raffle) {
+      const now = new Date()
+      const drawDate = new Date(raffle.draw_date)
+
+      if (raffle.status === 'ended' || raffle.status === 'completed') {
+        return 'Ended'
+      } else if (drawDate <= now) {
+        return 'Ended'
+      } else {
+        return 'Active'
+      }
+    },
+
     async loadRaffles(showLoading = true) {
       if (showLoading) this.loading = true
 
@@ -294,36 +299,64 @@ export default {
 
       this.selectingWinner = true
       try {
-        const token = sessionStorage.getItem('authToken')
-        const response = await fetch(
-          `${this.apiBaseUrl}/api/raffles/${this.selectedRaffle.raffle_id}/select-winner`,
-          {
-            method: 'POST',
-            headers: {
-              Authorization: `Bearer ${token}`,
-              'Content-Type': 'application/json',
-            },
+        // TODO: Replace with actual API endpoint when backend is implemented
+        // For now, simulate selecting a winner locally
+        const participants = await this.getRaffleParticipants()
+        if (!participants || participants.length === 0) {
+          throw new Error('No participants found for this raffle')
+        }
+
+        // Randomly select a winner from participants
+        const randomIndex = Math.floor(Math.random() * participants.length)
+        const winner = participants[randomIndex]
+
+        // Simulate API call delay
+        await new Promise((resolve) => setTimeout(resolve, 1000))
+
+        // Mock successful response
+        const mockResult = {
+          success: true,
+          data: {
+            winner_name: winner.name || `Participant ${randomIndex + 1}`,
+            winner_id: winner.id || randomIndex + 1,
+            raffle_id: this.selectedRaffle.raffle_id,
+            selected_at: new Date().toISOString(),
           },
+        }
+
+        this.$emit(
+          'show-message',
+          `Winner selected for ${this.selectedRaffle.stall_number}: ${mockResult.data.winner_name}`,
+          'success',
         )
 
-        const result = await response.json()
-        if (result.success) {
-          this.$emit(
-            'show-message',
-            `Winner selected for ${this.selectedRaffle.stall_number}: ${result.data.winner_name}`,
-            'success',
-          )
-          this.loadRaffles(false) // Refresh data
-          this.closeWinnerDialog()
-        } else {
-          throw new Error(result.message || 'Failed to select winner')
+        // Update the raffle status locally
+        const raffleIndex = this.raffles.findIndex(
+          (r) => r.raffle_id === this.selectedRaffle.raffle_id,
+        )
+        if (raffleIndex !== -1) {
+          this.raffles[raffleIndex].status = 'completed'
+          this.raffles[raffleIndex].winner_name = mockResult.data.winner_name
         }
+
+        this.closeWinnerDialog()
       } catch (error) {
         console.error('Error selecting winner:', error)
         this.$emit('show-message', `Failed to select winner: ${error.message}`, 'error')
       } finally {
         this.selectingWinner = false
       }
+    },
+
+    async getRaffleParticipants() {
+      // Mock participants data - replace with actual API call when available
+      return [
+        { id: 1, name: 'John Doe' },
+        { id: 2, name: 'Jane Smith' },
+        { id: 3, name: 'Mike Johnson' },
+        { id: 4, name: 'Sarah Wilson' },
+        { id: 5, name: 'David Brown' },
+      ]
     },
 
     formatDateTime(dateString) {

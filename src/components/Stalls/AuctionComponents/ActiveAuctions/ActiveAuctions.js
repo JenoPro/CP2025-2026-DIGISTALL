@@ -1,4 +1,5 @@
 import AuctionCard from '../AuctionCard/AuctionCard.vue'
+import SearchAndFilter from '../SearchAndFilter/SearchAndFilter.vue'
 
 import participantsService from '../../../../services/participantsService.js'
 
@@ -6,14 +7,17 @@ export default {
   name: 'ActiveAuctions',
   components: {
     AuctionCard,
+    SearchAndFilter,
   },
   data() {
     return {
       auctions: [],
+      filteredAuctions: [], // Will be populated by the SearchAndFilter component
       loading: false,
       search: '',
       statusFilter: null,
       sortBy: 'created_desc',
+      showFilterPanel: false,
 
       // Dialog states
       showExtendDialog: false,
@@ -54,61 +58,21 @@ export default {
   },
 
   computed: {
-    filteredAuctions() {
-      let filtered = [...this.auctions]
-
-      // Apply search filter
-      if (this.search) {
-        const searchLower = this.search.toLowerCase()
-        filtered = filtered.filter(
-          (auction) =>
-            auction.stall_number.toLowerCase().includes(searchLower) ||
-            auction.location.toLowerCase().includes(searchLower) ||
-            auction.floor_name?.toLowerCase().includes(searchLower) ||
-            auction.section_name?.toLowerCase().includes(searchLower),
-        )
-      }
-
-      // Apply status filter
-      if (this.statusFilter) {
-        const now = new Date()
-        filtered = filtered.filter((auction) => {
-          const expiresAt = new Date(auction.expires_at)
-          const timeLeft = expiresAt - now
-          const hoursLeft = timeLeft / (1000 * 60 * 60)
-
-          switch (this.statusFilter) {
-            case 'active':
-              return auction.status === 'active' && hoursLeft > 2
-            case 'expiring':
-              return auction.status === 'active' && hoursLeft <= 2 && hoursLeft > 0
-            case 'expired':
-              return auction.status === 'expired' || hoursLeft <= 0
-            default:
-              return true
-          }
-        })
-      }
-
-      // Apply sorting
-      filtered.sort((a, b) => {
-        switch (this.sortBy) {
-          case 'created_desc':
-            return new Date(b.created_at) - new Date(a.created_at)
-          case 'created_asc':
-            return new Date(a.created_at) - new Date(b.created_at)
-          case 'expires_asc':
-            return new Date(a.expires_at) - new Date(b.expires_at)
-          case 'bid_desc':
-            return (b.current_highest_bid || 0) - (a.current_highest_bid || 0)
-          case 'bidders_desc':
-            return (b.bidder_count || 0) - (a.bidder_count || 0)
-          default:
-            return 0
-        }
-      })
-
-      return filtered
+    activeAuctions() {
+      // Return auctions data for the SearchAndFilter component
+      return this.auctions.map((auction) => ({
+        ...auction,
+        stallNumber: auction.stall_number,
+        location: auction.location || '',
+        floor_id: auction.floor_id,
+        floor_name: auction.floor_name,
+        section_id: auction.section_id,
+        section_name: auction.section_name,
+        status: this.getAuctionStatus(auction),
+        startingPrice: auction.starting_price,
+        currentBid: auction.current_highest_bid,
+        endTime: auction.expires_at,
+      }))
     },
   },
 
@@ -135,6 +99,48 @@ export default {
   },
 
   methods: {
+    // Filter methods
+    toggleFilter() {
+      this.showFilterPanel = !this.showFilterPanel
+    },
+
+    applyFilters() {
+      // Filters are applied automatically through computed property
+      this.showFilterPanel = false
+      this.$emit('show-message', 'Filters applied successfully', 'success')
+    },
+
+    clearFilters() {
+      this.statusFilter = null
+      this.search = ''
+      this.sortBy = 'created_desc'
+      this.showFilterPanel = false
+      this.$emit('show-message', 'Filters cleared', 'info')
+    },
+
+    // New method to handle filtered auctions from SearchAndFilter component
+    handleFilteredAuctions(filteredAuctions) {
+      this.filteredAuctions = filteredAuctions
+    },
+
+    // Helper method to get auction status
+    getAuctionStatus(auction) {
+      const now = new Date()
+      const expiresAt = new Date(auction.expires_at)
+      const timeLeft = expiresAt - now
+      const hoursLeft = timeLeft / (1000 * 60 * 60)
+
+      if (auction.status === 'ended' || auction.status === 'completed') {
+        return 'Ended'
+      } else if (hoursLeft <= 0) {
+        return 'Ended'
+      } else if (hoursLeft <= 2) {
+        return 'Active' // Expiring soon but still active
+      } else {
+        return 'Active'
+      }
+    },
+
     async loadAuctions(showLoading = true) {
       if (showLoading) this.loading = true
 

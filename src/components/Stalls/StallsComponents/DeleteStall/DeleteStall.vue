@@ -33,13 +33,12 @@
             <v-card-actions class="pa-4">
                 <v-spacer></v-spacer>
 
-                <v-btn variant="text" color="grey-darken-1" @click="handleCancel" :disabled="loading">
+                                <v-btn variant="outlined" color="grey-darken-1" @click="handleCancel" :disabled="loading">
                     Cancel
                 </v-btn>
 
-                <v-btn color="error" variant="elevated" @click="handleConfirmDelete" :loading="loading" class="ml-2">
-                    <v-icon left>mdi-delete</v-icon>
-                    Delete Stall
+                <v-btn color="primary" variant="elevated" @click="handleConfirmDelete" :loading="loading" class="ml-2">
+                    Delete
                 </v-btn>
             </v-card-actions>
         </v-card>

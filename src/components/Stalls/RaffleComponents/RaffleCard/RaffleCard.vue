@@ -92,7 +92,7 @@
         v-if="canExtendTimer"
         small
         outlined
-        color="warning"
+        color="primary"
         @click="$emit('extend-timer', raffle)"
       >
         <v-icon small left>mdi-timer-plus</v-icon>
@@ -103,7 +103,7 @@
       <v-btn
         v-if="canSelectWinner"
         small
-        color="success"
+        color="primary"
         @click="$emit('select-winner', raffle)"
       >
         <v-icon small left>mdi-trophy</v-icon>

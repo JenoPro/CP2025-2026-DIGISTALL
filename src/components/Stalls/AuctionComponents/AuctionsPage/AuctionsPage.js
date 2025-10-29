@@ -9,6 +9,7 @@ export default {
   },
   data() {
     return {
+      // Message and Modal data
       showMessage: false,
       message: '',
       messageType: 'info',

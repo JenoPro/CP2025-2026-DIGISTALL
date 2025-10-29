@@ -38,6 +38,23 @@
   width: 100%;
 }
 
+/* Simplified Layout (clickable rows without stall and info columns) */
+.simplified-layout {
+  grid-template-columns: 0.8fr 2fr 2.5fr 1.5fr 3fr 2fr;
+  width: 100%;
+}
+
+.clickable-row {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.clickable-row:hover {
+  background-color: #f0f7ff !important;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 33, 129, 0.1);
+}
+
 .table-row {
   border-bottom: 1px solid #e0e0e0;
   transition: background-color 0.2s;
@@ -220,11 +237,14 @@
 }
 
 .accept-btn {
-  background-color: #4caf50 !important;
+  background-color: rgb(0, 33, 129) !important;
+  color: white !important;
 }
 
 .decline-btn {
-  background-color: #f44336 !important;
+  background-color: white !important;
+  color: black !important;
+  border: 1px solid black !important;
 }
 
 /* Status Display Styles */

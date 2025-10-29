@@ -14,17 +14,17 @@
 /* Status-based card styling */
 .raffle-card.status-active {
   border-color: rgb(0, 33, 129);
-  background: linear-gradient(145deg, #f3f7ff 0%, #ffffff 100%);
+  background: #ffffff;
 }
 
 .raffle-card.status-expiring {
-  border-color: #1565c0;
-  background: linear-gradient(145deg, #f0f4ff 0%, #ffffff 100%);
+  border-color: rgb(0, 33, 129);
+  background: #ffffff;
 }
 
 .raffle-card.status-expired {
-  border-color: #0d47a1;
-  background: linear-gradient(145deg, #e8f0ff 0%, #ffffff 100%);
+  border-color: rgb(0, 33, 129);
+  background: #ffffff;
 }
 
 /* Status Banner */
@@ -44,17 +44,17 @@
 }
 
 .status-banner.status-active {
-  background: linear-gradient(135deg, rgb(0, 33, 129), #1565c0);
+  background: rgb(0, 33, 129);
   color: white;
 }
 
 .status-banner.status-expiring {
-  background: linear-gradient(135deg, #1565c0, #0d47a1);
+  background: rgb(0, 33, 129);
   color: white;
 }
 
 .status-banner.status-expired {
-  background: linear-gradient(135deg, #0d47a1, #002171);
+  background: rgb(0, 33, 129);
   color: white;
 }
 
@@ -105,7 +105,7 @@
   display: block;
   font-size: 1.1rem;
   font-weight: 700;
-  color: #2196f3;
+  color: rgb(0, 33, 129);
   margin-top: 2px;
 }
 
@@ -118,18 +118,18 @@
 }
 
 .timer-section.timer-active {
-  background: rgba(76, 175, 80, 0.08);
-  border: 1px solid rgba(76, 175, 80, 0.2);
+  background: rgba(0, 33, 129, 0.08);
+  border: 1px solid rgba(0, 33, 129, 0.2);
 }
 
 .timer-section.timer-expiring {
-  background: rgba(255, 152, 0, 0.08);
-  border: 1px solid rgba(255, 152, 0, 0.2);
+  background: rgba(0, 33, 129, 0.08);
+  border: 1px solid rgba(0, 33, 129, 0.2);
 }
 
 .timer-section.timer-expired {
-  background: rgba(244, 67, 54, 0.08);
-  border: 1px solid rgba(244, 67, 54, 0.2);
+  background: rgba(0, 33, 129, 0.08);
+  border: 1px solid rgba(0, 33, 129, 0.2);
 }
 
 .timer-display {

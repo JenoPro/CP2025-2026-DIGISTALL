@@ -1,14 +1,14 @@
 <template>
   <v-dialog v-model="showModal" max-width="500" persistent>
     <v-card>
-      <v-card-title class="text-h5 pa-4 bg-success text-white">
+      <v-card-title class="text-h5 pa-4 bg-primary text-white">
         <v-icon class="mr-2" color="white">mdi-check-circle</v-icon>
         Approve Applicant
       </v-card-title>
 
       <v-card-text class="pa-6">
         <div class="text-center mb-4">
-          <v-icon size="64" color="success">mdi-account-check</v-icon>
+          <v-icon size="64" color="primary">mdi-account-check</v-icon>
         </div>
         
         <div class="text-center mb-4">
@@ -31,7 +31,7 @@
         <div v-if="processing" class="text-center py-4">
           <v-progress-circular
             indeterminate
-            color="success"
+            color="primary"
             size="48"
             class="mb-3"
           ></v-progress-circular>
@@ -40,8 +40,8 @@
 
         <!-- Success State -->
         <div v-if="approved && !processing" class="text-center">
-          <v-icon size="48" color="success" class="mb-3">mdi-check-circle</v-icon>
-          <p class="text-h6 text-success mb-2">Applicant Approved!</p>
+          <v-icon size="48" color="primary" class="mb-3">mdi-check-circle</v-icon>
+          <p class="text-h6 text-primary mb-2">Applicant Approved!</p>
           <div class="text-left bg-grey-lighten-4 pa-3 rounded mb-3">
             <p class="text-body-2 mb-1"><strong>Generated Credentials:</strong></p>
             <p class="text-body-2 mb-1">Username: <strong>{{ credentials?.username }}</strong></p>
@@ -64,7 +64,7 @@
         </v-btn>
         <v-btn
           v-if="!processing && !approved"
-          color="success"
+          color="primary"
           variant="flat"
           @click="approveApplicant"
           :disabled="processing"

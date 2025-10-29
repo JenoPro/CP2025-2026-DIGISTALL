@@ -35,7 +35,7 @@
         <v-col cols="12" sm="6" md="3">
           <v-card elevation="2" class="stats-card">
             <v-card-text class="text-center">
-              <v-icon size="48" color="success" class="mb-3">mdi-check-circle</v-icon>
+              <v-icon size="48" color="primary" class="mb-3">mdi-check-circle</v-icon>
               <h3 class="text-h4 font-weight-bold">{{ activeBranches }}</h3>
               <p class="text-subtitle-2 text--secondary">Active Branches</p>
             </v-card-text>

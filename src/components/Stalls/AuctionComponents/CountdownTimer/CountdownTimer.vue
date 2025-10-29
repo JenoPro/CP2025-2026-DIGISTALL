@@ -41,7 +41,7 @@
         <v-icon start size="16">mdi-alert</v-icon>
         Urgent
       </v-chip>
-      <v-chip v-else color="success" size="small" variant="flat">
+      <v-chip v-else color="primary" size="small" variant="flat">
         <v-icon start size="16">mdi-play</v-icon>
         Active
       </v-chip>

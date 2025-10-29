@@ -1,16 +1,10 @@
 ﻿<template>
   <div class="auctions-page">
-    <div class="page-header">
-      <h1 class="page-title">
-        <v-icon large color="white" class="mr-3">mdi-gavel</v-icon>
-        Active Auctions
-      </h1>
-      <p class="page-subtitle">
-        Manage and monitor all active auction stalls
-      </p>
-    </div>
-
-    <active-auctions @show-message="handleMessage" @view-auction-details="handleViewDetails" @view-auction-participants="handleViewParticipants" />
+    <active-auctions
+      @show-message="handleMessage"
+      @view-auction-details="handleViewDetails"
+      @view-auction-participants="handleViewParticipants"
+    />
 
     <!-- View Details Modal -->
     <v-dialog v-model="showDetailsModal" max-width="600px" persistent>
@@ -30,17 +24,30 @@
               <p><strong>Location:</strong> {{ selectedAuction.location }}</p>
               <p><strong>Floor:</strong> {{ selectedAuction.floor_name }}</p>
               <p><strong>Section:</strong> {{ selectedAuction.section_name }}</p>
-              <p><strong>Starting Bid:</strong> ₱{{ formatPrice(selectedAuction.starting_bid) }}</p>
-              <p><strong>Current Bid:</strong> ₱{{ formatPrice(selectedAuction.current_bid) }}</p>
+              <p>
+                <strong>Starting Bid:</strong> ₱{{
+                  formatPrice(selectedAuction.starting_bid)
+                }}
+              </p>
+              <p>
+                <strong>Current Bid:</strong> ₱{{
+                  formatPrice(selectedAuction.current_bid)
+                }}
+              </p>
             </v-col>
             <v-col cols="12" md="6">
               <h4 class="mb-2">Auction Status</h4>
               <p><strong>Status:</strong> {{ selectedAuction.status }}</p>
-              <p><strong>Created:</strong> {{ formatDateTime(selectedAuction.created_at) }}</p>
-              <p><strong>Expires:</strong> {{ formatDateTime(selectedAuction.expires_at) }}</p>
+              <p>
+                <strong>Created:</strong> {{ formatDateTime(selectedAuction.created_at) }}
+              </p>
+              <p>
+                <strong>Expires:</strong> {{ formatDateTime(selectedAuction.expires_at) }}
+              </p>
               <p><strong>Total Bids:</strong> {{ selectedAuction.bid_count || 0 }}</p>
-              <p v-if="selectedAuction.highest_bidder"><strong>Highest Bidder:</strong> {{
-                selectedAuction.highest_bidder }}</p>
+              <p v-if="selectedAuction.highest_bidder">
+                <strong>Highest Bidder:</strong> {{ selectedAuction.highest_bidder }}
+              </p>
             </v-col>
           </v-row>
         </v-card-text>
@@ -61,9 +68,9 @@
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </v-card-title>
-        
+
         <v-card-text v-if="selectedAuctionForParticipants">
-          <stall-participants 
+          <stall-participants
             :stall-id="selectedAuctionForParticipants.stall_id"
             @close="closeParticipantsModal"
           />

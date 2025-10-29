@@ -127,7 +127,7 @@
 .success-icon {
   width: 60px;
   height: 60px;
-  background: #28a745;
+  background: 'primary';
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -138,7 +138,7 @@
 }
 
 .success-message {
-  color: #28a745;
+  color: 'primary';
   font-weight: 600;
   font-size: 1.1rem;
   margin-bottom: 20px;

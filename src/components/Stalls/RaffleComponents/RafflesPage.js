@@ -1,6 +1,6 @@
 import ActiveRaffles from './ActiveRaffles/ActiveRaffles.vue'
 import StallParticipants from '../StallsComponents/StallParticipants/StallParticipants.vue'
-import RaffleDetailsPopup from './RafflesPage/RaffleDetailsPopup.vue'
+import RaffleDetailsPopup from './RaffleDetailsPopup/RaffleDetailsPopup.vue'
 
 export default {
   name: 'RafflesPage',
@@ -11,6 +11,7 @@ export default {
   },
   data() {
     return {
+      // Message and Modal data
       showMessage: false,
       message: '',
       messageType: 'info',
@@ -22,6 +23,7 @@ export default {
     }
   },
   methods: {
+    // Message and Modal methods
     handleMessage(message, type = 'info') {
       this.message = message
       this.messageType = type

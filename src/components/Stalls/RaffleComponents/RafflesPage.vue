@@ -1,13 +1,5 @@
 <template>
   <div class="raffles-page">
-    <div class="page-header">
-      <h1 class="page-title">
-        <v-icon large color="primary" class="mr-3">mdi-ticket-percent</v-icon>
-        Active Raffles
-      </h1>
-      <p class="page-subtitle">Manage and monitor all active raffle stalls</p>
-    </div>
-
     <active-raffles
       @show-message="handleMessage"
       @view-raffle-details="handleViewDetails"

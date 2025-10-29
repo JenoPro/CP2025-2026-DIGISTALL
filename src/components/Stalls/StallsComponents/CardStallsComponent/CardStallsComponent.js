@@ -48,9 +48,9 @@ export default {
     getPriceTypeColor(priceType) {
       switch (priceType) {
         case 'Raffle':
-          return 'success'
+          return 'primary'
         case 'Auction':
-          return 'error'
+          return 'primary'
         case 'Fixed Price':
         default:
           return 'primary'

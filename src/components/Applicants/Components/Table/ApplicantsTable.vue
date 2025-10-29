@@ -3,21 +3,26 @@
     <v-card elevation="1" class="table-card">
       <!-- Custom Table Header -->
       <div class="table-header">
-        <div class="header-row" :class="applicantType === 'Stall Applicants' ? 'stall-layout' : 'vendor-layout'">
+        <div
+          class="header-row simplified-layout"
+        >
           <div class="header-cell id-col">ID</div>
           <div class="header-cell name-col">Full Name</div>
           <div class="header-cell email-col">Email Address</div>
           <div class="header-cell phone-col">Phone Number</div>
           <div class="header-cell address-col">Address</div>
-          <div class="header-cell stall-col" v-if="applicantType === 'Stall Applicants'">Stall Applied</div>
-          <div class="header-cell info-col">More Info</div>
           <div class="header-cell action-col">Status/Action</div>
         </div>
       </div>
 
       <!-- Table Body -->
       <div class="table-body">
-        <div v-for="applicant in applicants" :key="applicant.id" class="table-row" :class="applicantType === 'Stall Applicants' ? 'stall-layout' : 'vendor-layout'">
+        <div
+          v-for="applicant in applicants"
+          :key="applicant.id"
+          class="table-row simplified-layout clickable-row"
+          @click="viewMoreInfo(applicant)"
+        >
           <div class="table-cell id-col">
             {{ applicant.id }}
           </div>
@@ -35,60 +40,30 @@
               {{ applicant.address }}
             </div>
           </div>
-          <div class="table-cell stall-col" v-if="applicantType === 'Stall Applicants'">
-            <div v-if="applicant.stall_info" class="stall-info">
-              <div class="stall-primary">
-                <strong>{{ applicant.stall_info.stall_no }}</strong>
-              </div>
-              <div class="stall-secondary">
-                {{ applicant.stall_info.stall_location }}
-              </div>
-              <div class="stall-details">
-                <span class="stall-section">{{ applicant.stall_info.section_name }}</span>
-                <span class="stall-price">₱{{ formatCurrency(applicant.stall_info.rental_price) }}</span>
-              </div>
-              <div class="stall-type">
-                <v-chip size="x-small" :color="getStallTypeColor(applicant.stall_info.price_type)">
-                  {{ applicant.stall_info.price_type }}
-                </v-chip>
-              </div>
-            </div>
-            <div v-else class="no-stall-info">
-              <em>No stall information</em>
-            </div>
-          </div>
-          <div class="table-cell info-col">
-            <v-btn
-              icon
-              variant="text"
-              size="small"
-              color="primary"
-              @click="viewMoreInfo(applicant)"
-              class="info-btn"
-            >
-              <v-icon size="20">mdi-information-outline</v-icon>
-            </v-btn>
-          </div>
-          <div class="table-cell action-col">
+          <div class="table-cell action-col" @click.stop>
             <!-- Show Status Badge for Approved/Rejected/Under Review Applicants -->
-            <div v-if="isProcessedStatus(applicant.application_status)" class="status-display">
+            <div
+              v-if="isProcessedStatus(applicant.application_status)"
+              class="status-display"
+            >
               <!-- Re-check tooltip for Rejected status -->
               <v-tooltip v-if="applicant.application_status === 'Rejected'" bottom>
                 <template v-slot:activator="{ props }">
-                  <div 
-                    class="status-badge status-declined-recheck" 
+                  <div
+                    class="status-badge status-declined-recheck"
                     :class="{
                       'status-approved': applicant.application_status === 'Approved',
                       'status-declined': applicant.application_status === 'Rejected',
-                      'status-under-review': applicant.application_status === 'Under Review',
-                      'status-cancelled': applicant.application_status === 'Cancelled'
+                      'status-under-review':
+                        applicant.application_status === 'Under Review',
+                      'status-cancelled': applicant.application_status === 'Cancelled',
                     }"
                     v-bind="props"
                     @click="handleStatusClick(applicant)"
                   >
-                    <v-icon 
-                      :icon="getStatusIcon(applicant.application_status)" 
-                      size="16" 
+                    <v-icon
+                      :icon="getStatusIcon(applicant.application_status)"
+                      size="16"
                       :color="getStatusColor(applicant.application_status)"
                       class="mr-1"
                     ></v-icon>
@@ -99,22 +74,26 @@
               </v-tooltip>
 
               <!-- Approve tooltip for Under Review status -->
-              <v-tooltip v-else-if="applicant.application_status === 'Under Review'" bottom>
+              <v-tooltip
+                v-else-if="applicant.application_status === 'Under Review'"
+                bottom
+              >
                 <template v-slot:activator="{ props }">
-                  <div 
-                    class="status-badge status-under-review-approve" 
+                  <div
+                    class="status-badge status-under-review-approve"
                     :class="{
                       'status-approved': applicant.application_status === 'Approved',
                       'status-declined': applicant.application_status === 'Rejected',
-                      'status-under-review': applicant.application_status === 'Under Review',
-                      'status-cancelled': applicant.application_status === 'Cancelled'
+                      'status-under-review':
+                        applicant.application_status === 'Under Review',
+                      'status-cancelled': applicant.application_status === 'Cancelled',
                     }"
                     v-bind="props"
                     @click="handleStatusClick(applicant)"
                   >
-                    <v-icon 
+                    <v-icon
                       icon="mdi-check-circle-outline"
-                      size="16" 
+                      size="16"
                       :color="getStatusColor(applicant.application_status)"
                       class="mr-1"
                     ></v-icon>
@@ -125,34 +104,43 @@
               </v-tooltip>
 
               <!-- Regular status badge for other statuses -->
-              <div 
+              <div
                 v-else
-                class="status-badge" 
+                class="status-badge"
                 :class="{
                   'status-approved': applicant.application_status === 'Approved',
                   'status-declined': applicant.application_status === 'Rejected',
                   'status-under-review': applicant.application_status === 'Under Review',
-                  'status-cancelled': applicant.application_status === 'Cancelled'
+                  'status-cancelled': applicant.application_status === 'Cancelled',
                 }"
               >
-                <v-icon 
-                  :icon="getStatusIcon(applicant.application_status)" 
-                  size="16" 
+                <v-icon
+                  :icon="getStatusIcon(applicant.application_status)"
+                  size="16"
                   :color="getStatusColor(applicant.application_status)"
                   class="mr-1"
                 ></v-icon>
                 {{ getStatusText(applicant.application_status) }}
               </div>
-              <div v-if="applicant.approved_at || applicant.declined_at || applicant.updated_at" class="status-date">
-                {{ formatStatusDate(applicant.approved_at || applicant.declined_at || applicant.updated_at) }}
+              <div
+                v-if="
+                  applicant.approved_at || applicant.declined_at || applicant.updated_at
+                "
+                class="status-date"
+              >
+                {{
+                  formatStatusDate(
+                    applicant.approved_at || applicant.declined_at || applicant.updated_at
+                  )
+                }}
               </div>
             </div>
-            
+
             <!-- Show Action Buttons for Pending Applicants -->
             <div v-else class="action-buttons">
               <v-btn
                 variant="flat"
-                color="success"
+                color="primary"
                 size="small"
                 class="mr-2 accept-btn"
                 @click="acceptApplicant(applicant)"
@@ -160,10 +148,11 @@
                 ACCEPT
               </v-btn>
               <v-btn
-                variant="flat"
-                color="error"
+                variant="outlined"
+                color="black"
                 size="small"
                 class="decline-btn"
+                style="background-color: white; color: black; border-color: black;"
                 @click="declineApplicant(applicant)"
               >
                 DECLINE
@@ -194,8 +183,14 @@
           <v-tabs v-model="activeTab" color="primary" class="border-b">
             <v-tab value="personal">Personal Information</v-tab>
             <v-tab value="business">Business Information</v-tab>
-            <v-tab value="stall" v-if="selectedApplicant?.stall_info && applicantType === 'Stall Applicants'">Stall Information</v-tab>
-            <v-tab value="spouse" v-if="selectedApplicant?.spouse_information">Spouse Information</v-tab>
+            <v-tab
+              value="stall"
+              v-if="selectedApplicant?.stall_info && applicantType === 'Stall Applicants'"
+              >Stall Information</v-tab
+            >
+            <v-tab value="spouse" v-if="selectedApplicant?.spouse_information"
+              >Spouse Information</v-tab
+            >
             <v-tab value="documents">Other Information</v-tab>
           </v-tabs>
 
@@ -312,45 +307,65 @@
             </v-tabs-window-item>
 
             <!-- Stall Information Tab -->
-            <v-tabs-window-item value="stall" v-if="selectedApplicant?.stall_info && applicantType === 'Stall Applicants'">
+            <v-tabs-window-item
+              value="stall"
+              v-if="selectedApplicant?.stall_info && applicantType === 'Stall Applicants'"
+            >
               <div class="info-section">
                 <h3 class="section-title">Stall Application Details</h3>
                 <v-row>
                   <v-col cols="12" md="6">
                     <div class="info-item">
                       <span class="info-label">Stall Number:</span>
-                      <span class="info-value stall-number">{{ selectedApplicant.stall_info.stall_no }}</span>
+                      <span class="info-value stall-number">{{
+                        selectedApplicant.stall_info.stall_no
+                      }}</span>
                     </div>
                   </v-col>
                   <v-col cols="12" md="6">
                     <div class="info-item">
                       <span class="info-label">Location:</span>
-                      <span class="info-value">{{ selectedApplicant.stall_info.stall_location }}</span>
+                      <span class="info-value">{{
+                        selectedApplicant.stall_info.stall_location
+                      }}</span>
                     </div>
                   </v-col>
                   <v-col cols="12" md="6">
                     <div class="info-item">
                       <span class="info-label">Section:</span>
-                      <span class="info-value">{{ selectedApplicant.stall_info.section_name }}</span>
+                      <span class="info-value">{{
+                        selectedApplicant.stall_info.section_name
+                      }}</span>
                     </div>
                   </v-col>
                   <v-col cols="12" md="6">
                     <div class="info-item">
                       <span class="info-label">Floor:</span>
-                      <span class="info-value">{{ selectedApplicant.stall_info.floor_name }}</span>
+                      <span class="info-value">{{
+                        selectedApplicant.stall_info.floor_name
+                      }}</span>
                     </div>
                   </v-col>
                   <v-col cols="12" md="6">
                     <div class="info-item">
                       <span class="info-label">Rental Price:</span>
-                      <span class="info-value price">₱{{ formatCurrency(selectedApplicant.stall_info.rental_price) }}</span>
+                      <span class="info-value price"
+                        >₱{{
+                          formatCurrency(selectedApplicant.stall_info.rental_price)
+                        }}</span
+                      >
                     </div>
                   </v-col>
                   <v-col cols="12" md="6">
                     <div class="info-item">
                       <span class="info-label">Price Type:</span>
                       <span class="info-value">
-                        <v-chip size="small" :color="getStallTypeColor(selectedApplicant.stall_info.price_type)">
+                        <v-chip
+                          size="small"
+                          :color="
+                            getStallTypeColor(selectedApplicant.stall_info.price_type)
+                          "
+                        >
                           {{ selectedApplicant.stall_info.price_type }}
                         </v-chip>
                       </span>
@@ -359,14 +374,23 @@
                   <v-col cols="12" md="6">
                     <div class="info-item">
                       <span class="info-label">Application Date:</span>
-                      <span class="info-value">{{ formatDate(selectedApplicant.application_date) }}</span>
+                      <span class="info-value">{{
+                        formatDate(selectedApplicant.application_date)
+                      }}</span>
                     </div>
                   </v-col>
                   <v-col cols="12" md="6">
                     <div class="info-item">
                       <span class="info-label">Application Status:</span>
                       <span class="info-value">
-                        <v-chip size="small" :color="getApplicationStatusColor(selectedApplicant.application_status)">
+                        <v-chip
+                          size="small"
+                          :color="
+                            getApplicationStatusColor(
+                              selectedApplicant.application_status
+                            )
+                          "
+                        >
                           {{ selectedApplicant.application_status }}
                         </v-chip>
                       </span>
@@ -375,7 +399,9 @@
                   <v-col cols="12" md="6">
                     <div class="info-item">
                       <span class="info-label">Stall Status:</span>
-                      <span class="info-value">{{ selectedApplicant.stall_info.stall_status }}</span>
+                      <span class="info-value">{{
+                        selectedApplicant.stall_info.stall_status
+                      }}</span>
                     </div>
                   </v-col>
                 </v-row>
@@ -383,7 +409,10 @@
             </v-tabs-window-item>
 
             <!-- Spouse Information Tab -->
-            <v-tabs-window-item value="spouse" v-if="selectedApplicant?.spouse_information">
+            <v-tabs-window-item
+              value="spouse"
+              v-if="selectedApplicant?.spouse_information"
+            >
               <div class="info-section">
                 <h3 class="section-title">Spouse Details</h3>
                 <v-row>
@@ -497,10 +526,18 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn variant="text" @click="showConfirmDialog = false">Cancel</v-btn>
+          <v-btn 
+            variant="outlined" 
+            color="black"
+            style="background-color: white; color: black; border-color: black;"
+            @click="showConfirmDialog = false"
+          >
+            Cancel
+          </v-btn>
           <v-btn
-            :color="confirmAction === 'accept' ? 'success' : 'error'"
-            variant="flat"
+            :color="confirmAction === 'accept' ? 'primary' : 'black'"
+            :variant="confirmAction === 'accept' ? 'flat' : 'outlined'"
+            :style="confirmAction === 'decline' ? 'background-color: white; color: black; border-color: black;' : ''"
             @click="confirmActionHandler"
           >
             {{ confirmAction === "accept" ? "Accept" : "Decline" }}

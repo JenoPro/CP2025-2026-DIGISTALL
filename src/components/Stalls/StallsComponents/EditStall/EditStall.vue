@@ -123,7 +123,7 @@
                 </div>
 
                 <!-- Availability Toggle -->
-                <v-switch v-model="editForm.isAvailable" label="Available for Rent" color="success" inset
+                <v-switch v-model="editForm.isAvailable" label="Available for Rent" color="primary" inset
                   class="mt-3"></v-switch>
               </v-col>
             </v-row>

@@ -1,53 +1,30 @@
 <template>
   <div class="active-raffles">
-    <v-card>
-      <v-card-title class="d-flex align-center">
-        <v-icon left color="rgb(0, 33, 129)">mdi-ticket-percent</v-icon>
-        Active Raffles
-      </v-card-title>
+    <!-- Search and Filters Section -->
+    <SearchAndFilter 
+      :raffles-data="activeRaffles" 
+      @filtered-raffles="handleFilteredRaffles"
+    />
 
+    <!-- Raffles Cards Section -->
+    <v-card>
       <v-card-text>
-        <!-- Search and Filters -->
-        <v-row class="mb-4">
-          <v-col cols="12" md="6">
-            <v-text-field
-              v-model="search"
-              label="Search raffles..."
-              prepend-inner-icon="mdi-magnify"
-              outlined
-              dense
-              clearable
-            />
-          </v-col>
-          <v-col cols="12" md="3">
-            <v-select
-              v-model="statusFilter"
-              :items="statusOptions"
-              label="Status Filter"
-              outlined
-              dense
-              clearable
-            />
-          </v-col>
-          <v-col cols="12" md="3">
-            <v-select
-              v-model="sortBy"
-              :items="sortOptions"
-              label="Sort By"
-              outlined
-              dense
-            />
-          </v-col>
-        </v-row>
 
         <!-- Loading State -->
         <div v-if="loading && raffles.length === 0" class="text-center py-8">
-          <v-progress-circular indeterminate color="primary" size="60"></v-progress-circular>
+          <v-progress-circular
+            indeterminate
+            color="primary"
+            size="60"
+          ></v-progress-circular>
           <p class="mt-4">Loading active raffles...</p>
         </div>
 
         <!-- No Data State -->
-        <div v-else-if="!loading && filteredRaffles.length === 0" class="text-center py-8">
+        <div
+          v-else-if="!loading && filteredRaffles.length === 0"
+          class="text-center py-8"
+        >
           <v-icon size="64" color="grey lighten-1">mdi-ticket-outline</v-icon>
           <h3 class="mt-4 grey--text">No Active Raffles</h3>
           <p class="grey--text">Create a new raffle stall to get started.</p>
@@ -95,7 +72,7 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn text @click="closeExtendDialog">Cancel</v-btn>
+          <v-btn variant="outlined" @click="closeExtendDialog">Cancel</v-btn>
           <v-btn color="primary" @click="confirmExtendTimer" :loading="extending">
             Extend
           </v-btn>
@@ -112,7 +89,7 @@
         </v-card-title>
         <v-card-text>
           <p>
-            Are you sure you want to select a winner for 
+            Are you sure you want to select a winner for
             <strong>{{ selectedRaffle?.stall_number }}</strong> now?
           </p>
           <p class="mt-2">
@@ -124,8 +101,8 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn text @click="closeWinnerDialog">Cancel</v-btn>
-          <v-btn color="error" @click="confirmSelectWinner" :loading="selectingWinner">
+          <v-btn variant="outlined" @click="closeWinnerDialog">Cancel</v-btn>
+          <v-btn color="primary" @click="confirmSelectWinner" :loading="selectingWinner">
             Select Winner
           </v-btn>
         </v-card-actions>

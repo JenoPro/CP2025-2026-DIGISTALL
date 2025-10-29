@@ -193,7 +193,7 @@
 
 .status-approved {
   background: #e3f2fd;
-  color: #1565c0;
+  color: rgb(0, 33, 129);
 }
 
 .action-buttons {
@@ -220,25 +220,26 @@
 }
 
 .accept-btn {
-  background: #4caf50;
+  background: rgb(0, 33, 129);
   color: white;
 }
 
 .accept-btn:hover {
-  background: #388e3c;
+  background: rgb(0, 28, 109);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 33, 129, 0.3);
 }
 
 .decline-btn {
-  background: #f44336;
-  color: white;
+  background: white;
+  color: black;
+  border: 2px solid #ddd;
 }
 
 .decline-btn:hover {
-  background: #d32f2f;
+  background: #f5f5f5;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(244, 67, 54, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .accept-btn svg,
@@ -258,9 +259,9 @@
 }
 
 .status-message.approved {
-  background: #e8f5e8;
-  color: #2e7d32;
-  border: 2px solid #4caf50;
+  background: #e3f2fd;
+  color: rgb(0, 33, 129);
+  border: 2px solid rgb(0, 33, 129);
 }
 
 .status-message.rejected {
@@ -282,32 +283,32 @@
     border-radius: 0;
     max-height: 100vh;
   }
-  
+
   .document-content {
     flex-direction: column;
   }
-  
+
   .document-preview {
     flex: 1;
     padding: 20px;
     min-height: 300px;
   }
-  
+
   .document-info-panel {
     border-left: none;
     border-top: 1px solid #e0e0e0;
   }
-  
+
   .info-section,
   .action-section,
   .status-section {
     padding: 20px;
   }
-  
+
   .action-buttons {
     flex-direction: row;
   }
-  
+
   .accept-btn,
   .decline-btn {
     flex: 1;
@@ -320,21 +321,21 @@
   .modal-header {
     padding: 15px 20px;
   }
-  
+
   .modal-header h2 {
     font-size: 20px;
   }
-  
+
   .info-row {
     flex-direction: column;
     align-items: flex-start;
     gap: 5px;
   }
-  
+
   .value {
     text-align: left;
   }
-  
+
   .action-buttons {
     flex-direction: column;
   }

@@ -35,7 +35,7 @@
     <v-card-text class="bidders-section">
       <div class="bidders-info">
         <div class="bidder-count">
-          <v-icon color="error">mdi-account-multiple</v-icon>
+          <v-icon color="primary">mdi-account-multiple</v-icon>
           <span>{{ auction.bidder_count || 0 }} Bidders</span>
         </div>
         <div class="stall-details">
@@ -78,21 +78,16 @@
         View Details
       </v-btn>
 
-      <v-btn small text color="info" @click="$emit('view-participants', auction)">
-        <v-icon small left>mdi-account-group</v-icon>
-        Participants
-      </v-btn>
-
       <v-spacer></v-spacer>
 
       <!-- Extend Timer Button -->
-      <v-btn v-if="canExtendTimer" small outlined color="warning" @click="$emit('extend-timer', auction)">
+      <v-btn v-if="canExtendTimer" small outlined color="primary" @click="$emit('extend-timer', auction)">
         <v-icon small left>mdi-timer-plus</v-icon>
         Extend
       </v-btn>
 
       <!-- End Auction Button -->
-      <v-btn v-if="canSelectWinner" small color="error" @click="$emit('select-winner', auction)">
+      <v-btn v-if="canSelectWinner" small color="primary" @click="$emit('select-winner', auction)">
         <v-icon small left>mdi-gavel</v-icon>
         End Auction
       </v-btn>

@@ -80,15 +80,8 @@ export default {
     },
 
     timerColor() {
-      switch (this.statusType) {
-        case 'expired':
-          return 'error'
-        case 'expiring':
-          return 'warning'
-        case 'active':
-        default:
-          return 'success'
-      }
+      // Always use primary color
+      return 'primary'
     },
 
     cardClass() {

@@ -104,7 +104,7 @@
                 </div>
                 <div class="choice-card-overlay">
                   <v-btn
-                    color="success"
+                    color="primary"
                     class="choice-btn"
                     :loading="loading"
                     :disabled="loading"

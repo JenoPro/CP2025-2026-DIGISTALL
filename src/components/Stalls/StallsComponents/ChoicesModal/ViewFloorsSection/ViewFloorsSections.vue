@@ -91,7 +91,7 @@
                                                         <v-card class="section-card" variant="outlined">
                                                             <v-card-text class="pa-3">
                                                                 <div class="d-flex align-center">
-                                                                    <v-icon color="success"
+                                                                    <v-icon color="primary"
                                                                         class="mr-2">mdi-view-grid</v-icon>
                                                                     <div>
                                                                         <p class="font-weight-medium mb-1">{{
