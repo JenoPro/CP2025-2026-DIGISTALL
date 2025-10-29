@@ -190,7 +190,7 @@
 }
 
 .form-checkbox:checked::after {
-  content: '✓';
+  content: "✓";
   position: absolute;
   top: 50%;
   left: 50%;
@@ -589,7 +589,7 @@
 
 .error-x::before,
 .error-x::after {
-  content: '';
+  content: "";
   position: absolute;
   width: 40px;
   height: 4px;
