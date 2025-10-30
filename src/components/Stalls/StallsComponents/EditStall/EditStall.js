@@ -532,3 +532,18 @@ export default {
     }
   },
 }
+
+// backend - create routes or endpoint
+//services
+
+// client
+//services - fetch(), insert
+
+// api - useUser() call fetch user in service ()
+
+// component - useUser()
+
+//component - fetch in backend
+
+// endpoint /api/User
+// vue or react //api/user

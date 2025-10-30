@@ -13,7 +13,6 @@ export default {
   },
   data() {
     return {
-      pageTitle: "Compliance Management",
       searchQuery: "",
       activeFilter: "all",
       selectedCompliance: {},

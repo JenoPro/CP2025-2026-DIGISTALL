@@ -4,18 +4,16 @@ import ComplaintsSearch from '../Complaints/ComplaintsComponents/ComplaintsSearc
 import ViewComplaints from '../Complaints/ComplaintsComponents/ViewComplaints/ViewComplaints.vue'
 
 export default {
-  name: "Complaints",
+  name: 'Complaints',
   components: {
     ComplaintsTable,
     ComplaintsSearch,
     ViewComplaints,
-
   },
   data() {
     return {
-      pageTitle: "Complaints Management",
-      searchQuery: "",
-      activeFilter: "all",
+      searchQuery: '',
+      activeFilter: 'all',
       selectedComplaints: {},
       showViewComplaintsModal: false,
       complaintsList: [], // Complaints data
@@ -29,31 +27,29 @@ export default {
     handleSearch(searchData) {
       this.searchQuery = searchData.query
       this.activeFilter = searchData.filter
-      console.log("Search data:", searchData)
+      console.log('Search data:', searchData)
     },
 
     // Table actions
     handleViewComplaints(complaints) {
-      console.log("View complaints:", complaints)
+      console.log('View complaints:', complaints)
       this.selectedComplaints = complaints
       this.showViewComplaintsModal = true
     },
 
     handleEditComplaints(complaints) {
-      console.log("Edit complaints:", complaints)
+      console.log('Edit complaints:', complaints)
       this.selectedComplaints = complaints
       // Open edit modal or navigate to edit page
     },
 
     handleDeleteComplaints(complaints) {
-      console.log("Delete complaints:", complaints)
+      console.log('Delete complaints:', complaints)
       if (confirm(`Are you sure you want to delete complaints record ${complaints.id}?`)) {
-        this.complaintsList = this.complaintsList.filter(item => item.id !== complaints.id)
-        console.log("Complaints record deleted successfully!")
+        this.complaintsList = this.complaintsList.filter((item) => item.id !== complaints.id)
+        console.log('Complaints record deleted successfully!')
       }
     },
-
-
 
     closeViewComplaintsModal() {
       this.showViewComplaintsModal = false
@@ -62,7 +58,7 @@ export default {
 
     // Init
     initializeComplaints() {
-      console.log("Complaints page initialized")
+      console.log('Complaints page initialized')
       this.loadComplaintsData()
     },
 
@@ -71,36 +67,36 @@ export default {
         await new Promise((resolve) => setTimeout(resolve, 500))
         this.complaintsList = [
           {
-            id: "CMPT-0023",
-            date: "2024-01-15",
-            type: "Sanitay Issue",
-            sender: "Jonathan Reyna",
-            stallholder: "Juan Miguel",
-            status: "complete",
-            notes: "All health standards met",
+            id: 'CMPT-0023',
+            date: '2024-01-15',
+            type: 'Sanitay Issue',
+            sender: 'Jonathan Reyna',
+            stallholder: 'Juan Miguel',
+            status: 'complete',
+            notes: 'All health standards met',
           },
           {
-            id: "CMPT-0024",
-            date: "2024-01-18",
-            type: "Illegal Vending",
-            sender: "Pedro Cruz",
-            stallholder: "Patrick Lee",
-            status: "pending",
-            notes: "Awaiting safety equipment installation",
+            id: 'CMPT-0024',
+            date: '2024-01-18',
+            type: 'Illegal Vending',
+            sender: 'Pedro Cruz',
+            stallholder: 'Patrick Lee',
+            status: 'pending',
+            notes: 'Awaiting safety equipment installation',
           },
           {
-            id: "CMPT-0025",
-            date: "2024-01-20",
-            type: "Faulty Weighing Scale",
-            sender: "Miguel Ohara",
-            stallholder: "Maria Santos",
-            status: "incomplete",
-            notes: "Fire extinguisher needs replacement",
+            id: 'CMPT-0025',
+            date: '2024-01-20',
+            type: 'Faulty Weighing Scale',
+            sender: 'Miguel Ohara',
+            stallholder: 'Maria Santos',
+            status: 'incomplete',
+            notes: 'Fire extinguisher needs replacement',
           },
         ]
-        console.log("Complaints data loaded:", this.complaintsList)
+        console.log('Complaints data loaded:', this.complaintsList)
       } catch (error) {
-        console.error("Error loading complaints data:", error)
+        console.error('Error loading complaints data:', error)
       }
     },
   },

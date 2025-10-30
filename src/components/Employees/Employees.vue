@@ -6,14 +6,6 @@
       <v-container fluid class="main-content">
         <v-row>
           <v-col cols="12">
-            <div class="page-header mb-6">
-              <h2 class="text-h4 font-weight-bold">
-                <v-icon class="mr-2">mdi-account-group</v-icon>
-                Employee Management
-              </h2>
-              <p class="page-subtitle">Manage employee accounts and permissions</p>
-            </div>
-
             <!-- Stats Cards -->
             <v-row class="mb-6">
               <v-col cols="12" md="4">
